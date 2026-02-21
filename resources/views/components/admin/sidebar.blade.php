@@ -30,7 +30,7 @@
       }
 
       if (in_array($role, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true)) {
-          $items[] = ['label' => 'Hasil Analisis', 'href' => route('assignments.analysis-results'), 'active' => ['assignments.analysis-results'], 'icon_key' => 'hasil_analisis'];
+          $items[] = ['label' => 'Hasil Analisis', 'href' => route('assignments.analysis-results'), 'active' => ['assignments.analysis-results*'], 'icon_key' => 'hasil_analisis'];
       }
   }
 @endphp

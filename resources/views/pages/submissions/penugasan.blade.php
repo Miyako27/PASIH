@@ -22,7 +22,7 @@
 
     <div class="rounded-lg bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200">
-        <h2 class="text-2xl font-extrabold tracking-tight text-slate-800">Penugasan</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Penugasan</h2>
       </div>
 
       <form method="POST" action="{{ route('submissions.penugasan.save', $submission) }}" class="p-5 space-y-5">
@@ -31,30 +31,30 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label class="block text-lg font-medium text-slate-700">
             Nomor Surat
-            <input type="text" disabled value="{{ $submission->nomor_surat }}" class="mt-2 w-full h-12 rounded-xl border-slate-300 bg-slate-100 text-base text-slate-500">
+            <input type="text" disabled value="{{ $submission->nomor_surat }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </label>
           <label class="block text-lg font-medium text-slate-700">
             Perihal
-            <input type="text" disabled value="{{ $submission->perihal }}" class="mt-2 w-full h-12 rounded-xl border-slate-300 bg-slate-100 text-base text-slate-500">
+            <input type="text" disabled value="{{ $submission->perihal }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </label>
           <label class="block text-lg font-medium text-slate-700">
             Tanggal Pengajuan
-            <input type="text" disabled value="{{ optional($submission->submitted_at)->format('d - m - Y') ?: '-' }}" class="mt-2 w-full h-12 rounded-xl border-slate-300 bg-slate-100 text-base text-slate-500">
+            <input type="text" disabled value="{{ optional($submission->submitted_at)->format('d - m - Y') ?: '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </label>
           <label class="block text-lg font-medium text-slate-700">
             Instansi Pengaju
-            <input type="text" disabled value="{{ $submission->pemda_name }}" class="mt-2 w-full h-12 rounded-xl border-slate-300 bg-slate-100 text-base text-slate-500">
+            <input type="text" disabled value="{{ $submission->pemda_name }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </label>
         </div>
 
         <label class="block text-lg font-medium text-slate-700">
           Catatan Penugasan
-          <textarea name="instruction" rows="4" placeholder="Masukkan Catatan Untuk Penugasan" class="mt-2 w-full rounded-xl border-slate-300 text-base placeholder:text-slate-400">{{ old('instruction') }}</textarea>
+          <textarea name="instruction" rows="4" placeholder="Masukkan Catatan Untuk Penugasan" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('instruction') }}</textarea>
         </label>
 
         <label class="block text-lg font-medium text-slate-700">
           Deadline
-          <input type="date" name="deadline_at" value="{{ old('deadline_at') }}" class="mt-2 w-full h-12 rounded-xl border-slate-300 text-base">
+          <input type="date" name="deadline_at" value="{{ old('deadline_at') }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
         </label>
 
         <div>

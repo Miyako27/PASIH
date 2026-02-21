@@ -64,6 +64,34 @@ class AssignmentController extends Controller
         ]);
     }
 
+    public function showAnalysisResult(Request $request, Assignment $assignment)
+    {
+        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true), 403);
+        abort_unless($assignment->status->value === 'completed', 404);
+
+        $assignment->load(['submission.submitter', 'analyst', 'documents']);
+
+        $user = $request->user();
+        if ($user->role->value === 'analis_hukum') {
+            abort_unless($assignment->analyst_id === $user->id, 403);
+        }
+
+        if ($user->role->value === 'operator_pemda') {
+            abort_unless($assignment->submission?->submitter_id === $user->id, 403);
+        }
+
+        $latestAnalysisDocument = $assignment->documents
+            ->where('document_type', 'hasil_analisis')
+            ->sortByDesc('id')
+            ->first();
+
+        return view('pages.assignments.show-hasil-analisis', [
+            'assignment' => $assignment,
+            'latestAnalysisDocument' => $latestAnalysisDocument,
+            'analysisFields' => $this->extractAnalysisFieldsFromNotes($latestAnalysisDocument?->notes),
+        ]);
+    }
+
     public function store(Request $request)
     {
         abort_unless(in_array($request->user()->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true), 403);

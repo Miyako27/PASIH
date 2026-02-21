@@ -2,57 +2,116 @@
 @section('title', 'Detail Pengajuan')
 
 @section('content')
-  <div class="space-y-6">
-    <x-ui.section title="Detail Pengajuan" subtitle="Informasi utama permohonan">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-        <div><span class="font-semibold">Nomor Surat:</span> {{ $submission->nomor_surat }}</div>
-        <div><span class="font-semibold">Status:</span> {{ $submission->status->label() }}</div>
-        <div><span class="font-semibold">Perihal:</span> {{ $submission->perihal }}</div>
-        <div><span class="font-semibold">Pemda:</span> {{ $submission->pemda_name }}</div>
-        <div class="md:col-span-2"><span class="font-semibold">Judul Perda:</span> {{ $submission->perda_title }}</div>
-        <div class="md:col-span-2"><span class="font-semibold">Deskripsi:</span> {{ $submission->description ?: '-' }}</div>
+  <div class="space-y-5">
+    <div>
+      <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Permohonan</h1>
+      <p class="mt-1 text-sm text-slate-500">
+        <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
+        <span class="mx-1">/</span>
+        <a href="{{ route('submissions.index') }}" class="hover:text-slate-700 hover:underline">Permohonan</a>
+        <span class="mx-1">/</span>
+        <span>Detail Pengajuan</span>
+      </p>
+    </div>
+
+    @php
+      $statusTone = match($submission->status->value) {
+        'accepted' => 'analisis-accepted',
+        'rejected' => 'analisis-rejected',
+        'revised' => 'analisis-revised',
+        default => 'analisis-submitted',
+      };
+    @endphp
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h2 class="text-xl font-bold text-slate-800">Informasi Pengajuan</h2>
+          <p class="text-sm text-slate-500 mt-1">Ringkasan data utama permohonan</p>
+        </div>
+        <x-ui.badge :tone="$statusTone">{{ $submission->status->label() }}</x-ui.badge>
       </div>
-    </x-ui.section>
 
-    <x-ui.section title="Dokumen Pengajuan" subtitle="Berkas yang diunggah di level pengajuan">
-      <div class="space-y-3 text-sm">
+      <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Nomor Surat</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->nomor_surat }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Pengajuan</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Perihal</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->perihal }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Instansi Pengaju</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->pemda_name }}</div>
+        </div>
+        <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Judul Perda</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->perda_title }}</div>
+        </div>
+        <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Deskripsi</div>
+          <div class="mt-1 text-sm text-slate-700">{{ $submission->description ?: '-' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <h2 class="text-xl font-bold text-slate-800">Dokumen Pengajuan</h2>
+      <p class="text-sm text-slate-500 mt-1">Berkas yang diunggah di level pengajuan</p>
+
+      <div class="mt-5 space-y-4">
         @forelse($submission->documents as $document)
-          <div class="flex items-center justify-between rounded-2xl bg-slate-50 ring-1 ring-slate-200 p-3">
-            <div>
-              <div class="font-semibold">{{ $document->file_name }}</div>
-              <div class="text-xs text-slate-500">{{ $document->document_type }}</div>
+          @php
+            $fileUrl = !empty($document->file_path) ? asset('storage/'.$document->file_path) : null;
+          @endphp
+          <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
+              <div>
+                <div class="text-sm font-semibold text-slate-800">{{ $document->file_name }}</div>
+                <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $document->document_type) }}</div>
+              </div>
+              @if($fileUrl)
+                <a href="{{ $fileUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                  Lihat
+                </a>
+              @else
+                <span class="text-xs text-rose-600 font-semibold">File tidak tersedia</span>
+              @endif
             </div>
-            @if(!empty($document->file_path))
-            <a href="{{ asset('storage/'.$document->file_path) }}"
-                target="_blank"
-                class="text-sm font-semibold hover:underline">
-                Lihat
-            </a>
-            @else
-            <span class="text-xs text-rose-500">File tidak tersedia</span>
-            @endif
-                </div>
-                    @empty
-                    <div class="text-slate-500">Belum ada dokumen.</div>
-                    @endforelse
-                </div>
-    </x-ui.section>
-
-    <x-ui.section title="Riwayat Disposisi" subtitle="Catatan alur disposisi permohonan">
-      <div class="space-y-2 text-sm">
-        @forelse($submission->dispositions as $disposition)
-          <div class="rounded-xl bg-slate-50 ring-1 ring-slate-200 p-3">
-            <div class="font-semibold">Disposisi pada {{ optional($disposition->disposed_at)->format('d M Y H:i') }}</div>
-            <div class="text-slate-600">{{ $disposition->note ?: '-' }}</div>
           </div>
         @empty
-          <div class="text-slate-500">Belum ada disposisi.</div>
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">Belum ada dokumen.</div>
         @endforelse
       </div>
-    </x-ui.section>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <h2 class="text-xl font-bold text-slate-800">Riwayat Disposisi</h2>
+      <p class="text-sm text-slate-500 mt-1">Jejak tindak lanjut disposisi permohonan</p>
+
+      <div class="mt-5 space-y-3">
+        @forelse($submission->dispositions as $disposition)
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+            <div class="text-sm font-semibold text-slate-800">
+              Disposisi {{ optional($disposition->disposed_at)->format('d M Y H:i') ?: '-' }}
+            </div>
+            <div class="text-sm text-slate-600 mt-1">{{ $disposition->note ?: '-' }}</div>
+          </div>
+        @empty
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">Belum ada disposisi.</div>
+        @endforelse
+      </div>
+    </div>
 
     @if($submission->submitter_id === auth()->id() && in_array($submission->status->value, ['submitted', 'revised'], true))
-      <a href="{{ route('submissions.edit', $submission) }}" class="inline-flex items-center h-10 px-4 rounded-2xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800">Edit Pengajuan</a>
+      <a href="{{ route('submissions.edit', $submission) }}" class="inline-flex items-center h-10 px-4 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800">
+        Edit Pengajuan
+      </a>
     @endif
   </div>
 @endsection

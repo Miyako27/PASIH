@@ -100,6 +100,9 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:analis_hukum,operator_divisi_p3h,operator_pemda')->group(function () {
         Route::get('/hasil-analisis', [AssignmentController::class, 'analysisResults'])
             ->name('assignments.analysis-results');
+        Route::get('/hasil-analisis/{assignment}', [AssignmentController::class, 'showAnalysisResult'])
+            ->whereNumber('assignment')
+            ->name('assignments.analysis-results.show');
     });
 
     Route::middleware('role:analis_hukum')->group(function () {
