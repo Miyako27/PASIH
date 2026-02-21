@@ -1,6 +1,6 @@
 @props([
-  'variant' => 'primary', // primary|soft|ghost
-  'size' => 'md',         // sm|md
+  'variant' => 'primary',
+  'size' => 'md',
 ])
 
 @php

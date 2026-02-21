@@ -3,7 +3,7 @@
   'value' => '0',
   'delta' => '+0%',
   'deltaNote' => 'dari bulan lalu',
-  'tone' => 'slate', // slate|amber|green|indigo
+  'tone' => 'slate',
   'icon' => '📄',
 ])
 

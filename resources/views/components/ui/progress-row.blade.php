@@ -1,8 +1,8 @@
 @props([
   'label' => 'Item',
   'note' => null,
-  'value' => 0,       // 0-100
-  'tone' => 'green',  // green|amber|slate|orange|rose
+  'value' => 0,
+  'tone' => 'green',
 ])
 
 @php
