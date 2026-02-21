@@ -325,7 +325,6 @@ class SubmissionController extends Controller
     $originalName = $file->getClientOriginalName();
     $storedName = time().'_'.preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
 
-    // ✅ AMBIL DULU SEBELUM MOVE
     $fileSize = $file->getSize();
     $mimeType = $file->getClientMimeType();
 

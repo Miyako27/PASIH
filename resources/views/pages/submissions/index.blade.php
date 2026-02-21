@@ -68,25 +68,25 @@
                 $assignment = $submission->assignments->sortByDesc('id')->first();
 
                 $statusTone = match($submission->status->value) {
-                  'accepted', 'completed' => 'green',
-                  'rejected' => 'rose',
-                  'revised' => 'amber',
-                  default => 'slate',
+                  'accepted' => 'analisis-accepted',
+                  'rejected' => 'analisis-rejected',
+                  'revised' => 'analisis-revised',
+                  default => 'analisis-submitted',
                 };
 
                 $analysisText = 'Belum Ditugaskan';
-                $analysisTone = 'slate';
+                $analysisTone = 'permohonan-unassigned';
 
                 if ($assignment) {
                     if ($assignment->status->value === 'completed') {
                         $analysisText = 'Selesai Analisis';
-                        $analysisTone = 'green';
+                        $analysisTone = 'permohonan-done';
                     } elseif ($assignment->status->value === 'in_progress') {
                         $analysisText = 'Dalam Analisis';
-                        $analysisTone = 'amber';
+                        $analysisTone = 'permohonan-in-analysis';
                     } else {
                         $analysisText = 'Tersedia';
-                        $analysisTone = 'green';
+                        $analysisTone = 'permohonan-available';
                     }
                 }
               @endphp
