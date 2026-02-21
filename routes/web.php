@@ -106,6 +106,9 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:analis_hukum')->group(function () {
+        Route::get('/hasil-analisis/{assignment}/edit', [AssignmentController::class, 'editAnalysisResultForm'])
+            ->whereNumber('assignment')
+            ->name('assignments.analysis-results.edit');
         Route::patch('/assignments/{assignment}/status', [AssignmentController::class, 'updateStatus'])
             ->whereNumber('assignment')
             ->name('assignments.update-status');
