@@ -122,4 +122,6 @@ Route::middleware('auth')->group(function () {
             ->whereNumber('assignment')
             ->name('assignments.upload-document');
     });
+
+    Route::get('send-mail', [MailController::class, 'index']);
 });
