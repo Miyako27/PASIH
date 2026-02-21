@@ -80,15 +80,18 @@
                 $rowNumber = ($assignments->firstItem() ?? 1) + $loop->index;
                 $submission = $assignment->submission;
 
-                $statusLabel = $assignment->status->label();
-                $statusTone = 'slate';
+                $statusLabel = 'Belum Ditugaskan';
+                $statusTone = 'permohonan-unassigned';
 
                 if ($assignment->status->value === 'assigned') {
-                    $statusTone = 'green';
+                    $statusLabel = 'Tersedia';
+                    $statusTone = 'permohonan-available';
                 } elseif ($assignment->status->value === 'in_progress') {
-                    $statusTone = 'amber';
+                    $statusLabel = 'Dalam Analisis';
+                    $statusTone = 'permohonan-in-analysis';
                 } elseif ($assignment->status->value === 'completed') {
-                    $statusTone = 'green';
+                    $statusLabel = 'Selesai Analisis';
+                    $statusTone = 'permohonan-done';
                 }
 
                 $isAnalystRole = auth()->user()->role->value === 'analis_hukum';

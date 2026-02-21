@@ -151,7 +151,9 @@ class SubmissionController extends Controller
             'perda_title' => $validated['perda_title'],
             'description' => $validated['description'] ?? null,
             'status' => 'submitted',
+            'reviewed_at' => null,
             'revision_note' => null,
+            'rejection_note' => null,
         ]);
 
         if ($request->hasFile('dokumen_pendukung')) {

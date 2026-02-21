@@ -113,9 +113,10 @@
                       @php
                         $isReviewerRole = in_array(auth()->user()->role->value, ['operator_kanwil', 'operator_divisi_p3h'], true);
                         $isStatusDispositionDone = !is_null($submission->reviewed_at);
+                        $allowStatusDispositionForResubmission = in_array($submission->status->value, ['submitted', 'revised'], true);
                       @endphp
 
-                      @if($isReviewerRole && $isStatusDispositionDone)
+                      @if($isReviewerRole && $isStatusDispositionDone && !$allowStatusDispositionForResubmission)
                         <button
                           type="button"
                           class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center cursor-not-allowed"
