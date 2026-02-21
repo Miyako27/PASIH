@@ -12,7 +12,7 @@
     <x-admin.sidebar />
 
     {{-- Main --}}
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col md:ml-[280px]">
       <x-admin.topbar />
 
       <main class="p-4 sm:p-6 lg:p-8">

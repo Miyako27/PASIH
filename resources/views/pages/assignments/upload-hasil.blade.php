@@ -4,7 +4,7 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="text-[32px] font-extrabold tracking-tight text-slate-800">Penugasan</h1>
+      <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Penugasan</h1>
       <p class="mt-1 text-sm text-slate-500">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
@@ -22,7 +22,7 @@
 
     <div class="rounded-lg bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200">
-        <h2 class="text-2xl font-extrabold tracking-tight text-slate-800">Upload Hasil Analisis</h2>
+        <h2 class="text-[18px] font-bold tracking-tight text-slate-800">Upload Hasil Analisis</h2>
       </div>
 
       <form method="POST" action="{{ route('assignments.upload-hasil.store', $assignment) }}" enctype="multipart/form-data" class="p-5 space-y-5">

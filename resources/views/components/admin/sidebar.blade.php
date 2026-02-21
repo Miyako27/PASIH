@@ -45,7 +45,7 @@
   }
 </style>
 
-<aside class="w-[280px] hidden md:flex flex-col text-white" style="background: linear-gradient(180deg, #2B3056 0%, #3A4070 50%, #2B3056 100%);">
+<aside class="fixed inset-y-0 left-0 z-30 w-[280px] hidden md:flex flex-col overflow-y-auto text-white" style="background: linear-gradient(180deg, #2B3056 0%, #3A4070 50%, #2B3056 100%);">
   <div class="px-6 py-6 border-b border-white/10
             flex flex-col items-center text-center">
     <img src="{{ asset('images/LogoInstansi.png') }}"

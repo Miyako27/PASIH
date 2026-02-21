@@ -18,30 +18,58 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-      <div class="rounded-2xl p-5 text-white bg-gradient-to-r from-indigo-800 to-indigo-700">
-        <div class="text-sm font-semibold text-white/90">Total Permohonan</div>
-        <div class="mt-5 text-4xl font-extrabold">{{ $stats['total_submissions'] }}</div>
+      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #2B3056 0%, #3A4070 50%, #4A5080 100%);">
+        <div class="flex items-start justify-between gap-3">
+          <div class="text-sm font-semibold text-white/90">Total Permohonan</div>
+          <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m-6-8h3m3-4l4 4m0 0v10a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2h10z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['total_submissions'] }}</div>
       </div>
 
-      <div class="rounded-2xl p-5 text-white bg-gradient-to-r from-amber-400 to-orange-400">
-        <div class="text-sm font-semibold text-white/90">Sedang Diproses</div>
-        <div class="mt-5 text-4xl font-extrabold">{{ $stats['in_progress'] }}</div>
+      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #FFD82B 0%, #FFAB4A 50%, #FF9F2E 100%);">
+        <div class="flex items-start justify-between gap-3">
+          <div class="text-sm font-semibold text-white/90">Sedang Diproses</div>
+          <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['in_progress'] }}</div>
       </div>
 
-      <div class="rounded-2xl p-5 text-white bg-gradient-to-r from-slate-600 to-slate-500">
-        <div class="text-sm font-semibold text-white/90">Sedang Dianalisis</div>
-        <div class="mt-5 text-4xl font-extrabold">{{ $stats['in_analysis'] }}</div>
+      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #475569 0%, #64748B 50%, #94A3B8 100%);">
+        <div class="flex items-start justify-between gap-3">
+          <div class="text-sm font-semibold text-white/90">Sedang Dianalisis</div>
+          <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m1.85-4.65a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['in_analysis'] }}</div>
       </div>
 
-      <div class="rounded-2xl p-5 text-white bg-gradient-to-r from-emerald-700 to-emerald-600">
-        <div class="text-sm font-semibold text-white/90">Selesai</div>
-        <div class="mt-5 text-4xl font-extrabold">{{ $stats['completed'] }}</div>
+      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #006A4E 0%, #1B7F5C 50%, #2A8F6A 100%);">
+        <div class="flex items-start justify-between gap-3">
+          <div class="text-sm font-semibold text-white/90">Selesai</div>
+          <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['completed'] }}</div>
       </div>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
       <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
-        <h2 class="text-[20px] font-extrabold tracking-tight text-slate-800">Grafik Bottleneck Proses</h2>
+        <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Grafik Bottleneck Proses</h2>
         <p class="mt-1 text-[14px] text-slate-500">Grafik ini menunjukkan distribusi permohonan untuk mendeteksi hambatan proses.</p>
 
         <div class="mt-6 space-y-4">
@@ -60,7 +88,7 @@
       </div>
 
       <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
-        <h2 class="text-[20px] font-extrabold tracking-tight text-slate-800">Persentase Ketepatan Waktu Penugasan</h2>
+        <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Persentase Ketepatan Waktu Penugasan</h2>
         <p class="mt-1 text-[14px] text-slate-500">Selesai Tepat Waktu vs Terlambat</p>
 
         <div class="mt-6 flex flex-col md:flex-row md:items-center gap-6">

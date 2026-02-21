@@ -4,8 +4,8 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="text-[32px] font-extrabold tracking-tight text-slate-800">Dashboard Admin</h1>
-      <p class="mt-1 text-sm text-slate-500">Ringkasan data sistem PASIH</p>
+      <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Dashboard</h1>
+      <div class="mt-2 h-1 w-20 rounded-full bg-amber-400"></div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">

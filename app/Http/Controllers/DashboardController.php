@@ -31,6 +31,9 @@ class DashboardController extends Controller
 
         if ($user->role->value === 'operator_pemda') {
             $submissionQuery->where('submitter_id', $user->id);
+            $assignmentQuery->whereHas('submission', function ($query) use ($user) {
+                $query->where('submitter_id', $user->id);
+            });
         }
 
         if ($user->role->value === 'analis_hukum') {
@@ -40,12 +43,26 @@ class DashboardController extends Controller
             });
         }
 
+        $acceptedSubmissions = (clone $submissionQuery)->where('status', 'accepted')->count();
+        $inAnalysisAssignments = (clone $assignmentQuery)->where('status', 'in_progress')->count();
+        $completedAssignmentsCount = (clone $assignmentQuery)->where('status', 'completed')->count();
+        $validatedSubmissions = (clone $submissionQuery)
+            ->whereIn('status', ['accepted', 'disposed', 'assigned', 'completed'])
+            ->count();
+        $disposedSubmissions = (clone $submissionQuery)
+            ->where(function ($query) {
+                $query
+                    ->where('status', 'disposed')
+                    ->orWhereHas('assignments');
+            })
+            ->count();
+
         $stats = [
             'total_submissions' => (clone $submissionQuery)->count(),
             'submitted' => (clone $submissionQuery)->where('status', 'submitted')->count(),
-            'in_progress' => (clone $submissionQuery)->whereIn('status', ['disposed', 'assigned'])->count(),
-            'in_analysis' => (clone $assignmentQuery)->where('status', 'in_progress')->count(),
-            'completed' => (clone $submissionQuery)->where('status', 'completed')->count(),
+            'in_progress' => $acceptedSubmissions,
+            'in_analysis' => $inAnalysisAssignments,
+            'completed' => $completedAssignmentsCount,
             'total_assignments' => (clone $assignmentQuery)->count(),
         ];
 
@@ -53,10 +70,10 @@ class DashboardController extends Controller
 
         $bottleneck = [
             'Permohonan Masuk' => (clone $submissionQuery)->count(),
-            'Sudah Divalidasi' => (clone $submissionQuery)->whereIn('status', ['accepted', 'disposed', 'assigned', 'completed'])->count(),
-            'Sudah Disposisi' => (clone $submissionQuery)->whereIn('status', ['disposed', 'assigned', 'completed'])->count(),
-            'Sedang Dianalisis' => (clone $assignmentQuery)->where('status', 'in_progress')->count(),
-            'Selesai' => (clone $submissionQuery)->where('status', 'completed')->count(),
+            'Sudah Divalidasi' => $validatedSubmissions,
+            'Sudah Disposisi' => $disposedSubmissions,
+            'Sedang Dianalisis' => $inAnalysisAssignments,
+            'Selesai' => $completedAssignmentsCount,
         ];
 
         $completedAssignments = (clone $assignmentQuery)
