@@ -15,28 +15,28 @@
         </p>
       </div>
 
-      <a href="{{ route('admin.instansi.index') }}" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
+      {{-- <a href="{{ route('admin.instansi.index') }}" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
         Kembali
-      </a>
+      </a> --}}
     </div>
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200">
-        <h2 class="text-2xl font-bold text-slate-800">Detail Instansi</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Detail Instansi</h2>
       </div>
 
       <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
         <div>
           <div class="text-slate-500">Nama Instansi</div>
-          <div class="mt-1 font-semibold">{{ $institution->nama_instansi }}</div>
+          <div class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ $institution->nama_instansi }}</div>
         </div>
         <div>
           <div class="text-slate-500">Jenis</div>
-          <div class="mt-1 font-semibold">{{ $institution->jenis_instansi }}</div>
+          <div class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ $institution->jenis_instansi }}</div>
         </div>
         <div class="md:col-span-2">
           <div class="text-slate-500">Alamat</div>
-          <div class="mt-1 font-semibold">{{ $institution->alamat }}</div>
+          <div class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ $institution->alamat }}</div>
         </div>
       </div>
     </div>

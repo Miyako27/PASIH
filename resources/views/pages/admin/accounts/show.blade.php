@@ -15,32 +15,32 @@
         </p>
       </div>
 
-      <a href="{{ route('admin.accounts.index') }}" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
+      {{-- <a href="{{ route('admin.accounts.index') }}" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
         Kembali
-      </a>
+      </a> --}}
     </div>
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200">
-        <h2 class="text-2xl font-bold text-slate-800">Detail Akun</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Detail Akun</h2>
       </div>
 
       <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-700">
         <div>
           <div class="text-slate-500">Nama</div>
-          <div class="mt-1 font-semibold">{{ $account->name }}</div>
+          <div class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ $account->name }}</div>
         </div>
         <div>
           <div class="text-slate-500">Email</div>
-          <div class="mt-1 font-semibold">{{ $account->email }}</div>
+          <div class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ $account->email }}</div>
         </div>
         <div>
           <div class="text-slate-500">Role</div>
-          <div class="mt-1 font-semibold">{{ $account->role?->label() ?? $account->role }}</div>
+          <div class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ $account->role?->label() ?? $account->role }}</div>
         </div>
         <div>
           <div class="text-slate-500">Instansi</div>
-          <div class="mt-1 font-semibold">{{ $account->instansi?->nama_instansi ?? '-' }}</div>
+          <div class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ $account->instansi?->nama_instansi ?? '-' }}</div>
         </div>
       </div>
     </div>
