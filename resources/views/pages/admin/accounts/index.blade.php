@@ -16,7 +16,11 @@
     <div class="flex items-start justify-between gap-4">
       <div>
         <h1 class="text-[42px] font-extrabold tracking-tight text-slate-800 leading-none">Manajemen Akun</h1>
-        <p class="mt-2 text-sm text-slate-500">Manajemen Akun</p>
+        <p class="mt-2 text-sm text-slate-500">
+          <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
+          <span class="mx-1">/</span>
+          <span>Manajemen Akun</span>
+        </p>
       </div>
 
       <a href="{{ route('admin.accounts.create') }}" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
@@ -39,7 +43,7 @@
 
         <form method="GET" action="{{ route('admin.accounts.index') }}" class="flex items-center gap-2 text-sm text-slate-700">
           <label for="q">Cari:</label>
-          <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 rounded-md border-slate-300 text-sm">
+          <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
           <input type="hidden" name="per_page" value="{{ $perPage }}">
         </form>
       </div>

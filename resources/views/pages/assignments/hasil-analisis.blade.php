@@ -9,7 +9,11 @@
 
     <div>
       <h1 class="text-[32px] font-extrabold tracking-tight text-slate-800">Hasil Analisis</h1>
-      <p class="mt-1 text-sm text-slate-500">Dashboard / Hasil Analisis</p>
+      <p class="mt-1 text-sm text-slate-500">
+        <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
+        <span class="mx-1">/</span>
+        <span>Hasil Analisis</span>
+      </p>
     </div>
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
@@ -21,7 +25,7 @@
         </div>
         <div class="flex items-center gap-2 text-sm text-slate-700">
           <span>Cari:</span>
-          <input type="text" class="h-8 w-40 rounded-md border-slate-300 text-sm">
+          <input type="text" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
         </div>
       </div>
 

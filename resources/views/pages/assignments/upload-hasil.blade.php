@@ -5,7 +5,13 @@
   <div class="space-y-5">
     <div>
       <h1 class="text-[32px] font-extrabold tracking-tight text-slate-800">Penugasan</h1>
-      <p class="mt-1 text-sm text-slate-500">Dashboard / Penugasan / Upload Hasil Analisis</p>
+      <p class="mt-1 text-sm text-slate-500">
+        <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
+        <span class="mx-1">/</span>
+        <a href="{{ route('assignments.index') }}" class="hover:text-slate-700 hover:underline">Penugasan</a>
+        <span class="mx-1">/</span>
+        <span>Upload Hasil Analisis</span>
+      </p>
     </div>
 
     @if($errors->any())

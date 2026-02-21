@@ -6,7 +6,13 @@
   <div class="space-y-5">
     <div>
       <h1 class="text-[32px] font-extrabold tracking-tight text-slate-800">Permohonan</h1>
-      <p class="mt-1 text-sm text-slate-500">Dashboard / Permohonan / Tambah Permohonan</p>
+      <p class="mt-1 text-sm text-slate-500">
+        <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
+        <span class="mx-1">/</span>
+        <a href="{{ route('submissions.index') }}" class="hover:text-slate-700 hover:underline">Permohonan</a>
+        <span class="mx-1">/</span>
+        <span>Tambah Permohonan</span>
+      </p>
     </div>
 
 
