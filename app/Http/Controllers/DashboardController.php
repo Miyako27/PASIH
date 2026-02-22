@@ -23,6 +23,7 @@ class DashboardController extends Controller
                     'total_assignments' => Assignment::query()->count(),
                 ],
                 'recentAccounts' => User::query()->with('instansi')->latest()->limit(5)->get(),
+                'recentActivities' => NotificationController::buildActivities($user, 10),
             ]);
         }
 
@@ -98,6 +99,7 @@ class DashboardController extends Controller
                 'late' => $late,
                 'total' => $completedAssignments->count(),
             ],
+            'recentActivities' => NotificationController::buildActivities($user, 10),
         ]);
     }
 }

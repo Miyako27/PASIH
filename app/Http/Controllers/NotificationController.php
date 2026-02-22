@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Assignment;
 use App\Models\Submission;
 use App\Models\User;
+use App\Models\UserActivity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -24,6 +25,7 @@ class NotificationController extends Controller
      *   type:string,
      *   title:string,
      *   detail:string,
+     *   user_id:int|null,
      *   user:string,
      *   time:\Illuminate\Support\Carbon|null
      * }>
@@ -90,6 +92,7 @@ class NotificationController extends Controller
                     'type' => 'Status Permohonan',
                     'title' => "Perubahan status permohonan {$submission->nomor_surat}",
                     'detail' => "Status sekarang: {$submission->status->label()}",
+                    'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $submission->updated_at,
                 ];
@@ -100,6 +103,7 @@ class NotificationController extends Controller
                     'type' => 'Disposisi',
                     'title' => "Permohonan {$submission->nomor_surat} telah didisposisikan",
                     'detail' => 'Permohonan diteruskan untuk proses berikutnya.',
+                    'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $submission->updated_at,
                 ];
@@ -109,6 +113,7 @@ class NotificationController extends Controller
                 'type' => 'Notifikasi Lainnya',
                 'title' => "Pembaruan permohonan {$submission->nomor_surat}",
                 'detail' => "Status saat ini: {$submission->status->label()}",
+                'user_id' => $actorId,
                 'user' => $actorName,
                 'time' => $submission->updated_at,
             ];
@@ -127,6 +132,7 @@ class NotificationController extends Controller
                     'type' => 'Penugasan',
                     'title' => "Ada penugasan baru untuk {$nomorSurat}",
                     'detail' => 'Status analisis: Tersedia',
+                    'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $assignment->updated_at,
                 ];
@@ -137,6 +143,7 @@ class NotificationController extends Controller
                     'type' => 'Status Analisis',
                     'title' => "Perubahan status analisis {$nomorSurat}",
                     'detail' => "Status sekarang: {$assignment->status->label()}",
+                    'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $assignment->updated_at,
                 ];
@@ -146,6 +153,7 @@ class NotificationController extends Controller
                 'type' => 'Notifikasi Lainnya',
                 'title' => "Pembaruan penugasan {$nomorSurat}",
                 'detail' => "Status saat ini: {$assignment->status->label()}",
+                'user_id' => $actorId,
                 'user' => $actorName,
                 'time' => $assignment->updated_at,
             ];
@@ -160,6 +168,21 @@ class NotificationController extends Controller
 
     public static function buildActivities($user, int $limit = 10): Collection
     {
-        return self::buildNotifications($user, $limit);
+        return UserActivity::query()
+            ->where('user_id', $user->id)
+            ->latest()
+            ->limit($limit)
+            ->get()
+            ->map(function (UserActivity $activity) use ($user) {
+                return [
+                    'type' => $activity->type,
+                    'title' => $activity->title,
+                    'detail' => $activity->detail ?? '-',
+                    'user_id' => $user->id,
+                    'user' => $user->name,
+                    'time' => $activity->created_at,
+                ];
+            })
+            ->values();
     }
 }

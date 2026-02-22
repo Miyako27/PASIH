@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\UserActivity;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,11 +34,41 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->user()) {
+            try {
+                UserActivity::query()->create([
+                    'user_id' => $request->user()->id,
+                    'type' => 'Autentikasi',
+                    'title' => 'Login ke sistem',
+                    'detail' => 'Berhasil masuk ke aplikasi PASIH.',
+                    'route_name' => 'login.attempt',
+                    'method' => 'POST',
+                ]);
+            } catch (\Throwable) {
+                // Logging aktivitas tidak boleh mengganggu proses login.
+            }
+        }
+
         return redirect()->intended(route('dashboard'));
     }
 
     public function logout(Request $request)
     {
+        if ($request->user()) {
+            try {
+                UserActivity::query()->create([
+                    'user_id' => $request->user()->id,
+                    'type' => 'Autentikasi',
+                    'title' => 'Logout dari sistem',
+                    'detail' => 'Keluar dari aplikasi PASIH.',
+                    'route_name' => 'logout',
+                    'method' => 'POST',
+                ]);
+            } catch (\Throwable) {
+                // Logging aktivitas tidak boleh mengganggu proses logout.
+            }
+        }
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

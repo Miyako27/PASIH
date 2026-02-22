@@ -90,5 +90,57 @@
         </table>
       </div>
     </div>
+
+    <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Riwayat Aktivitas</h2>
+          {{-- <p class="mt-1 text-[14px] text-slate-500">Jejak aksi akun Anda saat menggunakan sistem PASIH.</p> --}}
+        </div>
+        <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+          {{ $recentActivities->count() }} aktivitas
+        </span>
+      </div>
+
+      <div class="mt-5 max-h-[440px] overflow-y-auto pr-1 space-y-3">
+        @forelse($recentActivities as $activity)
+          @php
+            $type = (string) ($activity['type'] ?? 'Aktivitas Sistem');
+            [$dotColor, $chipClass] = match ($type) {
+                'Autentikasi' => ['bg-emerald-500', 'bg-emerald-50 text-emerald-700 ring-emerald-200'],
+                'Permohonan' => ['bg-indigo-500', 'bg-indigo-50 text-indigo-700 ring-indigo-200'],
+                'Penugasan' => ['bg-sky-500', 'bg-sky-50 text-sky-700 ring-sky-200'],
+                'Hasil Analisis' => ['bg-amber-500', 'bg-amber-50 text-amber-700 ring-amber-200'],
+                default => ['bg-slate-500', 'bg-slate-100 text-slate-700 ring-slate-200'],
+            };
+          @endphp
+          <div class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+            <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div class="flex gap-3 min-w-0 flex-1">
+              <div class="pt-1">
+                <span class="inline-block h-2.5 w-2.5 rounded-full {{ $dotColor }}"></span>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center rounded-md px-2 py-1 text-[11px] font-semibold ring-1 {{ $chipClass }}">{{ $type }}</span>
+                </div>
+                <div class="mt-2 text-sm font-semibold text-slate-800">{{ $activity['title'] }}</div>
+                <div class="mt-1 text-sm text-slate-600">{{ $activity['detail'] }}</div>
+              </div>
+              </div>
+              <div class="shrink-0">
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                  {{ optional($activity['time'])->format('d M Y H:i:s') ?: '-' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        @empty
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">
+            Belum ada riwayat aktivitas.
+          </div>
+        @endforelse
+      </div>
+    </div>
   </div>
 @endsection
