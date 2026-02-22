@@ -43,6 +43,11 @@ class Assignment extends Model
         return $this->belongsTo(User::class, 'analyst_id');
     }
 
+    public function assignedBy()
+    {
+        return $this->belongsTo(User::class, 'assigned_by_id');
+    }
+
     public function documents()
     {
         return $this->hasMany(AssignmentDocument::class);

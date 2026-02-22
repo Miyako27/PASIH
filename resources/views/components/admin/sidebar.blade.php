@@ -26,7 +26,7 @@
       }
 
       if (in_array($role, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true)) {
-          $items[] = ['label' => 'Penugasan', 'href' => route('assignments.index'), 'active' => ['assignments.index', 'assignments.upload-hasil.*'], 'icon_key' => 'penugasan'];
+          $items[] = ['label' => 'Penugasan', 'href' => route('assignments.index'), 'active' => ['assignments.index', 'assignments.show', 'assignments.upload-hasil.*'], 'icon_key' => 'penugasan'];
       }
 
       if (in_array($role, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true)) {

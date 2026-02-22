@@ -14,35 +14,67 @@
       </p>
     </div>
 
+    @php
+      $submission = $assignment->submission;
+
+      $assignmentTone = match($assignment->status->value) {
+        'completed' => 'permohonan-done',
+        'in_progress' => 'permohonan-in-analysis',
+        default => 'permohonan-available',
+      };
+
+      $assignmentStatusLabel = match($assignment->status->value) {
+        'completed' => 'Selesai Analisis',
+        'in_progress' => 'Dalam Analisis',
+        default => 'Tersedia',
+      };
+    @endphp
+
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
       <div class="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h2 class="text-xl font-bold text-slate-800">Informasi Penugasan</h2>
-          <p class="text-sm text-slate-500 mt-1">Ringkasan data utama hasil analisis</p>
+          <p class="text-sm text-slate-500 mt-1">Ringkasan data utama penugasan</p>
         </div>
-        <x-ui.badge tone="permohonan-done">Selesai Analisis</x-ui.badge>
+        <x-ui.badge :tone="$assignmentTone">{{ $assignmentStatusLabel }}</x-ui.badge>
       </div>
 
       <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Nomor Surat</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->submission->nomor_surat }}</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->nomor_surat }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Perihal</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->submission->perihal }}</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Pengajuan</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Instansi Pengaju</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->submission->pemda_name }}</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Pemberi Penugasan</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->assignedBy?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Analis</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->analyst?->name ?? '-' }}</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->analyst?->name ?? 'Belum diambil' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Selesai</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Ditugaskan</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->assigned_at)->format('d-m-Y H:i') ?: '-' }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Deadline</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->deadline_at)->format('d-m-Y') ?: '-' }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Mulai Analisis</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->started_at)->format('d-m-Y H:i') ?: '-' }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Selesai Analisis</div>
           <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->completed_at)->format('d-m-Y H:i') ?: '-' }}</div>
+        </div>
+        <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Catatan Penugasan</div>
+          <div class="mt-1 text-sm text-slate-700">{{ $assignment->instruction ?: '-' }}</div>
         </div>
       </div>
     </div>

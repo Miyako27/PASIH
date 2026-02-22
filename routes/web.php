@@ -85,6 +85,9 @@ Route::middleware('auth')->group(function () {
             ->whereNumber('submission')
             ->name('submissions.upload-result');
         Route::get('/assignments', [AssignmentController::class, 'index'])->name('assignments.index');
+        Route::get('/assignments/{assignment}', [AssignmentController::class, 'show'])
+            ->whereNumber('assignment')
+            ->name('assignments.show');
     });
 
     Route::middleware('role:operator_divisi_p3h,kakanwil,kepala_divisi_p3h')->group(function () {

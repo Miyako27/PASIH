@@ -40,6 +40,33 @@ class AssignmentController extends Controller
         ]);
     }
 
+    public function show(Request $request, Assignment $assignment)
+    {
+        abort_unless(in_array($request->user()->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true), 403);
+
+        $assignment->load([
+            'assignedBy',
+            'analyst',
+            'documents',
+            'submission.submitter',
+            'submission.divisionOperator',
+            'submission.latestDisposition.toUser',
+            'submission.dispositions.toUser',
+            'submission.documents',
+        ]);
+
+        if ($request->user()->role->value === 'analis_hukum') {
+            $isOwnedByAnalyst = $assignment->analyst_id === $request->user()->id;
+            $isAvailable = $assignment->status->value === 'assigned' && $assignment->analyst_id === null;
+
+            abort_unless($isOwnedByAnalyst || $isAvailable, 403);
+        }
+
+        return view('pages.assignments.show', [
+            'assignment' => $assignment,
+        ]);
+    }
+
     public function analysisResults(Request $request)
     {
         abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true), 403);
@@ -69,7 +96,7 @@ class AssignmentController extends Controller
         abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true), 403);
         abort_unless($assignment->status->value === 'completed', 404);
 
-        $assignment->load(['submission.submitter', 'analyst', 'documents']);
+        $assignment->load(['submission.submitter', 'analyst', 'assignedBy', 'documents']);
 
         $user = $request->user();
         if ($user->role->value === 'analis_hukum') {

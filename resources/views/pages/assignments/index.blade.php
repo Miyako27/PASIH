@@ -106,7 +106,7 @@
                 <td class="px-4 py-3">{{ $assignment->analyst?->name ?? 'Belum diambil' }}</td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-1.5">
-                    <a href="{{ route('submissions.show', $submission) }}" class="h-8 w-8 rounded-md bg-blue-600 text-white inline-flex items-center justify-center" title="Detail">
+                    <a href="{{ route('assignments.show', $assignment) }}" class="h-8 w-8 rounded-md bg-blue-600 text-white inline-flex items-center justify-center" title="Detail">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /><circle cx="12" cy="12" r="3" /></svg>
                     </a>
 

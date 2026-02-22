@@ -107,7 +107,14 @@ class SubmissionController extends Controller
         abort_unless($request->user()->role->value !== 'analis_hukum', 403);
         $this->authorizeView($request, $submission);
 
-        $submission->load(['submitter', 'documents', 'dispositions', 'assignments.analyst', 'assignments.documents']);
+        $submission->load([
+            'submitter',
+            'documents',
+            'dispositions.toUser',
+            'latestDisposition.toUser',
+            'assignments.analyst',
+            'assignments.documents',
+        ]);
 
         return view('pages.submissions.show', [
             'submission' => $submission,
@@ -191,12 +198,16 @@ class SubmissionController extends Controller
             'note' => ['nullable', 'string'],
         ]);
 
+        $statusNote = blank($validated['note'] ?? null) ? null : $validated['note'];
+
         $submission->update([
             'kanwil_operator_id' => $request->user()->id,
             'status' => $validated['status'],
             'reviewed_at' => now(),
-            'revision_note' => $validated['status'] === 'revised' ? ($validated['note'] ?? null) : null,
-            'rejection_note' => $validated['status'] === 'rejected' ? ($validated['note'] ?? null) : null,
+            // Gunakan revision_note sebagai catatan status umum (accepted/revised),
+            // sementara rejected tetap memakai rejection_note.
+            'revision_note' => in_array($validated['status'], ['accepted', 'revised'], true) ? $statusNote : null,
+            'rejection_note' => $validated['status'] === 'rejected' ? $statusNote : null,
         ]);
 
         return back()->with('success', 'Status pengajuan diperbarui.');
@@ -226,13 +237,17 @@ class SubmissionController extends Controller
             'disposition_note' => ['nullable', 'string'],
         ]);
 
-        DB::transaction(function () use ($request, $submission, $validated): void {
+        $statusNote = blank($validated['status_note'] ?? null) ? null : $validated['status_note'];
+
+        DB::transaction(function () use ($request, $submission, $validated, $statusNote): void {
             $submission->update([
                 'kanwil_operator_id' => $request->user()->id,
                 'status' => $validated['status'],
                 'reviewed_at' => now(),
-                'revision_note' => $validated['status'] === 'revised' ? ($validated['status_note'] ?? null) : null,
-                'rejection_note' => $validated['status'] === 'rejected' ? ($validated['status_note'] ?? null) : null,
+                // Gunakan revision_note sebagai catatan status umum (accepted/revised),
+                // sementara rejected tetap memakai rejection_note.
+                'revision_note' => in_array($validated['status'], ['accepted', 'revised'], true) ? $statusNote : null,
+                'rejection_note' => $validated['status'] === 'rejected' ? $statusNote : null,
             ]);
 
             if (! empty($validated['to_user_id'])) {
