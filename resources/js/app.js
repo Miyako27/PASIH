@@ -344,9 +344,18 @@ async function initInlinePdfViewer(root) {
     };
 
     const loadPreview = async () => {
-        if (loading || mode === 'pdfjs' || mode === 'blob') {
+        if (loading) {
             return;
         }
+
+        if (blobPreviewUrl) {
+            URL.revokeObjectURL(blobPreviewUrl);
+            blobPreviewUrl = null;
+        }
+
+        mode = 'idle';
+        pdf = null;
+        renderToken += 1;
 
         loading = true;
         if (loadButton) {
@@ -382,7 +391,7 @@ async function initInlinePdfViewer(root) {
             loading = false;
             if (loadButton) {
                 loadButton.disabled = false;
-                loadButton.textContent = mode === 'idle' ? 'Tampilkan' : 'Muat Ulang';
+                loadButton.textContent = 'Muat Ulang';
             }
         }
     };
@@ -434,6 +443,7 @@ async function initInlinePdfViewer(root) {
 
     setControlEnabled(false);
     setIdleState();
+    void loadPreview();
 
     root.addEventListener('remove', () => {
         if (blobPreviewUrl) {

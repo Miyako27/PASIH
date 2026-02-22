@@ -197,9 +197,6 @@
                       <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
                       <a href="{{ $previewUrl }}" target="_blank" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Buka</a>
                       <a href="{{ $fileUrl }}" target="_blank" download class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Unduh</a>
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100" data-pdf-action="zoom-out" data-pdf-control>-</button>
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100" data-pdf-action="zoom-in" data-pdf-control>+</button>
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100" data-pdf-action="fit" data-pdf-control>Fit</button>
                     </div>
                   </div>
                   <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
@@ -263,9 +260,6 @@
                       <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
                       <a href="{{ $previewUrl }}" target="_blank" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Buka</a>
                       <a href="{{ $fileUrl }}" target="_blank" download class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Unduh</a>
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100" data-pdf-action="zoom-out" data-pdf-control>-</button>
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100" data-pdf-action="zoom-in" data-pdf-control>+</button>
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100" data-pdf-action="fit" data-pdf-control>Fit</button>
                     </div>
                   </div>
                   <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
