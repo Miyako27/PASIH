@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\AccountManagementController;
 use App\Http\Controllers\Admin\InstitutionManagementController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentPreviewController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::get('/documents/submissions/{document}/preview', [DocumentPreviewController::class, 'previewSubmission'])
+        ->whereNumber('document')
+        ->name('documents.preview.submission');
+    Route::get('/documents/assignments/{document}/preview', [DocumentPreviewController::class, 'previewAssignment'])
+        ->whereNumber('document')
+        ->name('documents.preview.assignment');
 
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/accounts', [AccountManagementController::class, 'index'])->name('admin.accounts.index');
