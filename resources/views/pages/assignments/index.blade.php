@@ -3,10 +3,6 @@
 
 @section('content')
   <div class="space-y-5">
-    @if(session('success'))
-      <div class="rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 px-4 py-3 text-sm font-semibold">{{ session('success') }}</div>
-    @endif
-
     <div>
       <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Penugasan</h1>
       <p class="mt-1 text-sm text-slate-500">
@@ -116,7 +112,7 @@
 
                     @if($isAnalystStyleRole)
                       @if($isAvailableForAnalyst)
-                        <form method="POST" action="{{ route('assignments.take', $assignment) }}" onsubmit="return confirm('Apakah Anda yakin ingin mengambil penugasan ini?')">
+                        <form method="POST" action="{{ route('assignments.take', $assignment) }}" data-confirm-type="take-assignment" data-confirm-message="Apakah Anda yakin ingin mengambil penugasan ini?">
                           @csrf
                           <button type="submit" class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center" style="background-color:#06B6D4" title="Ambil Penugasan">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 11V7a5 5 0 0110 0v4m-2 0v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m10 0H7" /></svg>

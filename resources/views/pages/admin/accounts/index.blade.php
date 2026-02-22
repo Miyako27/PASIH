@@ -9,10 +9,6 @@
       </div>
     @endif
 
-    @if(session('success'))
-      <div class="rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 px-4 py-3 text-sm font-semibold">{{ session('success') }}</div>
-    @endif
-
     <div class="flex items-start justify-between gap-4">
       <div>
         <h1 class="text-[32px] font-bold tracking-tight text-slate-800 leading-none">Manajemen Akun</h1>
@@ -84,7 +80,7 @@
                     <a href="{{ route('admin.accounts.show', $account) }}" class="h-8 w-8 rounded-md bg-blue-600 text-white inline-flex items-center justify-center" title="Detail">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /><circle cx="12" cy="12" r="3" /></svg>
                     </a>
-                    <form method="POST" action="{{ route('admin.accounts.destroy', $account) }}" onsubmit="return confirm('Yakin ingin menghapus akun ini?')">
+                    <form method="POST" action="{{ route('admin.accounts.destroy', $account) }}" data-confirm-type="delete" data-confirm-message="Apakah Anda yakin ingin menghapus data ini?">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="h-8 w-8 rounded-md bg-rose-600 text-white inline-flex items-center justify-center" title="Hapus">

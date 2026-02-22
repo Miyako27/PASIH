@@ -3,10 +3,6 @@
 
 @section('content')
   <div class="space-y-5">
-    @if(session('success'))
-      <div class="rounded-xl bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 px-4 py-3 text-sm font-semibold">{{ session('success') }}</div>
-    @endif
-
     <div>
       <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Hasil Analisis</h1>
       <p class="mt-1 text-sm text-slate-500">
