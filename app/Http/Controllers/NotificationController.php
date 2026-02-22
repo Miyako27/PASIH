@@ -27,7 +27,8 @@ class NotificationController extends Controller
      *   detail:string,
      *   user_id:int|null,
      *   user:string,
-     *   time:\Illuminate\Support\Carbon|null
+     *   time:\Illuminate\Support\Carbon|null,
+     *   url:string|null
      * }>
      */
     public static function buildNotifications($user, int $limit = 10): Collection
@@ -82,7 +83,7 @@ class NotificationController extends Controller
             ->whereIn('id', $userIds)
             ->pluck('name', 'id');
 
-        $submissionNotifications = $submissions->map(function (Submission $submission) use ($userNames) {
+        $submissionNotifications = $submissions->map(function (Submission $submission) use ($userNames, $user) {
             $status = $submission->status->value;
             $actorId = $submission->kanwil_operator_id ?? $submission->division_operator_id ?? $submission->submitter_id;
             $actorName = $userNames->get($actorId) ?? 'Sistem';
@@ -95,6 +96,7 @@ class NotificationController extends Controller
                     'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $submission->updated_at,
+                    'url' => self::resolveSubmissionUrl($user, $submission),
                 ];
             }
 
@@ -106,6 +108,7 @@ class NotificationController extends Controller
                     'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $submission->updated_at,
+                    'url' => self::resolveSubmissionUrl($user, $submission),
                 ];
             }
 
@@ -116,10 +119,11 @@ class NotificationController extends Controller
                 'user_id' => $actorId,
                 'user' => $actorName,
                 'time' => $submission->updated_at,
+                'url' => self::resolveSubmissionUrl($user, $submission),
             ];
         });
 
-        $assignmentNotifications = $assignments->map(function (Assignment $assignment) use ($userNames) {
+        $assignmentNotifications = $assignments->map(function (Assignment $assignment) use ($userNames, $user) {
             $nomorSurat = $assignment->submission?->nomor_surat ?? ('#'.$assignment->id);
             $status = $assignment->status->value;
             $actorId = in_array($status, ['in_progress', 'completed'], true)
@@ -135,6 +139,7 @@ class NotificationController extends Controller
                     'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $assignment->updated_at,
+                    'url' => self::resolveAssignmentUrl($user, $assignment),
                 ];
             }
 
@@ -146,6 +151,7 @@ class NotificationController extends Controller
                     'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $assignment->updated_at,
+                    'url' => self::resolveAssignmentUrl($user, $assignment),
                 ];
             }
 
@@ -156,6 +162,7 @@ class NotificationController extends Controller
                 'user_id' => $actorId,
                 'user' => $actorName,
                 'time' => $assignment->updated_at,
+                'url' => self::resolveAssignmentUrl($user, $assignment),
             ];
         });
 
@@ -164,6 +171,26 @@ class NotificationController extends Controller
             ->sortByDesc('time')
             ->take($limit)
             ->values();
+    }
+
+    private static function resolveSubmissionUrl($user, Submission $submission): ?string
+    {
+        return route('submissions.show', $submission);
+    }
+
+    private static function resolveAssignmentUrl($user, Assignment $assignment): ?string
+    {
+        $role = $user->role->value;
+
+        if ($role === 'operator_pemda') {
+            return route('submissions.show', $assignment->submission_id);
+        }
+
+        if (in_array($role, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true)) {
+            return route('assignments.show', $assignment);
+        }
+
+        return null;
     }
 
     public static function buildActivities($user, int $limit = 10): Collection

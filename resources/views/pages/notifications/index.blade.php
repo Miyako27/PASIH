@@ -33,7 +33,11 @@
               default => 'bg-slate-100 text-slate-700 ring-slate-200',
             };
           @endphp
-          <div class="px-5 py-4 hover:bg-slate-50/60 transition">
+          @if(!empty($notification['url']))
+            <a href="{{ $notification['url'] }}" class="block px-5 py-4 hover:bg-slate-50/60 transition">
+          @else
+            <div class="px-5 py-4 hover:bg-slate-50/60 transition">
+          @endif
             <div class="flex items-start justify-between gap-3">
               <div class="flex min-w-0 items-start gap-3">
                 <div class="mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
@@ -69,7 +73,11 @@
                 <div class="mt-1 text-[11px] text-slate-500">{{ optional($notification['time'])->format('d M Y, H:i') }}</div>
               </div>
             </div>
-          </div>
+          @if(!empty($notification['url']))
+            </a>
+          @else
+            </div>
+          @endif
         @empty
           <div class="px-5 py-12 text-center">
             <div class="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
