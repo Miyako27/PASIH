@@ -20,6 +20,9 @@
       $assignmentTone = match($assignment->status->value) {
         'completed' => 'permohonan-done',
         'in_progress' => 'permohonan-in-analysis',
+        'pending_kadiv_approval' => 'permohonan-awaiting-kadiv',
+        'pending_kakanwil_approval' => 'permohonan-awaiting-kakanwil',
+        'revision_by_pic' => 'permohonan-revision',
         default => 'permohonan-available',
       };
 
@@ -58,8 +61,12 @@
           <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->assignedBy?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Analis</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->analyst?->name ?? 'Belum diambil' }}</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">PIC Analis</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->analyst?->name ?? 'Belum ada PIC' }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">PIC Ditentukan Oleh</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->picAssignedBy?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Ditugaskan</div>
@@ -76,6 +83,10 @@
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Selesai Analisis</div>
           <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->completed_at)->format('d-m-Y H:i') ?: '-' }}</div>
+        </div>
+        <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Catatan Revisi ACC</div>
+          <div class="mt-1 text-sm text-slate-700">{{ $assignment->revision_note ?: '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Catatan Penugasan</div>

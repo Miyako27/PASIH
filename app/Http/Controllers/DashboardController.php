@@ -45,7 +45,9 @@ class DashboardController extends Controller
         }
 
         $acceptedSubmissions = (clone $submissionQuery)->where('status', 'accepted')->count();
-        $inAnalysisAssignments = (clone $assignmentQuery)->where('status', 'in_progress')->count();
+        $inAnalysisAssignments = (clone $assignmentQuery)
+            ->whereIn('status', ['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic'])
+            ->count();
         $completedAssignmentsCount = (clone $assignmentQuery)->where('status', 'completed')->count();
         $validatedSubmissions = (clone $submissionQuery)
             ->whereIn('status', ['accepted', 'disposed', 'assigned', 'completed'])

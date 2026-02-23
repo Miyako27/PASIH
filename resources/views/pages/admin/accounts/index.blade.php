@@ -64,7 +64,7 @@
                     'analis_hukum' => 'account-analis-hukum',
                     'operator_pemda' => 'account-operator-pemda',
                     'operator_kanwil' => 'account-operator-kanwil',
-                    'operator_divisi_p3h' => 'account-operator-divisi-p3h',
+                    'ketua_tim_analisis' => 'account-ketua-tim-analisis',
                     'kakanwil' => 'account-kakanwil',
                     'kepala_divisi_p3h' => 'account-kepala-divisi-p3h',
                     'admin' => 'account-admin',

@@ -45,7 +45,7 @@ class AccountManagementController extends Controller
     {
         return view('pages.admin.accounts.create', [
             'roles' => Role::query()
-                ->whereNotIn('nama_role', ['pimpinan_p3h'])
+                ->whereNotIn('nama_role', ['pimpinan_p3h', 'operator_divisi_p3h'])
                 ->orderBy('nama_role')
                 ->get(),
             'institutions' => Instansi::query()->orderBy('nama_instansi')->get(),
@@ -90,7 +90,7 @@ class AccountManagementController extends Controller
         return view('pages.admin.accounts.edit', [
             'account' => $user,
             'roles' => Role::query()
-                ->whereNotIn('nama_role', ['pimpinan_p3h'])
+                ->whereNotIn('nama_role', ['pimpinan_p3h', 'operator_divisi_p3h'])
                 ->orderBy('nama_role')
                 ->get(),
             'institutions' => Instansi::query()->orderBy('nama_instansi')->get(),

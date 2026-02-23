@@ -63,11 +63,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::query()->create([
-            'name' => 'Operator Divisi P3H',
-            'email' => 'divisi@pasih.test',
+            'name' => 'Ketua Tim Analisis',
+            'email' => 'ketuatim@pasih.test',
             'password' => $password,
-            'role' => 'operator_divisi_p3h',
-            'id_role' => $roleMap['operator_divisi_p3h'] ?? null,
+            'role' => 'ketua_tim_analisis',
+            'id_role' => $roleMap['ketua_tim_analisis'] ?? null,
             'id_instansi' => $instansiP3H->id_instansi,
         ]);
 

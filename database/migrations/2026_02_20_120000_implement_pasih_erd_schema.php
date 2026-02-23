@@ -107,7 +107,7 @@ return new class extends Migration
             ['nama_role' => 'admin', 'created_at' => now(), 'updated_at' => now()],
             ['nama_role' => 'operator_pemda', 'created_at' => now(), 'updated_at' => now()],
             ['nama_role' => 'operator_kanwil', 'created_at' => now(), 'updated_at' => now()],
-            ['nama_role' => 'operator_divisi_p3h', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_role' => 'ketua_tim_analisis', 'created_at' => now(), 'updated_at' => now()],
             ['nama_role' => 'kakanwil', 'created_at' => now(), 'updated_at' => now()],
             ['nama_role' => 'kepala_divisi_p3h', 'created_at' => now(), 'updated_at' => now()],
             ['nama_role' => 'analis_hukum', 'created_at' => now(), 'updated_at' => now()],

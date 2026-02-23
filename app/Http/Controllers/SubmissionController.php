@@ -17,7 +17,7 @@ class SubmissionController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        abort_unless(in_array($user->role->value, ['operator_pemda', 'operator_kanwil', 'operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true), 403);
+        abort_unless(in_array($user->role->value, ['operator_pemda', 'operator_kanwil', 'kakanwil', 'kepala_divisi_p3h'], true), 403);
         $perPage = (int) $request->integer('per_page', 5);
         $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 5;
         $search = trim((string) $request->string('q'));
@@ -28,11 +28,7 @@ class SubmissionController extends Controller
             $query->where('submitter_id', $user->id);
         }
 
-        if ($user->role->value === 'analis_hukum') {
-            $query->whereHas('assignments', fn ($assignment) => $assignment->where('analyst_id', $user->id));
-        }
-
-        if (in_array($user->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true)) {
+        if (in_array($user->role->value, ['kakanwil', 'kepala_divisi_p3h'], true)) {
             $query->whereIn('status', ['disposed', 'assigned', 'completed', 'accepted']);
         }
 
@@ -49,10 +45,10 @@ class SubmissionController extends Controller
         return view('pages.submissions.index', [
             'submissions' => $query->paginate($perPage)->withQueryString(),
             'canCreate' => $user->role->value === 'operator_pemda',
-            'canReview' => in_array($user->role->value, ['operator_kanwil', 'operator_divisi_p3h'], true),
-            'canUploadResult' => in_array($user->role->value, ['operator_divisi_p3h', 'analis_hukum'], true),
-            'divisionUsers' => User::query()->where('role', 'operator_divisi_p3h')->get(),
-            'canAssignFromSubmission' => in_array($user->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true),
+            'canReview' => $user->role->value === 'operator_kanwil',
+            'canUploadResult' => $user->role->value === 'analis_hukum',
+            'divisionUsers' => User::query()->where('role', 'kepala_divisi_p3h')->get(),
+            'canAssignFromSubmission' => in_array($user->role->value, ['kakanwil', 'kepala_divisi_p3h'], true),
             'perPage' => $perPage,
             'search' => $search,
         ]);
@@ -126,7 +122,7 @@ class SubmissionController extends Controller
 
         return view('pages.submissions.show', [
             'submission' => $submission,
-            'canUploadResult' => in_array($request->user()->role->value, ['operator_divisi_p3h', 'analis_hukum'], true),
+            'canUploadResult' => $request->user()->role->value === 'analis_hukum',
         ]);
     }
 
@@ -223,20 +219,20 @@ class SubmissionController extends Controller
 
     public function statusDispositionForm(Request $request, Submission $submission)
     {
-        abort_unless(in_array($request->user()->role->value, ['operator_kanwil', 'operator_divisi_p3h'], true), 403);
+        abort_unless($request->user()->role->value === 'operator_kanwil', 403);
 
         return view('pages.submissions.status-disposisi', [
             'submission' => $submission,
-            'divisionUsers' => User::query()
-                ->where('role', 'operator_divisi_p3h')
+            'kadivUser' => User::query()
+                ->where('role', 'kepala_divisi_p3h')
                 ->orderBy('name')
-                ->get(),
+                ->first(),
         ]);
     }
 
     public function saveStatusDisposition(Request $request, Submission $submission)
     {
-        abort_unless(in_array($request->user()->role->value, ['operator_kanwil', 'operator_divisi_p3h'], true), 403);
+        abort_unless($request->user()->role->value === 'operator_kanwil', 403);
 
         $validated = $request->validate([
             'status' => ['required', Rule::in(['accepted', 'revised', 'rejected'])],
@@ -260,7 +256,7 @@ class SubmissionController extends Controller
 
             if (! empty($validated['to_user_id'])) {
                 $toUser = User::query()->findOrFail($validated['to_user_id']);
-                abort_unless($toUser->role->value === 'operator_divisi_p3h', 422);
+                abort_unless($toUser->role->value === 'kepala_divisi_p3h', 422);
 
                 Disposition::query()->create([
                     'submission_id' => $submission->id,
@@ -291,7 +287,7 @@ class SubmissionController extends Controller
         ]);
 
         $toUser = User::query()->findOrFail($validated['to_user_id']);
-        abort_unless($toUser->role->value === 'operator_divisi_p3h', 422);
+        abort_unless($toUser->role->value === 'kepala_divisi_p3h', 422);
 
         Disposition::query()->create([
             'submission_id' => $submission->id,
@@ -311,7 +307,7 @@ class SubmissionController extends Controller
 
     public function uploadResult(Request $request, Submission $submission)
     {
-        abort_unless(in_array($request->user()->role->value, ['operator_divisi_p3h', 'analis_hukum'], true), 403);
+        abort_unless($request->user()->role->value === 'analis_hukum', 403);
 
         $validated = $request->validate([
             'document_type' => ['required', Rule::in(['hasil_analisis', 'rekomendasi'])],
@@ -383,7 +379,7 @@ class SubmissionController extends Controller
     {
         $role = $request->user()->role->value;
 
-        if (in_array($role, ['operator_kanwil', 'operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true)) {
+        if (in_array($role, ['operator_kanwil', 'kakanwil', 'kepala_divisi_p3h'], true)) {
             return;
         }
 

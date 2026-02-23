@@ -20,13 +20,19 @@
       $assignmentTone = match($assignment->status->value) {
         'completed' => 'permohonan-done',
         'in_progress' => 'permohonan-in-analysis',
+        'pending_kadiv_approval' => 'permohonan-awaiting-kadiv',
+        'pending_kakanwil_approval' => 'permohonan-awaiting-kakanwil',
+        'revision_by_pic' => 'permohonan-revision',
         default => 'permohonan-available',
       };
 
       $assignmentStatusLabel = match($assignment->status->value) {
         'completed' => 'Selesai Analisis',
         'in_progress' => 'Dalam Analisis',
-        default => 'Tersedia',
+        'pending_kadiv_approval' => 'Menunggu ACC Kadiv',
+        'pending_kakanwil_approval' => 'Menunggu ACC Kakanwil',
+        'revision_by_pic' => 'Revisi oleh PIC',
+        default => 'Belum ada PIC',
       };
     @endphp
 
@@ -53,8 +59,8 @@
           <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->assignedBy?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Analis</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->analyst?->name ?? 'Belum diambil' }}</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">PIC Analis</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->analyst?->name ?? 'Belum ada PIC' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Ditugaskan</div>

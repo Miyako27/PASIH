@@ -9,43 +9,40 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class AssignmentController extends Controller
 {
     public function index(Request $request)
     {
         $user = $request->user();
+        $role = $user->role->value;
 
-        $query = Assignment::query()->with(['submission', 'analyst'])->latest();
+        abort_unless(in_array($role, ['ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true), 403);
 
-        if ($user->role->value === 'analis_hukum') {
-            $query->where(function ($builder) use ($user) {
-                $builder
-                    ->where(function ($q) {
-                        $q->where('status', 'assigned')->whereNull('analyst_id');
-                    })
-                    ->orWhere('analyst_id', $user->id);
-            });
+        $query = Assignment::query()
+            ->with(['submission', 'analyst'])
+            ->latest();
+
+        if ($role === 'analis_hukum') {
+            $query->where('analyst_id', $user->id);
         }
-
-        abort_unless(in_array($user->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true), 403);
 
         return view('pages.assignments.index', [
             'assignments' => $query->paginate(10),
-            'canAssign' => false,
-            'submissions' => Submission::query()->whereIn('status', ['disposed', 'assigned'])->latest()->get(),
-            'analysts' => User::query()->where('role', 'analis_hukum')->get(),
+            'analysts' => User::query()->where('role', 'analis_hukum')->orderBy('name')->get(),
         ]);
     }
 
     public function show(Request $request, Assignment $assignment)
     {
-        abort_unless(in_array($request->user()->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true), 403);
+        $role = $request->user()->role->value;
+        abort_unless(in_array($role, ['ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true), 403);
 
         $assignment->load([
             'assignedBy',
+            'picAssignedBy',
             'analyst',
             'documents',
             'submission.submitter',
@@ -55,11 +52,8 @@ class AssignmentController extends Controller
             'submission.documents',
         ]);
 
-        if ($request->user()->role->value === 'analis_hukum') {
-            $isOwnedByAnalyst = $assignment->analyst_id === $request->user()->id;
-            $isAvailable = $assignment->status->value === 'assigned' && $assignment->analyst_id === null;
-
-            abort_unless($isOwnedByAnalyst || $isAvailable, 403);
+        if ($role === 'analis_hukum') {
+            abort_unless($assignment->analyst_id === $request->user()->id, 403);
         }
 
         return view('pages.assignments.show', [
@@ -69,7 +63,7 @@ class AssignmentController extends Controller
 
     public function analysisResults(Request $request)
     {
-        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true), 403);
+        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'operator_pemda'], true), 403);
 
         $resultsQuery = Assignment::query()
             ->with(['submission', 'analyst', 'latestAnalysisDocument'])
@@ -84,16 +78,14 @@ class AssignmentController extends Controller
             });
         }
 
-        $results = $resultsQuery->paginate(5);
-
         return view('pages.assignments.hasil-analisis', [
-            'results' => $results,
+            'results' => $resultsQuery->paginate(5),
         ]);
     }
 
     public function showAnalysisResult(Request $request, Assignment $assignment)
     {
-        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true), 403);
+        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'operator_pemda'], true), 403);
         abort_unless($assignment->status->value === 'completed', 404);
 
         $assignment->load(['submission.submitter', 'analyst', 'assignedBy', 'documents']);
@@ -121,22 +113,20 @@ class AssignmentController extends Controller
 
     public function store(Request $request)
     {
-        abort_unless(in_array($request->user()->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true), 403);
+        abort_unless(in_array($request->user()->role->value, ['kakanwil', 'kepala_divisi_p3h'], true), 403);
 
         $validated = $request->validate([
             'submission_id' => ['required', 'exists:submissions,id'],
-            'analyst_id' => ['required', 'exists:users,id'],
             'instruction' => ['nullable', 'string'],
+            'deadline_at' => ['nullable', 'date'],
         ]);
-
-        $analyst = User::query()->findOrFail($validated['analyst_id']);
-        abort_unless($analyst->role->value === 'analis_hukum', 422);
 
         Assignment::query()->create([
             'submission_id' => $validated['submission_id'],
             'assigned_by_id' => $request->user()->id,
-            'analyst_id' => $analyst->id,
+            'analyst_id' => null,
             'instruction' => $validated['instruction'] ?? null,
+            'deadline_at' => $validated['deadline_at'] ?? null,
             'status' => 'assigned',
             'assigned_at' => now(),
         ]);
@@ -145,12 +135,12 @@ class AssignmentController extends Controller
             'assigned_by_id' => $request->user()->id,
         ]);
 
-        return back()->with('success', 'Penugasan berhasil dibuat.');
+        return back()->with('success', 'Penugasan berhasil dibuat. Status: Belum ada PIC.');
     }
 
     public function createFromSubmission(Request $request, Submission $submission)
     {
-        abort_unless(in_array($request->user()->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true), 403);
+        abort_unless(in_array($request->user()->role->value, ['kakanwil', 'kepala_divisi_p3h'], true), 403);
 
         return view('pages.submissions.penugasan', [
             'submission' => $submission,
@@ -159,7 +149,7 @@ class AssignmentController extends Controller
 
     public function storeFromSubmission(Request $request, Submission $submission)
     {
-        abort_unless(in_array($request->user()->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true), 403);
+        abort_unless(in_array($request->user()->role->value, ['kakanwil', 'kepala_divisi_p3h'], true), 403);
 
         $validated = $request->validate([
             'instruction' => ['nullable', 'string'],
@@ -180,51 +170,52 @@ class AssignmentController extends Controller
             'assigned_by_id' => $request->user()->id,
         ]);
 
-        return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat. Status penugasan: Tersedia.');
+        return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat. Status: Belum ada PIC.');
     }
 
-    public function updateStatus(Request $request, Assignment $assignment)
+    public function assignPicForm(Request $request, Assignment $assignment)
     {
-        abort_unless($request->user()->role->value === 'analis_hukum' && $assignment->analyst_id === $request->user()->id, 403);
+        abort_unless($request->user()->role->value === 'ketua_tim_analisis', 403);
+        abort_unless($assignment->status->value === 'assigned', 422);
+
+        $assignment->load(['submission']);
+
+        return view('pages.assignments.assign-pic', [
+            'assignment' => $assignment,
+            'analysts' => User::query()->where('role', 'analis_hukum')->orderBy('name')->get(),
+        ]);
+    }
+
+    public function assignPicStore(Request $request, Assignment $assignment)
+    {
+        abort_unless($request->user()->role->value === 'ketua_tim_analisis', 403);
+        abort_unless($assignment->status->value === 'assigned', 422);
 
         $validated = $request->validate([
-            'status' => ['required', Rule::in(['in_progress', 'completed'])],
+            'analyst_id' => ['required', 'exists:users,id'],
         ]);
 
-        $assignment->update([
-            'status' => $validated['status'],
-            'started_at' => $validated['status'] === 'in_progress' ? now() : $assignment->started_at,
-            'completed_at' => $validated['status'] === 'completed' ? now() : null,
-        ]);
-
-        if ($validated['status'] === 'completed') {
-            $assignment->submission()->update([
-                'status' => 'completed',
-                'finished_at' => now(),
-            ]);
-        }
-
-        return back()->with('success', 'Status penugasan diperbarui.');
-    }
-
-    public function take(Request $request, Assignment $assignment)
-    {
-        abort_unless($request->user()->role->value === 'analis_hukum', 403);
-        abort_unless($assignment->status->value === 'assigned' && $assignment->analyst_id === null, 422);
+        $analyst = User::query()->findOrFail($validated['analyst_id']);
+        abort_unless($analyst->role->value === 'analis_hukum', 422);
 
         $assignment->update([
-            'analyst_id' => $request->user()->id,
+            'analyst_id' => $analyst->id,
+            'pic_assigned_by_id' => $request->user()->id,
+            'pic_assigned_at' => now(),
             'status' => 'in_progress',
-            'started_at' => now(),
+            'started_at' => $assignment->started_at ?? now(),
+            'revision_note' => null,
         ]);
 
-        return back()->with('success', 'Penugasan berhasil diambil. Status menjadi Dalam Analisis.');
+        return redirect()->route('assignments.index')->with('success', 'PIC berhasil ditentukan. Status menjadi Dalam Analisis.');
     }
 
     public function uploadAnalysisForm(Request $request, Assignment $assignment)
     {
         abort_unless(
-            $request->user()->role->value === 'analis_hukum' && $assignment->analyst_id === $request->user()->id,
+            $request->user()->role->value === 'analis_hukum' &&
+            $assignment->analyst_id === $request->user()->id &&
+            in_array($assignment->status->value, ['in_progress', 'revision_by_pic'], true),
             403
         );
 
@@ -240,7 +231,9 @@ class AssignmentController extends Controller
     public function editAnalysisResultForm(Request $request, Assignment $assignment)
     {
         abort_unless(
-            $request->user()->role->value === 'analis_hukum' && $assignment->analyst_id === $request->user()->id,
+            $request->user()->role->value === 'analis_hukum' &&
+            $assignment->analyst_id === $request->user()->id &&
+            in_array($assignment->status->value, ['in_progress', 'revision_by_pic'], true),
             403
         );
 
@@ -256,7 +249,9 @@ class AssignmentController extends Controller
     public function uploadAnalysisStore(Request $request, Assignment $assignment)
     {
         abort_unless(
-            $request->user()->role->value === 'analis_hukum' && $assignment->analyst_id === $request->user()->id,
+            $request->user()->role->value === 'analis_hukum' &&
+            $assignment->analyst_id === $request->user()->id &&
+            in_array($assignment->status->value, ['in_progress', 'revision_by_pic'], true),
             403
         );
 
@@ -287,19 +282,97 @@ class AssignmentController extends Controller
             ]);
 
             $assignment->update([
-                'status' => 'completed',
-                'completed_at' => now(),
+                'status' => 'pending_kadiv_approval',
+                'started_at' => $assignment->started_at ?? now(),
+                'submitted_for_review_at' => now(),
+                'approved_by_kadiv_at' => null,
+                'approved_by_kakanwil_at' => null,
+                'revision_note' => null,
+                'completed_at' => null,
             ]);
         });
 
-        return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil diunggah.');
+        return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil diunggah. Status: Menunggu ACC Kadiv.');
+    }
+
+    public function approvalForm(Request $request, Assignment $assignment)
+    {
+        $role = $request->user()->role->value;
+        abort_unless(in_array($role, ['kepala_divisi_p3h', 'kakanwil'], true), 403);
+        abort_unless($this->canReviewAssignmentByRole($role, $assignment), 422);
+
+        $assignment->load(['submission', 'analyst', 'assignedBy']);
+
+        return view('pages.assignments.approval', [
+            'assignment' => $assignment,
+            'reviewRole' => $role,
+        ]);
+    }
+
+    public function approvalStore(Request $request, Assignment $assignment)
+    {
+        $role = $request->user()->role->value;
+        abort_unless(in_array($role, ['kepala_divisi_p3h', 'kakanwil'], true), 403);
+        abort_unless($this->canReviewAssignmentByRole($role, $assignment), 422);
+
+        $validated = $request->validate([
+            'decision' => ['required', Rule::in(['approve', 'revise'])],
+            'revision_note' => ['nullable', 'string', 'required_if:decision,revise'],
+        ]);
+
+        if ($role === 'kepala_divisi_p3h') {
+            if ($validated['decision'] === 'approve') {
+                $assignment->update([
+                    'status' => 'pending_kakanwil_approval',
+                    'approved_by_kadiv_at' => now(),
+                    'revision_note' => null,
+                ]);
+
+                return redirect()->route('assignments.index')->with('success', 'ACC Kadiv berhasil. Status: Menunggu ACC Kakanwil.');
+            }
+
+            $assignment->update([
+                'status' => 'revision_by_pic',
+                'revision_note' => $validated['revision_note'],
+                'completed_at' => null,
+            ]);
+
+            return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi PIC.');
+        }
+
+        if ($validated['decision'] === 'approve') {
+            DB::transaction(function () use ($assignment): void {
+                $assignment->update([
+                    'status' => 'completed',
+                    'approved_by_kakanwil_at' => now(),
+                    'revision_note' => null,
+                    'completed_at' => now(),
+                ]);
+
+                $assignment->submission()->update([
+                    'status' => 'completed',
+                    'finished_at' => now(),
+                ]);
+            });
+
+            return redirect()->route('assignments.index')->with('success', 'ACC Kakanwil berhasil. Status: Selesai Analisis.');
+        }
+
+        $assignment->update([
+            'status' => 'revision_by_pic',
+            'revision_note' => $validated['revision_note'],
+            'approved_by_kakanwil_at' => null,
+            'completed_at' => null,
+        ]);
+
+        return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi PIC.');
     }
 
     public function uploadDocument(Request $request, Assignment $assignment)
     {
         abort_unless(
             ($request->user()->role->value === 'analis_hukum' && $assignment->analyst_id === $request->user()->id) ||
-            in_array($request->user()->role->value, ['operator_divisi_p3h'], true),
+            $request->user()->role->value === 'ketua_tim_analisis',
             403
         );
 
@@ -328,6 +401,19 @@ class AssignmentController extends Controller
         ]);
 
         return back()->with('success', 'Dokumen penugasan berhasil diunggah.');
+    }
+
+    private function canReviewAssignmentByRole(string $role, Assignment $assignment): bool
+    {
+        if ($role === 'kepala_divisi_p3h') {
+            return $assignment->status->value === 'pending_kadiv_approval';
+        }
+
+        if ($role === 'kakanwil') {
+            return $assignment->status->value === 'pending_kakanwil_approval';
+        }
+
+        return false;
     }
 
     private function validateUploadedFile(

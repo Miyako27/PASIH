@@ -43,11 +43,11 @@
             Disposisi
             <select name="to_user_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
               <option value="">Pilih Disposisi</option>
-              @foreach($divisionUsers as $divisionUser)
-                <option value="{{ $divisionUser->id }}" @selected((int) old('to_user_id') === $divisionUser->id)>
-                  {{ $divisionUser->name }}
+              @if($kadivUser)
+                <option value="{{ $kadivUser->id }}" @selected((int) old('to_user_id') === $kadivUser->id)>
+                  Kepala Divisi P3H
                 </option>
-              @endforeach
+              @endif
             </select>
           </label>
         </div>

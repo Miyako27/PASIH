@@ -84,9 +84,21 @@
                     } elseif ($assignment->status->value === 'in_progress') {
                         $analysisText = 'Dalam Analisis';
                         $analysisTone = 'permohonan-in-analysis';
-                    } else {
-                        $analysisText = 'Tersedia';
+                    } elseif ($assignment->status->value === 'pending_kadiv_approval') {
+                        $analysisText = 'Menunggu ACC Kadiv';
+                        $analysisTone = 'permohonan-awaiting-kadiv';
+                    } elseif ($assignment->status->value === 'pending_kakanwil_approval') {
+                        $analysisText = 'Menunggu ACC Kakanwil';
+                        $analysisTone = 'permohonan-awaiting-kakanwil';
+                    } elseif ($assignment->status->value === 'revision_by_pic') {
+                        $analysisText = 'Revisi oleh PIC';
+                        $analysisTone = 'permohonan-revision';
+                    } elseif ($assignment->status->value === 'assigned') {
+                        $analysisText = 'Belum ada PIC';
                         $analysisTone = 'permohonan-available';
+                    } else {
+                        $analysisText = $assignment->status->label();
+                        $analysisTone = 'permohonan-unassigned';
                     }
                 }
               @endphp
@@ -105,9 +117,9 @@
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /><circle cx="12" cy="12" r="3" /></svg>
                     </a>
 
-                    @if($canReview && auth()->user()->role->value !== 'operator_divisi_p3h')
+                    @if($canReview)
                       @php
-                        $isReviewerRole = in_array(auth()->user()->role->value, ['operator_kanwil', 'operator_divisi_p3h'], true);
+                        $isReviewerRole = auth()->user()->role->value === 'operator_kanwil';
                         $isStatusDispositionDone = !is_null($submission->reviewed_at);
                         $allowStatusDispositionForResubmission = in_array($submission->status->value, ['submitted', 'revised'], true);
                       @endphp
@@ -136,7 +148,7 @@
                       @endif
                     @endif
 
-                    @if(in_array(auth()->user()->role->value, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h'], true) && in_array($submission->status->value, ['accepted', 'disposed', 'assigned'], true))
+                    @if(in_array(auth()->user()->role->value, ['kakanwil', 'kepala_divisi_p3h'], true))
                       @if($assignment)
                         <button
                           type="button"
@@ -148,7 +160,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                           </svg>
                         </button>
-                      @else
+                      @elseif(in_array($submission->status->value, ['accepted', 'disposed', 'assigned'], true))
                         <a
                           href="{{ route('submissions.penugasan.form', $submission) }}"
                           class="h-8 w-8 rounded-md bg-violet-600 text-white inline-flex items-center justify-center"
@@ -158,6 +170,17 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                           </svg>
                         </a>
+                      @else
+                        <button
+                          type="button"
+                          class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center cursor-not-allowed"
+                          style="background-color:#B9B9B9"
+                          title="Penugasan belum tersedia untuk status ini"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                        </button>
                       @endif
                     @endif
 

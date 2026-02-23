@@ -78,7 +78,7 @@ Route::middleware('auth')->group(function () {
             ->name('submissions.dispose');
     });
 
-    Route::middleware('role:operator_kanwil,operator_divisi_p3h')->group(function () {
+    Route::middleware('role:operator_kanwil')->group(function () {
         Route::get('/submissions/{submission}/status-disposisi', [SubmissionController::class, 'statusDispositionForm'])
             ->whereNumber('submission')
             ->name('submissions.status-disposisi.form');
@@ -87,7 +87,7 @@ Route::middleware('auth')->group(function () {
             ->name('submissions.status-disposisi.save');
     });
 
-    Route::middleware('role:operator_divisi_p3h,kakanwil,kepala_divisi_p3h,analis_hukum')->group(function () {
+    Route::middleware('role:ketua_tim_analisis,kakanwil,kepala_divisi_p3h,analis_hukum')->group(function () {
         Route::post('/submissions/{submission}/result', [SubmissionController::class, 'uploadResult'])
             ->whereNumber('submission')
             ->name('submissions.upload-result');
@@ -97,7 +97,7 @@ Route::middleware('auth')->group(function () {
             ->name('assignments.show');
     });
 
-    Route::middleware('role:operator_divisi_p3h,kakanwil,kepala_divisi_p3h')->group(function () {
+    Route::middleware('role:kakanwil,kepala_divisi_p3h')->group(function () {
         Route::post('/assignments', [AssignmentController::class, 'store'])->name('assignments.store');
         Route::get('/submissions/{submission}/penugasan', [AssignmentController::class, 'createFromSubmission'])
             ->whereNumber('submission')
@@ -107,7 +107,7 @@ Route::middleware('auth')->group(function () {
             ->name('submissions.penugasan.save');
     });
 
-    Route::middleware('role:analis_hukum,operator_divisi_p3h,operator_pemda')->group(function () {
+    Route::middleware('role:analis_hukum,ketua_tim_analisis,operator_pemda')->group(function () {
         Route::get('/hasil-analisis', [AssignmentController::class, 'analysisResults'])
             ->name('assignments.analysis-results');
         Route::get('/hasil-analisis/{assignment}', [AssignmentController::class, 'showAnalysisResult'])
@@ -115,16 +115,19 @@ Route::middleware('auth')->group(function () {
             ->name('assignments.analysis-results.show');
     });
 
+    Route::middleware('role:ketua_tim_analisis')->group(function () {
+        Route::get('/assignments/{assignment}/assign-pic', [AssignmentController::class, 'assignPicForm'])
+            ->whereNumber('assignment')
+            ->name('assignments.assign-pic.form');
+        Route::post('/assignments/{assignment}/assign-pic', [AssignmentController::class, 'assignPicStore'])
+            ->whereNumber('assignment')
+            ->name('assignments.assign-pic.store');
+    });
+
     Route::middleware('role:analis_hukum')->group(function () {
         Route::get('/hasil-analisis/{assignment}/edit', [AssignmentController::class, 'editAnalysisResultForm'])
             ->whereNumber('assignment')
             ->name('assignments.analysis-results.edit');
-        Route::patch('/assignments/{assignment}/status', [AssignmentController::class, 'updateStatus'])
-            ->whereNumber('assignment')
-            ->name('assignments.update-status');
-        Route::post('/assignments/{assignment}/take', [AssignmentController::class, 'take'])
-            ->whereNumber('assignment')
-            ->name('assignments.take');
         Route::get('/assignments/{assignment}/upload-hasil', [AssignmentController::class, 'uploadAnalysisForm'])
             ->whereNumber('assignment')
             ->name('assignments.upload-hasil.form');
@@ -133,7 +136,16 @@ Route::middleware('auth')->group(function () {
             ->name('assignments.upload-hasil.store');
     });
 
-    Route::middleware('role:operator_divisi_p3h,analis_hukum')->group(function () {
+    Route::middleware('role:kepala_divisi_p3h,kakanwil')->group(function () {
+        Route::get('/assignments/{assignment}/approval', [AssignmentController::class, 'approvalForm'])
+            ->whereNumber('assignment')
+            ->name('assignments.approval.form');
+        Route::post('/assignments/{assignment}/approval', [AssignmentController::class, 'approvalStore'])
+            ->whereNumber('assignment')
+            ->name('assignments.approval.store');
+    });
+
+    Route::middleware('role:ketua_tim_analisis,analis_hukum')->group(function () {
         Route::post('/assignments/{assignment}/document', [AssignmentController::class, 'uploadDocument'])
             ->whereNumber('assignment')
             ->name('assignments.upload-document');

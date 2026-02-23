@@ -21,15 +21,15 @@
   } else {
       $items[] = ['label' => 'Dashboard', 'href' => route('dashboard'), 'active' => ['dashboard'], 'icon_key' => 'dashboard'];
 
-      if ($role !== 'analis_hukum') {
+      if (! in_array($role, ['analis_hukum', 'ketua_tim_analisis'], true)) {
           $items[] = ['label' => 'Pengajuan', 'href' => route('submissions.index'), 'active' => ['submissions.*'], 'icon_key' => 'pengajuan'];
       }
 
-      if (in_array($role, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true)) {
-          $items[] = ['label' => 'Penugasan', 'href' => route('assignments.index'), 'active' => ['assignments.index', 'assignments.show', 'assignments.upload-hasil.*'], 'icon_key' => 'penugasan'];
+      if (in_array($role, ['ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true)) {
+          $items[] = ['label' => 'Penugasan', 'href' => route('assignments.index'), 'active' => ['assignments.index', 'assignments.show', 'assignments.upload-hasil.*', 'assignments.assign-pic.*', 'assignments.approval.*'], 'icon_key' => 'penugasan'];
       }
 
-      if (in_array($role, ['analis_hukum', 'operator_divisi_p3h', 'operator_pemda'], true)) {
+      if (in_array($role, ['analis_hukum', 'ketua_tim_analisis', 'operator_pemda'], true)) {
           $items[] = ['label' => 'Hasil Analisis', 'href' => route('assignments.analysis-results'), 'active' => ['assignments.analysis-results*'], 'icon_key' => 'hasil_analisis'];
       }
   }

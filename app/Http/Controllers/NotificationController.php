@@ -126,7 +126,7 @@ class NotificationController extends Controller
         $assignmentNotifications = $assignments->map(function (Assignment $assignment) use ($userNames, $user) {
             $nomorSurat = $assignment->submission?->nomor_surat ?? ('#'.$assignment->id);
             $status = $assignment->status->value;
-            $actorId = in_array($status, ['in_progress', 'completed'], true)
+            $actorId = in_array($status, ['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'], true)
                 ? ($assignment->analyst_id ?? $assignment->assigned_by_id)
                 : ($assignment->assigned_by_id ?? $assignment->analyst_id);
             $actorName = $userNames->get($actorId) ?? 'Sistem';
@@ -135,7 +135,7 @@ class NotificationController extends Controller
                 return [
                     'type' => 'Penugasan',
                     'title' => "Ada penugasan baru untuk {$nomorSurat}",
-                    'detail' => 'Status analisis: Tersedia',
+                    'detail' => 'Status analisis: Belum ada PIC',
                     'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $assignment->updated_at,
@@ -143,7 +143,7 @@ class NotificationController extends Controller
                 ];
             }
 
-            if (in_array($status, ['in_progress', 'completed'], true)) {
+            if (in_array($status, ['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'], true)) {
                 return [
                     'type' => 'Status Analisis',
                     'title' => "Perubahan status analisis {$nomorSurat}",
@@ -186,7 +186,7 @@ class NotificationController extends Controller
             return route('submissions.show', $assignment->submission_id);
         }
 
-        if (in_array($role, ['operator_divisi_p3h', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true)) {
+        if (in_array($role, ['ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true)) {
             return route('assignments.show', $assignment);
         }
 
