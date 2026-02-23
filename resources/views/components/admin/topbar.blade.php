@@ -7,7 +7,7 @@
     <div>
       <div class="text-lg font-bold tracking-tight">Dashboard {{ auth()->user()?->role?->label() }}</div>
 
-      <div class="text-xs text-slate-500">Kementerian Hukum dan HAM Wilayah Riau</div>
+      <div class="text-xs text-slate-500">Kementerian Hukum Provinsi Riau</div>
     </div>
 
     <div class="flex items-center gap-4">

@@ -61,7 +61,7 @@
         </label>
 
         <label class="block text-sm font-medium text-slate-700">Upload Dokumen
-          <input type="file" name="file" required class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-400 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-400">
+          <input type="file" name="file" required class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700">
         </label>
 
         <div class="pt-1">

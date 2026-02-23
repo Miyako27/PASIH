@@ -55,7 +55,7 @@
         PASIH
     </div>
     <div class="text-xs text-white/70 mt-1 leading-relaxed">
-        Analisis & Evaluasi Hukum Daerah
+        Pendampingan Analisa & Evaluasi Hukum Daerah
     </div>
 
 </div>

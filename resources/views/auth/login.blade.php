@@ -10,18 +10,14 @@
   <div class="w-full max-w-md rounded-2xl bg-[#F7F7F7] ring-1 ring-slate-300 shadow-md px-6 py-7">
         <div class="flex items-center justify-center gap-4 mb-5">
         <div class="h-[82px] flex items-center justify-center">
-            <img src="{{ asset('images/loginlogo1.png') }}"
-                alt="Logo Kanwil"
-                class="h-[82px] object-contain">
-        </div>
-        <div class="h-[82px] flex items-center justify-center">
             <img src="{{ asset('images/loginlogo2.png') }}"
                 alt="Logo PASIH"
                 class="h-[82px] object-contain">
         </div>
     </div>
 
-    <h1 class="text-center text-3xl font-extrabold tracking-tight text-[#19305D]">SIPASIH</h1>
+    <h1 class="text-center text-3xl font-extrabold tracking-tight text-[#19305D]">PASIH</h1>
+    <p class="text-center text-sm text-slate-700 mt-1">Pendampingan Analisa dan Evaluasi Hukum Daerah </p>
 
     @if($errors->any())
       <div class="mt-4 rounded-lg bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-3 py-2 text-sm">{{ $errors->first() }}</div>

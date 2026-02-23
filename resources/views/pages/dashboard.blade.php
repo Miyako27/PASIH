@@ -86,29 +86,6 @@
           @endforeach
         </div>
       </div>
-
-      <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
-        <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Persentase Ketepatan Waktu Penugasan</h2>
-        <p class="mt-1 text-[14px] text-slate-500">Selesai Tepat Waktu vs Terlambat</p>
-
-        <div class="mt-6 flex flex-col md:flex-row md:items-center gap-6">
-          <div class="relative h-44 w-44 rounded-full" style="background: conic-gradient(#1e3a8a 0 {{ $onTimePercent }}%, #dc2626 {{ $onTimePercent }}% 100%);">
-            <div class="absolute inset-8 rounded-full bg-white"></div>
-          </div>
-
-          <div class="space-y-3 text-sm">
-            <div class="flex items-center gap-2">
-              <span class="inline-block h-3 w-3 rounded-full bg-blue-900"></span>
-              <span class="text-slate-700">Selesai Tepat Waktu: <b>{{ $onTime }}</b></span>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="inline-block h-3 w-3 rounded-full bg-red-600"></span>
-              <span class="text-slate-700">Terlambat: <b>{{ $late }}</b></span>
-            </div>
-            <div class="pt-2 text-slate-500">Total selesai: {{ $punctuality['total'] }}</div>
-          </div>
-        </div>
-      </div>
     </div>
 
     <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">

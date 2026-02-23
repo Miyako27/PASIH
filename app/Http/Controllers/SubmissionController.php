@@ -73,30 +73,38 @@ class SubmissionController extends Controller
             'nomor_surat' => ['required', 'string', 'max:255'],
             'perihal' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'surat_permohonan' => ['required', 'file', 'max:4096', 'mimes:pdf,doc,docx'],
+            'surat_permohonan' => ['required', 'array'],
+            'surat_permohonan.*' => ['file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
         ]);
 
-        $suratPermohonan = $this->validateUploadedFile(
-            $request->file('surat_permohonan'),
-            'surat_permohonan',
-            'Upload dokumen gagal. Pastikan ukuran file tidak melebihi batas server.'
-        );
+        DB::transaction(function () use ($request, $validated): void {
 
-        DB::transaction(function () use ($request, $validated, $suratPermohonan): void {
             $submission = Submission::query()->create([
                 'submitter_id' => $request->user()->id,
                 'nomor_surat' => $validated['nomor_surat'],
                 'perihal' => $validated['perihal'],
-                // Instansi pengaju mengikuti akun user yang login.
                 'pemda_name' => $request->user()->name,
-                // Tetap isi perda_title agar kompatibel dengan skema saat ini.
                 'perda_title' => $validated['perihal'],
                 'description' => $validated['description'] ?? null,
                 'status' => 'submitted',
                 'submitted_at' => now(),
             ]);
 
-            $this->storeDocument($submission->id, $request->user()->id, $suratPermohonan, 'surat_permohonan');
+            foreach ($request->file('surat_permohonan') as $file) {
+
+                $validatedFile = $this->validateUploadedFile(
+                    $file,
+                    'surat_permohonan',
+                    'Upload dokumen gagal. Pastikan ukuran file tidak melebihi batas server.'
+                );
+
+                $this->storeDocument(
+                    $submission->id,
+                    $request->user()->id,
+                    $validatedFile,
+                    'surat_permohonan'
+                );
+            }
         });
 
         return redirect()->route('submissions.index')->with('success', 'Pengajuan berhasil dibuat.');
