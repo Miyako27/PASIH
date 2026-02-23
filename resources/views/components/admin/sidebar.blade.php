@@ -29,7 +29,7 @@
           $items[] = ['label' => 'Penugasan', 'href' => route('assignments.index'), 'active' => ['assignments.index', 'assignments.show', 'assignments.upload-hasil.*', 'assignments.assign-pic.*', 'assignments.approval.*'], 'icon_key' => 'penugasan'];
       }
 
-      if (in_array($role, ['analis_hukum', 'ketua_tim_analisis', 'operator_pemda'], true)) {
+      if (in_array($role, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true)) {
           $items[] = ['label' => 'Hasil Analisis', 'href' => route('assignments.analysis-results'), 'active' => ['assignments.analysis-results*'], 'icon_key' => 'hasil_analisis'];
       }
   }

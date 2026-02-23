@@ -63,7 +63,7 @@ class AssignmentController extends Controller
 
     public function analysisResults(Request $request)
     {
-        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'operator_pemda'], true), 403);
+        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true), 403);
 
         $resultsQuery = Assignment::query()
             ->with(['submission', 'analyst', 'latestAnalysisDocument'])
@@ -85,7 +85,7 @@ class AssignmentController extends Controller
 
     public function showAnalysisResult(Request $request, Assignment $assignment)
     {
-        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'operator_pemda'], true), 403);
+        abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true), 403);
         abort_unless($assignment->status->value === 'completed', 404);
 
         $assignment->load(['submission.submitter', 'analyst', 'assignedBy', 'documents']);
@@ -118,7 +118,6 @@ class AssignmentController extends Controller
         $validated = $request->validate([
             'submission_id' => ['required', 'exists:submissions,id'],
             'instruction' => ['nullable', 'string'],
-            'deadline_at' => ['nullable', 'date'],
         ]);
 
         Assignment::query()->create([
@@ -126,7 +125,6 @@ class AssignmentController extends Controller
             'assigned_by_id' => $request->user()->id,
             'analyst_id' => null,
             'instruction' => $validated['instruction'] ?? null,
-            'deadline_at' => $validated['deadline_at'] ?? null,
             'status' => 'assigned',
             'assigned_at' => now(),
         ]);
@@ -153,7 +151,6 @@ class AssignmentController extends Controller
 
         $validated = $request->validate([
             'instruction' => ['nullable', 'string'],
-            'deadline_at' => ['nullable', 'date'],
         ]);
 
         Assignment::query()->create([
@@ -161,7 +158,6 @@ class AssignmentController extends Controller
             'assigned_by_id' => $request->user()->id,
             'analyst_id' => null,
             'instruction' => $validated['instruction'] ?? null,
-            'deadline_at' => $validated['deadline_at'] ?? null,
             'status' => 'assigned',
             'assigned_at' => now(),
         ]);
@@ -193,6 +189,7 @@ class AssignmentController extends Controller
 
         $validated = $request->validate([
             'analyst_id' => ['required', 'exists:users,id'],
+            'deadline_at' => ['nullable', 'date'],
         ]);
 
         $analyst = User::query()->findOrFail($validated['analyst_id']);
@@ -202,6 +199,7 @@ class AssignmentController extends Controller
             'analyst_id' => $analyst->id,
             'pic_assigned_by_id' => $request->user()->id,
             'pic_assigned_at' => now(),
+            'deadline_at' => $validated['deadline_at'] ?? null,
             'status' => 'in_progress',
             'started_at' => $assignment->started_at ?? now(),
             'revision_note' => null,

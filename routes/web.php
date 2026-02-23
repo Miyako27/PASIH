@@ -107,7 +107,7 @@ Route::middleware('auth')->group(function () {
             ->name('submissions.penugasan.save');
     });
 
-    Route::middleware('role:analis_hukum,ketua_tim_analisis,operator_pemda')->group(function () {
+    Route::middleware('role:analis_hukum,ketua_tim_analisis,kakanwil,kepala_divisi_p3h,operator_pemda')->group(function () {
         Route::get('/hasil-analisis', [AssignmentController::class, 'analysisResults'])
             ->name('assignments.analysis-results');
         Route::get('/hasil-analisis/{assignment}', [AssignmentController::class, 'showAnalysisResult'])

@@ -52,11 +52,6 @@
           <textarea name="instruction" rows="4" placeholder="Masukkan Catatan Untuk Penugasan" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('instruction') }}</textarea>
         </label>
 
-        <label class="block text-lg font-medium text-slate-700">
-          Deadline
-          <input type="date" name="deadline_at" value="{{ old('deadline_at') }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
-        </label>
-
         <div>
           <button type="submit" class="inline-flex items-center gap-2 h-11 px-5 rounded-lg bg-emerald-600 text-white text-base font-semibold hover:bg-emerald-700">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

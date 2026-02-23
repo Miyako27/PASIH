@@ -38,13 +38,18 @@
           </select>
         </label>
 
-        <div class="flex items-center gap-2">
+        <label class="block text-sm font-medium text-slate-700">
+          Deadline
+          <input type="date" name="deadline_at" value="{{ old('deadline_at', optional($assignment->deadline_at)->format('Y-m-d')) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">
+        </label>
+
+        <div class="pt-1">
           <button type="submit" class="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700">
-            Simpan PIC
+           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 4v12m0 0l-4-4m4 4l4-4" />
+          </svg>
+            Simpan
           </button>
-          <a href="{{ route('assignments.index') }}" class="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-slate-200 text-slate-700 text-sm font-semibold hover:bg-slate-300">
-            Batal
-          </a>
         </div>
       </form>
     </div>
