@@ -86,6 +86,54 @@
           @endforeach
         </div>
       </div>
+
+      <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
+        <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Notifikasi Tugas</h2>
+        <p class="mt-1 text-[14px] text-slate-500">Berikut tugas yang menjadi tanggung jawab Anda.</p>
+
+        <div class="mt-6 space-y-3">
+          @forelse($taskNotifications as $task)
+            <a href="{{ $task['url'] }}" class="block rounded-xl border border-slate-200 bg-white px-4 py-3 transition-colors hover:border-amber-300 hover:bg-amber-50/40">
+              <div class="flex items-start justify-between gap-3">
+                <div class="min-w-0">
+                  <div class="text-sm font-semibold text-slate-800">{{ $task['title'] }}</div>
+                  <div class="mt-1 text-xs text-slate-500">{{ $task['description'] }}</div>
+                </div>
+                <span class="inline-flex min-w-[34px] justify-center rounded-full bg-amber-100 px-2.5 py-1 text-xs font-bold text-amber-700">
+                  {{ $task['count'] }}
+                </span>
+              </div>
+            </a>
+          @empty
+            <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">
+              Tidak ada task khusus untuk role ini saat ini.
+            </div>
+          @endforelse
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
+      <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Jumlah Permohonan per Instansi</h2>
+      <p class="mt-1 text-[14px] text-slate-500">Ringkasan jumlah permohonan dari tiap instansi yang terdaftar.</p>
+
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        @forelse($institutionSubmissionCounts as $instansi)
+          <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-colors hover:border-slate-300">
+            <div class="mt-2 min-h-[44px] text-sm font-semibold leading-5 text-slate-800">{{ $instansi->nama_instansi }}</div>
+            <div class="mt-4 flex items-end justify-between gap-3 border-t border-slate-100 pt-3">
+              <div>
+                <div class="text-[11px] font-medium text-slate-500">Total Permohonan</div>
+                <div class="text-2xl font-extrabold leading-none text-slate-900">{{ $instansi->total_permohonan }}</div>
+              </div>
+            </div>
+          </div>
+        @empty
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">
+            Belum ada data instansi.
+          </div>
+        @endforelse
+      </div>
     </div>
 
     <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">

@@ -24,14 +24,21 @@ class AssignmentController extends Controller
         $query = Assignment::query()
             ->with(['submission', 'analyst'])
             ->latest();
+        $status = trim((string) $request->string('status'));
+        $allowedStatuses = ['assigned', 'in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'];
 
         if ($role === 'analis_hukum') {
             $query->where('analyst_id', $user->id);
         }
 
+        if (in_array($status, $allowedStatuses, true)) {
+            $query->where('status', $status);
+        }
+
         return view('pages.assignments.index', [
-            'assignments' => $query->paginate(10),
+            'assignments' => $query->paginate(10)->withQueryString(),
             'analysts' => User::query()->where('role', 'analis_hukum')->orderBy('name')->get(),
+            'status' => $status,
         ]);
     }
 

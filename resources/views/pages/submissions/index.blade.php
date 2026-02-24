@@ -37,12 +37,14 @@
           </select>
           <span>Data</span>
           <input type="hidden" name="q" value="{{ $search }}">
+          <input type="hidden" name="status" value="{{ $status }}">
         </form>
 
         <form method="GET" action="{{ route('submissions.index') }}" class="flex items-center gap-2 text-sm text-slate-700">
           <label for="q">Cari:</label>
           <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
           <input type="hidden" name="per_page" value="{{ $perPage }}">
+          <input type="hidden" name="status" value="{{ $status }}">
         </form>
       </div>
 

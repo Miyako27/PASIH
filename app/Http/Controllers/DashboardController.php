@@ -69,15 +69,157 @@ class DashboardController extends Controller
             'total_assignments' => (clone $assignmentQuery)->count(),
         ];
 
-        $recentSubmissions = $submissionQuery->with('submitter')->latest()->limit(6)->get();
+        $recentSubmissions = (clone $submissionQuery)->with('submitter')->latest()->limit(6)->get();
 
         $bottleneck = [
             'Permohonan Masuk' => (clone $submissionQuery)->count(),
             'Sudah Divalidasi' => $validatedSubmissions,
             'Sudah Disposisi' => $disposedSubmissions,
-            'Sedang Dianalisis' => $inAnalysisAssignments,
-            'Selesai' => $completedAssignmentsCount,
+            'Belum Ada PIC' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
+            'Sedang Dianalisis' => (clone $assignmentQuery)->whereIn('status', ['in_progress', 'revision_by_pic'])->count(),
+            'Menunggu ACC Kadiv' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
+            'Menunggu ACC Kakanwil' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
+            'Selesai Analisis' => $completedAssignmentsCount,
         ];
+
+        $preferredInstitutionOrder = [
+            'Pemerintah Provinsi Riau',
+            'Kota Pekanbaru',
+            'Kota Dumai',
+            'Kabupaten Kampar',
+            'Kabupaten Siak',
+            'Kabupaten Pelalawan',
+            'Kabupaten Kuantan Singingi',
+            'Kabupaten Rokan Hulu',
+            'Kabupaten Rokan Hilir',
+            'Kabupaten Indragiri Hilir',
+            'Kabupaten Indragiri Hulu',
+            'Kabupaten Kepulauan Meranti',
+            'Kabupaten Bengkalis',
+        ];
+
+        $preferredInstitutionIndex = array_flip($preferredInstitutionOrder);
+        $filteredSubmissionIds = (clone $submissionQuery)->select('submissions.id');
+
+        $institutionSubmissionCounts = Instansi::query()
+            ->leftJoin('users', 'users.id_instansi', '=', 'instansi.id_instansi')
+            ->leftJoin('submissions', function ($join) use ($filteredSubmissionIds) {
+                $join
+                    ->on('submissions.submitter_id', '=', 'users.id')
+                    ->whereIn('submissions.id', $filteredSubmissionIds);
+            })
+            ->groupBy('instansi.id_instansi', 'instansi.nama_instansi')
+            ->select('instansi.nama_instansi')
+            ->selectRaw('COUNT(submissions.id) as total_permohonan')
+            ->get()
+            ->sort(function ($a, $b) use ($preferredInstitutionIndex) {
+                $indexA = $preferredInstitutionIndex[$a->nama_instansi] ?? PHP_INT_MAX;
+                $indexB = $preferredInstitutionIndex[$b->nama_instansi] ?? PHP_INT_MAX;
+
+                if ($indexA === $indexB) {
+                    return strcmp($a->nama_instansi, $b->nama_instansi);
+                }
+
+                return $indexA <=> $indexB;
+            })
+            ->values();
+
+        $taskNotifications = match ($user->role->value) {
+            'operator_pemda' => [
+                [
+                    'title' => 'Perbaiki permohonan yang direvisi',
+                    'description' => 'Permohonan perlu diperbaiki lalu dikirim ulang.',
+                    'count' => (clone $submissionQuery)->where('status', 'revised')->count(),
+                    'url' => route('submissions.index', ['status' => 'revised']),
+                ],
+                [
+                    'title' => 'Pantau permohonan menunggu validasi',
+                    'description' => 'Permohonan masih menunggu proses validasi operator kanwil.',
+                    'count' => (clone $submissionQuery)->where('status', 'submitted')->count(),
+                    'url' => route('submissions.index', ['status' => 'submitted']),
+                ],
+            ],
+            'operator_kanwil' => [
+                [
+                    'title' => 'Validasi permohonan masuk',
+                    'description' => 'Permohonan berstatus diajukan/revisi menunggu validasi dan disposisi.',
+                    'count' => Submission::query()->whereIn('status', ['submitted', 'revised'])->count(),
+                    'url' => route('submissions.index'),
+                ],
+                [
+                    'title' => 'Lanjutkan disposisi permohonan diterima',
+                    'description' => 'Permohonan diterima namun belum didisposisikan ke Kadiv.',
+                    'count' => Submission::query()
+                        ->where('status', 'accepted')
+                        ->whereDoesntHave('dispositions')
+                        ->count(),
+                    'url' => route('submissions.index', ['status' => 'accepted']),
+                ],
+            ],
+            'ketua_tim_analisis' => [
+                [
+                    'title' => 'Tentukan PIC analisis',
+                    'description' => 'Penugasan sudah dibuat tetapi PIC belum ditentukan.',
+                    'count' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
+                    'url' => route('assignments.index', ['status' => 'assigned']),
+                ],
+                [
+                    'title' => 'Pantau revisi dari PIC',
+                    'description' => 'Penugasan direvisi dan perlu dipantau progres pembaruannya.',
+                    'count' => (clone $assignmentQuery)->where('status', 'revision_by_pic')->count(),
+                    'url' => route('assignments.index', ['status' => 'revision_by_pic']),
+                ],
+            ],
+            'analis_hukum' => [
+                [
+                    'title' => 'Kerjakan analisis aktif',
+                    'description' => 'Penugasan dalam proses analisis dan menunggu unggahan hasil.',
+                    'count' => (clone $assignmentQuery)->where('status', 'in_progress')->count(),
+                    'url' => route('assignments.index', ['status' => 'in_progress']),
+                ],
+                [
+                    'title' => 'Tindak lanjuti revisi',
+                    'description' => 'Hasil analisis dikembalikan dan perlu diperbarui.',
+                    'count' => (clone $assignmentQuery)->where('status', 'revision_by_pic')->count(),
+                    'url' => route('assignments.index', ['status' => 'revision_by_pic']),
+                ],
+            ],
+            'kepala_divisi_p3h' => [
+                [
+                    'title' => 'ACC hasil analisis',
+                    'description' => 'Penugasan menunggu persetujuan Kadiv.',
+                    'count' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
+                    'url' => route('assignments.index', ['status' => 'pending_kadiv_approval']),
+                ],
+                [
+                    'title' => 'Buat penugasan baru',
+                    'description' => 'Permohonan sudah siap namun belum dibuat penugasan.',
+                    'count' => (clone $submissionQuery)
+                        ->whereIn('status', ['accepted', 'disposed', 'assigned'])
+                        ->whereDoesntHave('assignments')
+                        ->count(),
+                    'url' => route('submissions.index'),
+                ],
+            ],
+            'kakanwil' => [
+                [
+                    'title' => 'ACC final hasil analisis',
+                    'description' => 'Penugasan menunggu persetujuan final Kakanwil.',
+                    'count' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
+                    'url' => route('assignments.index', ['status' => 'pending_kakanwil_approval']),
+                ],
+                [
+                    'title' => 'Buat penugasan baru',
+                    'description' => 'Permohonan sudah siap namun belum dibuat penugasan.',
+                    'count' => (clone $submissionQuery)
+                        ->whereIn('status', ['accepted', 'disposed', 'assigned'])
+                        ->whereDoesntHave('assignments')
+                        ->count(),
+                    'url' => route('submissions.index'),
+                ],
+            ],
+            default => [],
+        };
 
         $completedAssignments = (clone $assignmentQuery)
             ->where('status', 'completed')
@@ -96,6 +238,8 @@ class DashboardController extends Controller
             'stats' => $stats,
             'recentSubmissions' => $recentSubmissions,
             'bottleneck' => $bottleneck,
+            'taskNotifications' => $taskNotifications,
+            'institutionSubmissionCounts' => $institutionSubmissionCounts,
             'punctuality' => [
                 'on_time' => $onTime,
                 'late' => $late,

@@ -21,6 +21,8 @@ class SubmissionController extends Controller
         $perPage = (int) $request->integer('per_page', 5);
         $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 5;
         $search = trim((string) $request->string('q'));
+        $status = trim((string) $request->string('status'));
+        $allowedStatuses = ['submitted', 'revised', 'rejected', 'accepted', 'disposed', 'assigned', 'completed'];
 
         $query = Submission::query()->with(['submitter', 'divisionOperator', 'latestDisposition.toUser', 'assignments.analyst'])->latest();
 
@@ -30,6 +32,10 @@ class SubmissionController extends Controller
 
         if (in_array($user->role->value, ['kakanwil', 'kepala_divisi_p3h'], true)) {
             $query->whereIn('status', ['disposed', 'assigned', 'completed', 'accepted']);
+        }
+
+        if (in_array($status, $allowedStatuses, true)) {
+            $query->where('status', $status);
         }
 
         if ($search !== '') {
@@ -51,6 +57,7 @@ class SubmissionController extends Controller
             'canAssignFromSubmission' => in_array($user->role->value, ['kakanwil', 'kepala_divisi_p3h'], true),
             'perPage' => $perPage,
             'search' => $search,
+            'status' => $status,
         ]);
     }
 
