@@ -80,7 +80,7 @@
           <div class="text-xs uppercase tracking-wide text-slate-500">Mulai Analisis</div>
           <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->started_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
-        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+        <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Selesai Analisis</div>
           <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->completed_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>

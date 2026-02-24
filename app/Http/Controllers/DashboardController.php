@@ -128,13 +128,13 @@ class DashboardController extends Controller
             'operator_pemda' => [
                 [
                     'title' => 'Perbaiki permohonan yang direvisi',
-                    'description' => 'Permohonan perlu diperbaiki lalu dikirim ulang.',
+                    'description' => 'Permohonan perlu diperbaiki lalu dikirim ulang',
                     'count' => (clone $submissionQuery)->where('status', 'revised')->count(),
                     'url' => route('submissions.index', ['status' => 'revised']),
                 ],
                 [
                     'title' => 'Pantau permohonan menunggu validasi',
-                    'description' => 'Permohonan masih menunggu proses validasi operator kanwil.',
+                    'description' => 'Permohonan masih menunggu proses validasi operator kanwil',
                     'count' => (clone $submissionQuery)->where('status', 'submitted')->count(),
                     'url' => route('submissions.index', ['status' => 'submitted']),
                 ],
@@ -142,13 +142,13 @@ class DashboardController extends Controller
             'operator_kanwil' => [
                 [
                     'title' => 'Validasi permohonan masuk',
-                    'description' => 'Permohonan berstatus diajukan/revisi menunggu validasi dan disposisi.',
+                    'description' => 'Permohonan berstatus diajukan/revisi menunggu validasi dan disposisi',
                     'count' => Submission::query()->whereIn('status', ['submitted', 'revised'])->count(),
                     'url' => route('submissions.index'),
                 ],
                 [
                     'title' => 'Lanjutkan disposisi permohonan diterima',
-                    'description' => 'Permohonan diterima namun belum didisposisikan ke Kadiv.',
+                    'description' => 'Permohonan diterima namun belum didisposisikan ke Kadiv',
                     'count' => Submission::query()
                         ->where('status', 'accepted')
                         ->whereDoesntHave('dispositions')
@@ -159,13 +159,13 @@ class DashboardController extends Controller
             'ketua_tim_analisis' => [
                 [
                     'title' => 'Tentukan PIC analisis',
-                    'description' => 'Penugasan sudah dibuat tetapi PIC belum ditentukan.',
+                    'description' => 'Penugasan sudah dibuat tetapi PIC belum ditentukan',
                     'count' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
                     'url' => route('assignments.index', ['status' => 'assigned']),
                 ],
                 [
                     'title' => 'Pantau revisi dari PIC',
-                    'description' => 'Penugasan direvisi dan perlu dipantau progres pembaruannya.',
+                    'description' => 'Penugasan direvisi dan perlu dipantau progres pembaruannya',
                     'count' => (clone $assignmentQuery)->where('status', 'revision_by_pic')->count(),
                     'url' => route('assignments.index', ['status' => 'revision_by_pic']),
                 ],
@@ -173,13 +173,13 @@ class DashboardController extends Controller
             'analis_hukum' => [
                 [
                     'title' => 'Kerjakan analisis aktif',
-                    'description' => 'Penugasan dalam proses analisis dan menunggu unggahan hasil.',
+                    'description' => 'Penugasan dalam proses analisis dan menunggu unggahan hasil',
                     'count' => (clone $assignmentQuery)->where('status', 'in_progress')->count(),
                     'url' => route('assignments.index', ['status' => 'in_progress']),
                 ],
                 [
                     'title' => 'Tindak lanjuti revisi',
-                    'description' => 'Hasil analisis dikembalikan dan perlu diperbarui.',
+                    'description' => 'Hasil analisis dikembalikan dan perlu diperbarui',
                     'count' => (clone $assignmentQuery)->where('status', 'revision_by_pic')->count(),
                     'url' => route('assignments.index', ['status' => 'revision_by_pic']),
                 ],
@@ -187,13 +187,13 @@ class DashboardController extends Controller
             'kepala_divisi_p3h' => [
                 [
                     'title' => 'ACC hasil analisis',
-                    'description' => 'Penugasan menunggu persetujuan Kadiv.',
+                    'description' => 'Penugasan menunggu persetujuan Kadiv',
                     'count' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
                     'url' => route('assignments.index', ['status' => 'pending_kadiv_approval']),
                 ],
                 [
                     'title' => 'Buat penugasan baru',
-                    'description' => 'Permohonan sudah siap namun belum dibuat penugasan.',
+                    'description' => 'Permohonan sudah siap namun belum dibuat penugasan',
                     'count' => (clone $submissionQuery)
                         ->whereIn('status', ['accepted', 'disposed', 'assigned'])
                         ->whereDoesntHave('assignments')
@@ -204,13 +204,13 @@ class DashboardController extends Controller
             'kakanwil' => [
                 [
                     'title' => 'ACC final hasil analisis',
-                    'description' => 'Penugasan menunggu persetujuan final Kakanwil.',
+                    'description' => 'Penugasan menunggu persetujuan final Kakanwil',
                     'count' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
                     'url' => route('assignments.index', ['status' => 'pending_kakanwil_approval']),
                 ],
                 [
                     'title' => 'Buat penugasan baru',
-                    'description' => 'Permohonan sudah siap namun belum dibuat penugasan.',
+                    'description' => 'Permohonan sudah siap namun belum dibuat penugasan',
                     'count' => (clone $submissionQuery)
                         ->whereIn('status', ['accepted', 'disposed', 'assigned'])
                         ->whereDoesntHave('assignments')

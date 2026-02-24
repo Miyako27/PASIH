@@ -40,7 +40,7 @@ class AuthController extends Controller
                     'user_id' => $request->user()->id,
                     'type' => 'Autentikasi',
                     'title' => 'Login ke sistem',
-                    'detail' => 'Berhasil masuk ke aplikasi PASIH.',
+                    'detail' => 'Berhasil masuk ke aplikasi PASIH',
                     'route_name' => 'login.attempt',
                     'method' => 'POST',
                 ]);
@@ -60,7 +60,7 @@ class AuthController extends Controller
                     'user_id' => $request->user()->id,
                     'type' => 'Autentikasi',
                     'title' => 'Logout dari sistem',
-                    'detail' => 'Keluar dari aplikasi PASIH.',
+                    'detail' => 'Keluar dari aplikasi PASIH',
                     'route_name' => 'logout',
                     'method' => 'POST',
                 ]);

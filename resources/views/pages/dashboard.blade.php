@@ -70,7 +70,7 @@
     <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
       <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
         <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Grafik Bottleneck Proses</h2>
-        <p class="mt-1 text-[14px] text-slate-500">Grafik ini menunjukkan distribusi permohonan untuk mendeteksi hambatan proses.</p>
+        <p class="mt-1 text-[14px] text-slate-500">Grafik ini menunjukkan distribusi permohonan untuk mendeteksi hambatan proses</p>
 
         <div class="mt-6 space-y-4">
           @foreach($bottleneck as $label => $value)
@@ -89,7 +89,7 @@
 
       <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
         <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Notifikasi Tugas</h2>
-        <p class="mt-1 text-[14px] text-slate-500">Berikut tugas yang menjadi tanggung jawab Anda.</p>
+        <p class="mt-1 text-[14px] text-slate-500">Berikut tugas yang menjadi tanggung jawab Anda</p>
 
         <div class="mt-6 space-y-3">
           @forelse($taskNotifications as $task)
@@ -106,7 +106,7 @@
             </a>
           @empty
             <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">
-              Tidak ada task khusus untuk role ini saat ini.
+              Tidak ada task khusus untuk role ini saat ini
             </div>
           @endforelse
         </div>
@@ -115,7 +115,7 @@
 
     <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
       <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Jumlah Permohonan per Instansi</h2>
-      <p class="mt-1 text-[14px] text-slate-500">Ringkasan jumlah permohonan dari tiap instansi yang terdaftar.</p>
+      <p class="mt-1 text-[14px] text-slate-500">Ringkasan jumlah permohonan dari tiap instansi yang terdaftar</p>
 
       <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         @forelse($institutionSubmissionCounts as $instansi)
@@ -130,7 +130,7 @@
           </div>
         @empty
           <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">
-            Belum ada data instansi.
+            Belum ada data instansi
           </div>
         @endforelse
       </div>
@@ -140,7 +140,6 @@
       <div class="flex items-center justify-between gap-3">
         <div>
           <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Riwayat Aktivitas</h2>
-          {{-- <p class="mt-1 text-[14px] text-slate-500">Jejak aksi akun Anda saat menggunakan sistem PASIH.</p> --}}
         </div>
         <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
           {{ $recentActivities->count() }} aktivitas
@@ -182,7 +181,7 @@
           </div>
         @empty
           <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">
-            Belum ada riwayat aktivitas.
+            Belum ada riwayat aktivitas
           </div>
         @endforelse
       </div>
