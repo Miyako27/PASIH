@@ -30,7 +30,7 @@
 
         <label class="block text-sm font-medium text-slate-700">
           Pilih PIC (Analis)
-          <select name="analyst_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm" required>
+          <select name="analyst_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
             <option value="">-- Pilih Analis --</option>
             @foreach($analysts as $analyst)
               <option value="{{ $analyst->id }}" @selected((string) old('analyst_id') === (string) $analyst->id)>{{ $analyst->name }}</option>

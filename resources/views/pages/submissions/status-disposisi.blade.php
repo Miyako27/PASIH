@@ -31,7 +31,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label class="block text-sm font-medium text-slate-700">
             Status
-            <select name="status" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <select name="status" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Status</option>
               <option value="accepted" @selected(old('status', $submission->status->value) === 'accepted')>Diterima</option>
               <option value="revised" @selected(old('status', $submission->status->value) === 'revised')>Perlu Revisi</option>
@@ -41,7 +41,7 @@
 
           <label class="block text-sm font-medium text-slate-700">
             Disposisi
-            <select name="to_user_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <select name="to_user_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Disposisi</option>
               @if($kadivUser)
                 <option value="{{ $kadivUser->id }}" @selected((int) old('to_user_id') === $kadivUser->id)>

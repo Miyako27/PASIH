@@ -65,7 +65,7 @@
                 Role
             </label>
             <select name="role"
-                class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-2 focus:ring-blue-200">
+                class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
 
                 <option value="">Pilih Role</option>
 
@@ -81,7 +81,7 @@
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700">Instansi</label>
-            <select name="id_instansi" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <select name="id_instansi" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Instansi</option>
               @foreach($institutions as $institution)
                 <option value="{{ $institution->id_instansi }}" @selected((string) old('id_instansi') === (string) $institution->id_instansi)>{{ $institution->nama_instansi }}</option>

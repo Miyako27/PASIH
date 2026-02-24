@@ -63,15 +63,24 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-semibold text-slate-700">Role</label>
-            <select name="role" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <select
+              name="role"
+              class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]"
+            >
+              <option value="">Pilih Role</option>
               @foreach($roles as $role)
-                <option value="{{ $role->nama_role }}" @selected(old('role', $account->role?->value ?? $account->role) === $role->nama_role)>{{ $role->nama_role }}</option>
+                <option
+                  value="{{ $role->nama_role }}"
+                  @selected(old('role', $account->role?->value ?? $account->role) === $role->nama_role)
+                >
+                  {{ Str::title(str_replace('_', ' ', $role->nama_role)) }}
+                </option>
               @endforeach
             </select>
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700">Instansi</label>
-            <select name="id_instansi" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <select name="id_instansi" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               @foreach($institutions as $institution)
                 <option value="{{ $institution->id_instansi }}" @selected((string) old('id_instansi', $account->id_instansi) === (string) $institution->id_instansi)>{{ $institution->nama_instansi }}</option>
               @endforeach
