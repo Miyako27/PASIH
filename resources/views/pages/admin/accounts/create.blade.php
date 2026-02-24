@@ -45,7 +45,17 @@
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700">Password</label>
-            <input type="password" name="password" placeholder="Masukkan Password" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <input
+              type="password"
+              name="password"
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+"
+              title="Minimal 8 karakter, mengandung huruf besar, huruf kecil, dan angka."
+              placeholder="Masukkan Password"
+              class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
+            >
+            <span class="mt-1 block text-xs text-slate-500">
+              Minimal 8 karakter, mengandung huruf besar, huruf kecil, dan angka.
+            </span>
           </div>
         </div>
 

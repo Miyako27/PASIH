@@ -57,9 +57,11 @@ class AccountManagementController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'string', 'email', 'max:150', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:6', 'max:255'],
+            'password' => ['required', 'string', 'min:8', 'max:255', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
             'role' => ['required', 'string', Rule::exists('roles', 'nama_role')],
             'id_instansi' => ['required', 'exists:instansi,id_instansi'],
+        ], [
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
         ]);
 
         $roleId = Role::query()->where('nama_role', $validated['role'])->value('id_role');
@@ -102,9 +104,11 @@ class AccountManagementController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:150'],
             'email' => ['required', 'string', 'email', 'max:150', Rule::unique('users', 'email')->ignore($user->id)],
-            'password' => ['nullable', 'string', 'min:6', 'max:255'],
+            'password' => ['nullable', 'string', 'min:8', 'max:255', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/'],
             'role' => ['required', 'string', Rule::exists('roles', 'nama_role')],
             'id_instansi' => ['required', 'exists:instansi,id_instansi'],
+        ], [
+            'password.regex' => 'Password harus mengandung huruf besar, huruf kecil, dan angka.',
         ]);
 
         $roleId = Role::query()->where('nama_role', $validated['role'])->value('id_role');
