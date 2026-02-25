@@ -99,15 +99,10 @@ class DashboardController extends Controller
         ];
 
         $preferredInstitutionIndex = array_flip($preferredInstitutionOrder);
-        $filteredSubmissionIds = (clone $submissionQuery)->select('submissions.id');
 
         $institutionSubmissionCounts = Instansi::query()
             ->leftJoin('users', 'users.id_instansi', '=', 'instansi.id_instansi')
-            ->leftJoin('submissions', function ($join) use ($filteredSubmissionIds) {
-                $join
-                    ->on('submissions.submitter_id', '=', 'users.id')
-                    ->whereIn('submissions.id', $filteredSubmissionIds);
-            })
+            ->leftJoin('submissions', 'submissions.submitter_id', '=', 'users.id')
             ->groupBy('instansi.id_instansi', 'instansi.nama_instansi')
             ->select('instansi.nama_instansi')
             ->selectRaw('COUNT(submissions.id) as total_permohonan')
