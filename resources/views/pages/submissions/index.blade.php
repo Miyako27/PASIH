@@ -56,7 +56,7 @@
               <th class="px-4 py-3 text-left">Nomor Surat</th>
               <th class="px-4 py-3 text-left">Tanggal Pengajuan</th>
               <th class="px-4 py-3 text-left">Perihal</th>
-              <th class="px-4 py-3 text-left">Instansi Pengaju</th>
+              <th class="px-4 py-3 text-left">Pengaju</th>
               <th class="px-4 py-3 text-left">Disposisi</th>
               <th class="px-4 py-3 text-left">Status Permohonan</th>
               <th class="px-4 py-3 text-left">Status Analisis</th>

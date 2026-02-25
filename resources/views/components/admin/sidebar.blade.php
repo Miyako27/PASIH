@@ -7,7 +7,7 @@
     'dashboard' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-8 9 8M5 10v10h14V10" />',
     'accounts' => '<path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 100-8 4 4 0 000 8zm11 14v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />',
     'instansi' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M12 9h.01M15 9h.01M9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" />',
-    'pengajuan' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l4 4v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2zm8 0v4h4M9 13h6M9 17h6M9 9h3" />',
+    'permohonan' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l4 4v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2zm8 0v4h4M9 13h6M9 17h6M9 9h3" />',
     'penugasan' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12h14V7a2 2 0 00-2-2h-2M9 5a3 3 0 006 0M9 5a3 3 0 016 0m-6 8l2 2 4-4" />',
     'hasil_analisis' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 15l3-3 3 2 4-5" />',
   ];
@@ -22,7 +22,7 @@
       $items[] = ['label' => 'Dashboard', 'href' => route('dashboard'), 'active' => ['dashboard'], 'icon_key' => 'dashboard'];
 
       if (! in_array($role, ['analis_hukum', 'ketua_tim_analisis'], true)) {
-          $items[] = ['label' => 'Pengajuan', 'href' => route('submissions.index'), 'active' => ['submissions.*'], 'icon_key' => 'pengajuan'];
+          $items[] = ['label' => 'Permohonan', 'href' => route('submissions.index'), 'active' => ['submissions.*'], 'icon_key' => 'permohonan'];
       }
 
       if (in_array($role, ['ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true)) {
@@ -85,11 +85,4 @@
       </a>
     @endforeach
   </nav>
-
-  {{-- <div class="mt-auto p-4 text-xs text-white/65">
-    <div class="rounded-2xl bg-white/5 p-4 ring-1 ring-white/10">
-      <div class="font-semibold text-white">{{ $user?->name }}</div>
-      <div class="mt-1">{{ $user?->role?->label() }}</div>
-    </div>
-  </div> --}}
 </aside>
