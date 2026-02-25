@@ -36,6 +36,12 @@
       $statusNote = $submission->revision_note ?: $submission->rejection_note;
 
       $latestDisposition = $submission->latestDisposition;
+      $analysisDocuments = $assignment->documents
+        ->where('document_type', 'hasil_analisis')
+        ->sortBy('id')
+        ->values();
+      $primaryAnalysisDocument = $analysisDocuments->first();
+      $revisionAnalysisDocuments = $analysisDocuments->slice(1)->sortByDesc('id')->values();
     @endphp
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
@@ -170,7 +176,8 @@
       <p class="text-sm text-slate-500 mt-1">Surat Permohonan</p>
 
       <div class="mt-5 space-y-4">
-        @forelse($submission->documents as $document)
+        @if($submission->documents->isNotEmpty())
+          @foreach($submission->documents as $document)
           @php
             $fileUrl = !empty($document->file_path) ? asset('storage/'.$document->file_path) : null;
             $fileName = strtolower($document->file_name ?? '');
@@ -186,8 +193,7 @@
                 <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $document->document_type) }}</div>
               </div>
               @if($fileUrl)
-                @php($openUrl = ($isPdf && $previewUrl) ? $previewUrl : $fileUrl)
-                <a href="{{ $openUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
                   Lihat
                 </a>
               @else
@@ -219,9 +225,130 @@
               </div>
             @endif
           </div>
-        @empty
+          @endforeach
+        @else
           <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">Belum ada dokumen pengajuan.</div>
-        @endforelse
+        @endif
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <h2 class="text-xl font-bold text-slate-800">Dokumen Hasil Analisis</h2>
+      <p class="text-sm text-slate-500 mt-1">Dokumen hasil analisis pertama</p>
+
+      <div class="mt-5 space-y-4">
+        @if($primaryAnalysisDocument)
+          @php
+            $fileUrl = !empty($primaryAnalysisDocument->file_path) ? asset('storage/'.$primaryAnalysisDocument->file_path) : null;
+            $fileName = strtolower($primaryAnalysisDocument->file_name ?? '');
+            $filePath = strtolower($primaryAnalysisDocument->file_path ?? '');
+            $isPdf = str_ends_with($fileName, '.pdf') || str_ends_with($filePath, '.pdf');
+            $previewUrl = $isPdf ? route('documents.preview.assignment', $primaryAnalysisDocument) : null;
+            $previewDataUrl = $isPdf ? route('documents.preview.assignment', ['document' => $primaryAnalysisDocument, 'base64' => 1]) : null;
+          @endphp
+          <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
+              <div>
+                <div class="text-sm font-semibold text-slate-800">{{ $primaryAnalysisDocument->file_name }}</div>
+                <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $primaryAnalysisDocument->document_type) }}</div>
+              </div>
+              @if($fileUrl)
+                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                  Lihat
+                </a>
+              @else
+                <span class="text-xs text-rose-600 font-semibold">File tidak tersedia</span>
+              @endif
+            </div>
+            @if($fileUrl && $isPdf && $previewUrl)
+              <div class="bg-slate-100 p-3 md:p-4">
+                <div
+                  class="overflow-hidden rounded-lg ring-1 ring-slate-200 bg-slate-200"
+                  data-pdf-viewer
+                  data-pdf-url="{{ $previewDataUrl }}"
+                  data-pdf-name="{{ $primaryAnalysisDocument->file_name }}"
+                >
+                  <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
+                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
+                      <a href="{{ $previewUrl }}" target="_blank" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Buka</a>
+                      <a href="{{ $fileUrl }}" target="_blank" download class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Unduh</a>
+                    </div>
+                  </div>
+                  <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
+                    <div class="flex flex-col items-center gap-3" data-pdf-pages>
+                      <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            @endif
+          </div>
+        @else
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">_</div>
+        @endif
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <h2 class="text-xl font-bold text-slate-800">Dokumen Revisi Hasil Analisis</h2>
+      <p class="text-sm text-slate-500 mt-1">Dokumen hasil analisis saat revisi</p>
+
+      <div class="mt-5 space-y-4">
+        @if($revisionAnalysisDocuments->isNotEmpty())
+          @foreach($revisionAnalysisDocuments as $document)
+          @php
+            $fileUrl = !empty($document->file_path) ? asset('storage/'.$document->file_path) : null;
+            $fileName = strtolower($document->file_name ?? '');
+            $filePath = strtolower($document->file_path ?? '');
+            $isPdf = str_ends_with($fileName, '.pdf') || str_ends_with($filePath, '.pdf');
+            $previewUrl = $isPdf ? route('documents.preview.assignment', $document) : null;
+            $previewDataUrl = $isPdf ? route('documents.preview.assignment', ['document' => $document, 'base64' => 1]) : null;
+          @endphp
+          <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
+              <div>
+                <div class="text-sm font-semibold text-slate-800">{{ $document->file_name }}</div>
+                <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $document->document_type) }}</div>
+              </div>
+              @if($fileUrl)
+                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                  Lihat
+                </a>
+              @else
+                <span class="text-xs text-rose-600 font-semibold">File tidak tersedia</span>
+              @endif
+            </div>
+            @if($fileUrl && $isPdf && $previewUrl)
+              <div class="bg-slate-100 p-3 md:p-4">
+                <div
+                  class="overflow-hidden rounded-lg ring-1 ring-slate-200 bg-slate-200"
+                  data-pdf-viewer
+                  data-pdf-url="{{ $previewDataUrl }}"
+                  data-pdf-name="{{ $document->file_name }}"
+                >
+                  <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
+                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
+                      <a href="{{ $previewUrl }}" target="_blank" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Buka</a>
+                      <a href="{{ $fileUrl }}" target="_blank" download class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-slate-600 ring-1 ring-slate-300 hover:bg-slate-100">Unduh</a>
+                    </div>
+                  </div>
+                  <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
+                    <div class="flex flex-col items-center gap-3" data-pdf-pages>
+                      <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            @endif
+          </div>
+          @endforeach
+        @else
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">_</div>
+        @endif
       </div>
     </div>
   </div>

@@ -14,6 +14,12 @@
       </p>
     </div>
 
+    @if($errors->any())
+      <div class="rounded-xl bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-4 py-3 text-sm">
+        {{ $errors->first() }}
+      </div>
+    @endif
+
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
       <form method="POST" action="{{ route('assignments.approval.store', $assignment) }}" class="p-5 space-y-5">
         @csrf
@@ -31,14 +37,21 @@
         <label class="block text-sm font-medium text-slate-700">
           Keputusan
           <select name="decision" id="decision" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
+            <option value="">--Pilih Keputusan--</option>
             <option value="approve" @selected(old('decision') === 'approve')>ACC</option>
             <option value="revise" @selected(old('decision') === 'revise')>Tolak dan Minta Revisi</option>
           </select>
+          @error('decision')
+            <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+          @enderror
         </label>
 
         <label class="block text-sm font-medium text-slate-700">
           Catatan Revisi
-          <textarea name="revision_note" rows="4" placeholder="Isi jika keputusan revisi" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">{{ old('revision_note') }}</textarea>
+          <textarea name="revision_note" id="revision_note" rows="4" placeholder="Isi jika keputusan revisi" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">{{ old('revision_note') }}</textarea>
+          @error('revision_note')
+            <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+          @enderror
         </label>
 
         <div class="pt-1">
@@ -52,4 +65,29 @@
       </form>
     </div>
   </div>
+
+  <script>
+    (function () {
+      const decisionSelect = document.getElementById('decision');
+      const revisionNote = document.getElementById('revision_note');
+
+      if (!decisionSelect || !revisionNote) return;
+
+      const syncRevisionRequirement = () => {
+        revisionNote.required = decisionSelect.value === 'revise';
+        revisionNote.setCustomValidity('');
+      };
+
+      syncRevisionRequirement();
+      decisionSelect.addEventListener('change', syncRevisionRequirement);
+      revisionNote.addEventListener('input', () => revisionNote.setCustomValidity(''));
+      revisionNote.addEventListener('invalid', () => {
+        if (decisionSelect.value === 'revise' && !revisionNote.value.trim()) {
+          revisionNote.setCustomValidity('Catatan revisi wajib diisi saat memilih Tolak dan Minta Revisi.');
+        } else {
+          revisionNote.setCustomValidity('');
+        }
+      });
+    })();
+  </script>
 @endsection
