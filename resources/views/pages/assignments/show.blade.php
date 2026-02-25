@@ -41,7 +41,7 @@
         ->sortBy('id')
         ->values();
       $primaryAnalysisDocument = $analysisDocuments->first();
-      $revisionAnalysisDocuments = $analysisDocuments->slice(1)->sortByDesc('id')->values();
+      $latestRevisionAnalysisDocument = $analysisDocuments->slice(1)->sortByDesc('id')->first();
     @endphp
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
@@ -296,9 +296,9 @@
       <p class="text-sm text-slate-500 mt-1">Dokumen hasil analisis saat revisi</p>
 
       <div class="mt-5 space-y-4">
-        @if($revisionAnalysisDocuments->isNotEmpty())
-          @foreach($revisionAnalysisDocuments as $document)
+        @if($latestRevisionAnalysisDocument)
           @php
+            $document = $latestRevisionAnalysisDocument;
             $fileUrl = !empty($document->file_path) ? asset('storage/'.$document->file_path) : null;
             $fileName = strtolower($document->file_name ?? '');
             $filePath = strtolower($document->file_path ?? '');
@@ -345,7 +345,6 @@
               </div>
             @endif
           </div>
-          @endforeach
         @else
           <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">_</div>
         @endif
