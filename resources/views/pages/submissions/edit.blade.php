@@ -64,12 +64,11 @@
           <label class="block text-sm font-medium text-slate-700">Instansi Pengaju
             <input
               type="text"
-              name="pemda_name"
-              value="{{ old('pemda_name', $submission->pemda_name) }}"
-              placeholder="Masukkan Instansi Pengaju"
-              required
-              class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
+              value="{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}"
+              disabled
+              class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500"
             >
+            <input type="hidden" name="pemda_name" value="{{ $submission->submitter?->instansi?->nama_instansi ?? old('pemda_name', $submission->pemda_name) }}">
           </label>
         </div>
 
