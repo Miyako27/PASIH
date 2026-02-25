@@ -42,8 +42,8 @@
             <input type="text" disabled value="{{ optional($submission->submitted_at)->format('d - m - Y') ?: '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </label>
           <label class="block text-sm font-medium text-slate-700">
-            Pengaju
-            <input type="text" disabled value="{{ $submission->pemda_name }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            Instansi Pengaju
+            <input type="text" disabled value="{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </label>
         </div>
 

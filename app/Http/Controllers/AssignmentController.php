@@ -22,7 +22,7 @@ class AssignmentController extends Controller
         abort_unless(in_array($role, ['ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true), 403);
 
         $query = Assignment::query()
-            ->with(['submission', 'analyst'])
+            ->with(['submission.submitter.instansi', 'analyst'])
             ->latest();
         $status = trim((string) $request->string('status'));
         $allowedStatuses = ['assigned', 'in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'];
@@ -52,7 +52,7 @@ class AssignmentController extends Controller
             'picAssignedBy',
             'analyst',
             'documents',
-            'submission.submitter',
+            'submission.submitter.instansi',
             'submission.divisionOperator',
             'submission.latestDisposition.toUser',
             'submission.dispositions.toUser',
@@ -95,7 +95,7 @@ class AssignmentController extends Controller
         abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true), 403);
         abort_unless($assignment->status->value === 'completed', 404);
 
-        $assignment->load(['submission.submitter', 'analyst', 'assignedBy', 'documents']);
+        $assignment->load(['submission.submitter.instansi', 'analyst', 'assignedBy', 'documents']);
 
         $user = $request->user();
         if ($user->role->value === 'analis_hukum') {

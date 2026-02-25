@@ -46,8 +46,8 @@
           <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->perihal }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Pengaju</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->pemda_name }}</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Instansi Pengaju</div>
+          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Judul Perda</div>

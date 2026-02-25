@@ -56,7 +56,7 @@
               <th class="px-4 py-3 text-left">Nomor Surat</th>
               <th class="px-4 py-3 text-left">Tanggal Pengajuan</th>
               <th class="px-4 py-3 text-left">Perihal</th>
-              <th class="px-4 py-3 text-left">Pengaju</th>
+              <th class="px-4 py-3 text-left">Instansi Pengaju</th>
               <th class="px-4 py-3 text-left">Disposisi</th>
               <th class="px-4 py-3 text-left">Status Permohonan</th>
               <th class="px-4 py-3 text-left">Status Analisis</th>
@@ -111,7 +111,7 @@
                 <td class="px-4 py-3">{{ $submission->nomor_surat }}</td>
                 <td class="px-4 py-3">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</td>
                 <td class="px-4 py-3">{{ $submission->perihal }}</td>
-                <td class="px-4 py-3">{{ $submission->pemda_name }}</td>
+                <td class="px-4 py-3">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</td>
                 <td class="px-4 py-3">{{ $dispositionRoleLabel }}</td>
                 <td class="px-4 py-3"><x-ui.badge :tone="$statusTone">{{ $submission->status->label() }}</x-ui.badge></td>
                 <td class="px-4 py-3"><x-ui.badge :tone="$analysisTone">{{ $analysisText }}</x-ui.badge></td>
