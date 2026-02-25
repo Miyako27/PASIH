@@ -163,8 +163,11 @@
     </div>
 
     @if($submission->submitter_id === auth()->id() && in_array($submission->status->value, ['submitted', 'revised'], true))
-      <a href="{{ route('submissions.edit', $submission) }}" class="inline-flex items-center h-10 px-4 rounded-lg bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800">
-        Edit Pengajuan
+      <a href="{{ route('submissions.edit', $submission) }}" class="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-amber-400 text-white text-sm font-semibold hover:bg-amber-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 113 3L12 14l-4 1 1-4 7.5-7.5z" />
+          </svg>
+        Edit Permohonan
       </a>
     @endif
   </div>
