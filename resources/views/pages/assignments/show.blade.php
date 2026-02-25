@@ -346,7 +346,7 @@
             @endif
           </div>
         @else
-          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">_</div>
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">-</div>
         @endif
       </div>
     </div>
