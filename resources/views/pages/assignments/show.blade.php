@@ -42,6 +42,25 @@
         ->values();
       $primaryAnalysisDocument = $analysisDocuments->first();
       $latestRevisionAnalysisDocument = $analysisDocuments->slice(1)->sortByDesc('id')->first();
+      $latestAnalysisDocument = $analysisDocuments->sortByDesc('id')->first();
+      $analysisFields = [
+        'ringkasan_analisis' => '',
+        'hasil_evaluasi' => '',
+        'rekomendasi' => '',
+      ];
+
+      $analysisNotes = (string) ($latestAnalysisDocument?->notes ?? '');
+      if ($analysisNotes !== '') {
+        if (preg_match('/Ringkasan:\s*(.*?)\n\nHasil Evaluasi:/s', $analysisNotes, $m)) {
+          $analysisFields['ringkasan_analisis'] = trim($m[1]);
+        }
+        if (preg_match('/Hasil Evaluasi:\s*(.*?)\n\nRekomendasi:/s', $analysisNotes, $m)) {
+          $analysisFields['hasil_evaluasi'] = trim($m[1]);
+        }
+        if (preg_match('/Rekomendasi:\s*(.*)$/s', $analysisNotes, $m)) {
+          $analysisFields['rekomendasi'] = trim($m[1]);
+        }
+      }
     @endphp
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
@@ -227,6 +246,25 @@
         @else
           <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">Belum ada dokumen pengajuan.</div>
         @endif
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <h2 class="text-xl font-bold text-slate-800">Ringkasan Hasil Analisis</h2>
+      <p class="text-sm text-slate-500 mt-1">Isi pokok hasil analisis dari analis</p>
+      <div class="mt-5 space-y-4 text-sm">
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Ringkasan Analisis</div>
+          <div class="mt-1 text-slate-700">{{ $analysisFields['ringkasan_analisis'] ?: '-' }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Hasil Evaluasi</div>
+          <div class="mt-1 text-slate-700">{{ $analysisFields['hasil_evaluasi'] ?: '-' }}</div>
+        </div>
+        <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+          <div class="text-xs uppercase tracking-wide text-slate-500">Rekomendasi</div>
+          <div class="mt-1 text-slate-700">{{ $analysisFields['rekomendasi'] ?: '-' }}</div>
+        </div>
       </div>
     </div>
 

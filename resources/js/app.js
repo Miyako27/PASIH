@@ -234,7 +234,7 @@ async function initInlinePdfViewer(root) {
 
     const setIdleState = () => {
         setStatus('Preview belum dimuat');
-        pagesContainer.innerHTML = '<div class="text-xs text-slate-500">Klik tombol Tampilkan untuk memuat preview PDF.</div>';
+        pagesContainer.innerHTML = '<div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>';
     };
 
     let mode = 'idle';
