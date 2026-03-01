@@ -11,8 +11,8 @@
 
     <div class="flex items-start justify-between gap-4">
       <div>
-        <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Permohonan</h1>
-        <p class="mt-1 text-sm text-slate-500">
+        <h1 class="pasih-page-title">Permohonan</h1>
+        <p class="mt-1 pasih-page-breadcrumb">
           <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
           <span class="mx-1">/</span>
           <span>Permohonan</span>
@@ -237,3 +237,4 @@
     </div>
   </div>
 @endsection
+

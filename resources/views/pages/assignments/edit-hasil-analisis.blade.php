@@ -4,8 +4,8 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Hasil Analisis</h1>
-      <p class="mt-1 text-sm text-slate-500">
+      <h1 class="pasih-page-title">Hasil Analisis</h1>
+      <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('assignments.analysis-results') }}" class="hover:text-slate-700 hover:underline">Hasil Analisis</a>
@@ -76,3 +76,4 @@
     </div>
   </div>
 @endsection
+

@@ -5,8 +5,8 @@
   <div class="space-y-5">
     <div class="flex items-start justify-between gap-4">
       <div>
-        <h1 class="text-[32px] font-bold tracking-tight text-slate-800 leading-none">Manajemen Instansi</h1>
-        <p class="mt-2 text-sm text-slate-500">
+        <h1 class="pasih-page-title">Manajemen Instansi</h1>
+        <p class="mt-2 pasih-page-breadcrumb">
           <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
           <span class="mx-1">/</span>
           <a href="{{ route('admin.instansi.index') }}" class="hover:text-slate-700 hover:underline">Manajemen Instansi</a>
@@ -42,3 +42,4 @@
     </div>
   </div>
 @endsection
+

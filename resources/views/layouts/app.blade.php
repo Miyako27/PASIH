@@ -12,7 +12,7 @@
   @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body
-  class="bg-slate-50 text-slate-900"
+  class="bg-slate-50 text-slate-900 overflow-x-clip"
   data-flash-success="{{ session('success') ? e(session('success')) : '' }}"
   data-is-show-page="{{ $isShowPage ? '1' : '0' }}"
 >
@@ -21,10 +21,10 @@
     <x-admin.sidebar />
 
     {{-- Main --}}
-    <div class="flex-1 flex flex-col md:ml-[280px]">
+    <div class="flex-1 min-w-0 flex flex-col md:ml-[280px]">
       <x-admin.topbar />
 
-      <main class="p-4 sm:p-6 lg:p-8">
+      <main class="min-w-0 p-4 sm:p-6 lg:p-8">
         @yield('content')
       </main>
     </div>

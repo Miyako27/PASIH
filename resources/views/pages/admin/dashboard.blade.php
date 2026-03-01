@@ -4,7 +4,7 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="text-[32px] font-bold tracking-tight text-slate-800">Dashboard</h1>
+      <h1 class="pasih-page-title">Dashboard</h1>
       <div class="mt-2 h-1 w-20 rounded-full bg-amber-400"></div>
     </div>
 
@@ -144,3 +144,4 @@
     </div>
   </div>
 @endsection
+

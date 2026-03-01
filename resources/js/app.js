@@ -463,8 +463,96 @@ function initInlinePdfViewers() {
     });
 }
 
+function initSidebarDrawer() {
+    const drawer = document.querySelector('[data-sidebar-drawer]');
+    const overlay = document.querySelector('[data-sidebar-overlay]');
+    const toggles = Array.from(document.querySelectorAll('[data-sidebar-toggle]'));
+    const closeButton = document.querySelector('[data-sidebar-close]');
+    const sidebarLinks = Array.from(document.querySelectorAll('[data-sidebar-link]'));
+
+    if (!drawer || !overlay || !toggles.length) {
+        return;
+    }
+
+    const isDesktop = () => window.matchMedia('(min-width: 768px)').matches;
+
+    const closeDrawer = () => {
+        drawer.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+        toggles.forEach((toggle) => toggle.setAttribute('aria-expanded', 'false'));
+    };
+
+    const openDrawer = () => {
+        if (isDesktop()) {
+            return;
+        }
+
+        drawer.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+        toggles.forEach((toggle) => toggle.setAttribute('aria-expanded', 'true'));
+    };
+
+    toggles.forEach((toggle) => {
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.addEventListener('click', () => {
+            const isClosed = drawer.classList.contains('-translate-x-full');
+            if (isClosed) {
+                openDrawer();
+                return;
+            }
+            closeDrawer();
+        });
+    });
+
+    overlay.addEventListener('click', closeDrawer);
+    closeButton?.addEventListener('click', closeDrawer);
+    sidebarLinks.forEach((link) => link.addEventListener('click', closeDrawer));
+
+    window.addEventListener('resize', () => {
+        if (isDesktop()) {
+            closeDrawer();
+        }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeDrawer();
+        }
+    });
+}
+
+function initResponsiveTables() {
+    const tables = Array.from(document.querySelectorAll('main table'));
+    if (!tables.length) {
+        return;
+    }
+
+    tables.forEach((table) => {
+        const parent = table.parentElement;
+        if (!parent) {
+            return;
+        }
+
+        if (parent.classList.contains('pasih-table-scroll') || parent.dataset.tableScroll === '1') {
+            return;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'pasih-table-scroll w-full overflow-x-auto';
+        wrapper.dataset.tableScroll = '1';
+
+        table.classList.add('w-full', 'min-w-[640px]');
+        parent.insertBefore(wrapper, table);
+        wrapper.appendChild(table);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     bindConfirmForms();
     showFlashSuccess();
     initInlinePdfViewers();
+    initSidebarDrawer();
+    initResponsiveTables();
 });

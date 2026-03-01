@@ -69,6 +69,62 @@
         $fallbackIcon = $defaultIcons[$item['icon_key'] ?? 'dashboard'] ?? $defaultIcons['dashboard'];
       @endphp
       <a href="{{ $item['href'] }}"
+         data-sidebar-link
+         class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold transition {{ $active ? 'text-slate-900' : 'text-white/85 hover:bg-white/10 hover:text-white' }}"
+         @if($active) style="background: linear-gradient(90deg, #FFD82B 0%, #FFAB4A 100%);" @endif>
+        @if($iconMarkup)
+          <span class="sidebar-icon inline-flex h-5 w-5 shrink-0 items-center justify-center" style="color: {{ $iconColor }};">
+            {!! $iconMarkup !!}
+          </span>
+        @else
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+               class="h-5 w-5 shrink-0" fill="none" stroke="{{ $iconColor }}" stroke-width="1.8">
+            {!! $fallbackIcon !!}
+          </svg>
+        @endif
+        <span>{{ $item['label'] }}</span>
+      </a>
+    @endforeach
+  </nav>
+</aside>
+
+<div data-sidebar-overlay class="fixed inset-0 z-30 hidden bg-slate-900/55 backdrop-blur-[1px] md:hidden"></div>
+
+<aside
+  data-sidebar-drawer
+  class="fixed inset-y-0 left-0 z-40 flex w-[280px] -translate-x-full flex-col overflow-y-auto text-white shadow-2xl transition-transform duration-200 ease-out md:hidden"
+  style="background: linear-gradient(180deg, #2B3056 0%, #3A4070 50%, #2B3056 100%);"
+>
+  <div class="px-6 py-5 border-b border-white/10 flex items-center justify-between gap-3">
+    <div class="flex items-center gap-3 min-w-0">
+      <img src="{{ asset('images/LogoInstansi.png') }}" alt="Logo PASIH" class="w-11 h-11 object-contain">
+      <div class="min-w-0">
+        <div class="font-extrabold tracking-tight text-lg truncate">PASIH</div>
+        <div class="text-[11px] text-white/70 leading-relaxed">Pendampingan Analisa & Evaluasi Hukum Daerah</div>
+      </div>
+    </div>
+    <button
+      type="button"
+      data-sidebar-close
+      aria-label="Tutup menu"
+      class="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/25 bg-white/10 text-white"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <nav class="px-4 py-5 space-y-2">
+    @foreach($items as $item)
+      @php
+        $active = collect($item['active'] ?? [])->contains(fn ($pattern) => request()->routeIs($pattern));
+        $iconColor = $active ? '#161616' : '#B9B9B9';
+        $iconMarkup = $item['icon_svg'] ?? null;
+        $fallbackIcon = $defaultIcons[$item['icon_key'] ?? 'dashboard'] ?? $defaultIcons['dashboard'];
+      @endphp
+      <a href="{{ $item['href'] }}"
+         data-sidebar-link
          class="flex items-center gap-3 rounded-2xl px-4 py-3 font-semibold transition {{ $active ? 'text-slate-900' : 'text-white/85 hover:bg-white/10 hover:text-white' }}"
          @if($active) style="background: linear-gradient(90deg, #FFD82B 0%, #FFAB4A 100%);" @endif>
         @if($iconMarkup)
