@@ -188,12 +188,12 @@
           @endphp
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
-              <div>
-                <div class="text-sm font-semibold text-slate-800">{{ $document->file_name }}</div>
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $document->file_name }}">{{ $document->file_name }}</div>
                 <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $document->document_type) }}</div>
               </div>
               @if($fileUrl)
-                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
                   Lihat
                 </a>
               @else
@@ -246,12 +246,12 @@
           @endphp
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
-              <div>
-                <div class="text-sm font-semibold text-slate-800">{{ $primaryAnalysisDocument->file_name }}</div>
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $primaryAnalysisDocument->file_name }}">{{ $primaryAnalysisDocument->file_name }}</div>
                 <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $primaryAnalysisDocument->document_type) }}</div>
               </div>
               @if($fileUrl)
-                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
                   Lihat
                 </a>
               @else
@@ -304,12 +304,12 @@
           @endphp
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
-              <div>
-                <div class="text-sm font-semibold text-slate-800">{{ $document->file_name }}</div>
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $document->file_name }}">{{ $document->file_name }}</div>
                 <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $document->document_type) }}</div>
               </div>
               @if($fileUrl)
-                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
                   Lihat
                 </a>
               @else
@@ -346,4 +346,3 @@
     </div>
   </div>
 @endsection
-
