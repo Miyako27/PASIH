@@ -283,4 +283,15 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     main [class*='grid-cols-'] {
         row-gap: 1rem;
     }
+
+    /* Keep primary form actions consistent on mobile: full-width like Penugasan. */
+    main form :is(button[type='submit'], input[type='submit']) {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Preserve compact icon actions used inside tables. */
+    main table form :is(button[type='submit'], input[type='submit']) {
+        width: auto;
+    }
 }
