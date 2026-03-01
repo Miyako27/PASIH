@@ -147,6 +147,26 @@ function showFlashSuccess() {
 
 let pdfJsLoaderPromise = null;
 
+const pdfJsBundles = [
+    {
+        // Legacy UMD build is the most compatible on mobile browsers.
+        script: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
+        worker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js',
+    },
+    {
+        script: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js',
+        worker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js',
+    },
+    {
+        script: '/js/pdfjs/pdf.min.js',
+        worker: '/js/pdfjs/pdf.worker.min.js',
+    },
+    {
+        script: '/vendor/pdfjs/pdf.min.js',
+        worker: '/vendor/pdfjs/pdf.worker.min.js',
+    },
+];
+
 function loadScript(src) {
     return new Promise((resolve, reject) => {
         const script = document.createElement('script');
@@ -165,37 +185,16 @@ async function ensurePdfJs() {
 
     if (!pdfJsLoaderPromise) {
         pdfJsLoaderPromise = (async () => {
-            const bundles = [
-                {
-                    script: '/js/pdfjs/pdf.min.js',
-                    worker: '/js/pdfjs/pdf.worker.min.js',
-                },
-                {
-                    script: '/vendor/pdfjs/pdf.min.js',
-                    worker: '/vendor/pdfjs/pdf.worker.min.js',
-                },
-                {
-                    script: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.min.js',
-                    worker: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.6.82/pdf.worker.min.js',
-                },
-                {
-                    script: 'https://unpkg.com/pdfjs-dist@4.6.82/build/pdf.min.js',
-                    worker: 'https://unpkg.com/pdfjs-dist@4.6.82/build/pdf.worker.min.js',
-                },
-                {
-                    script: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.js',
-                    worker: 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.js',
-                },
-            ];
-
             let loaded = false;
             let chosenWorker = '';
-            for (const bundle of bundles) {
+            for (const bundle of pdfJsBundles) {
                 try {
                     await loadScript(bundle.script);
-                    loaded = true;
-                    chosenWorker = bundle.worker;
-                    break;
+                    if (window.pdfjsLib && typeof window.pdfjsLib.getDocument === 'function') {
+                        loaded = true;
+                        chosenWorker = bundle.worker;
+                        break;
+                    }
                 } catch (error) {
                     // Try the next CDN source.
                 }
@@ -238,7 +237,6 @@ async function initInlinePdfViewer(root) {
         pagesContainer.innerHTML = '<div class="text-xs text-slate-500">Klik tombol Tampilkan untuk memuat preview PDF.</div>';
     };
 
-    let blobPreviewUrl = null;
     let mode = 'idle';
     let loading = false;
     let pdf = null;
@@ -326,31 +324,9 @@ async function initInlinePdfViewer(root) {
         return response.arrayBuffer();
     };
 
-    const renderBlobIframeFallback = async () => {
-        const bytes = await fetchPdfBytes();
-        const blob = new Blob([bytes], { type: 'application/pdf' });
-        blobPreviewUrl = URL.createObjectURL(blob);
-        mode = 'blob';
-
-        setStatus(`${displayName} | mode browser viewer`);
-        pagesContainer.innerHTML = `
-            <iframe
-                src="${blobPreviewUrl}"
-                class="w-full h-[56vh] min-h-[400px] rounded bg-white ring-1 ring-slate-200"
-                title="Preview ${displayName}"
-            ></iframe>
-        `;
-        setControlEnabled(false);
-    };
-
     const loadPreview = async () => {
         if (loading) {
             return;
-        }
-
-        if (blobPreviewUrl) {
-            URL.revokeObjectURL(blobPreviewUrl);
-            blobPreviewUrl = null;
         }
 
         mode = 'idle';
@@ -382,11 +358,8 @@ async function initInlinePdfViewer(root) {
             setControlEnabled(true);
             await renderAllPages();
         } catch (error) {
-            try {
-                await renderBlobIframeFallback();
-            } catch (fallbackError) {
-                setError('File PDF tidak dapat ditampilkan. Gunakan tombol Buka.');
-            }
+            setControlEnabled(false);
+            setError('File PDF tidak dapat ditampilkan. Silakan tekan Muat Ulang.');
         } finally {
             loading = false;
             if (loadButton) {
@@ -445,11 +418,6 @@ async function initInlinePdfViewer(root) {
     setIdleState();
     void loadPreview();
 
-    root.addEventListener('remove', () => {
-        if (blobPreviewUrl) {
-            URL.revokeObjectURL(blobPreviewUrl);
-        }
-    });
 }
 
 function initInlinePdfViewers() {
