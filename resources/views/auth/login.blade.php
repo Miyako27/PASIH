@@ -40,13 +40,32 @@
 
       <label class="block text-sm font-medium text-slate-700">
         Password
-        <input
-          type="password"
-          name="password"
-          required
-          placeholder="Masukkan Password"
-          class="mt-1.5 w-full h-11 px-4 py-2 rounded border border-[#B9B9B9] bg-white text-sm placeholder:text-[14px]"
-        >
+        <div class="relative mt-1.5">
+          <input
+            id="password"
+            type="password"
+            name="password"
+            required
+            placeholder="Masukkan Password"
+            class="w-full h-11 px-4 pr-11 py-2 rounded border border-[#B9B9B9] bg-white text-sm placeholder:text-[14px]"
+          >
+          <button
+            type="button"
+            id="toggle-password"
+            aria-label="Tampilkan password"
+            aria-pressed="false"
+            class="absolute inset-y-0 right-0 px-3 text-slate-500 hover:text-slate-700 focus:outline-none"
+          >
+            <svg id="eye-open" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7s-8.268-2.943-9.542-7z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            <svg id="eye-closed" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10.584 10.587A2 2 0 0012 14a2 2 0 001.413-3.416M9.88 5.09A9.76 9.76 0 0112 5c4.478 0 8.269 2.943 9.543 7a9.97 9.97 0 01-4.132 5.411M6.228 6.231C4.383 7.477 3.06 9.518 2.457 12A9.97 9.97 0 006.59 17.411"/>
+            </svg>
+          </button>
+        </div>
       </label>
 
       <div class="flex items-center justify-between text-xs pt-0.5">
@@ -62,5 +81,21 @@
       </button>
     </form>
   </div>
+  <script>
+    const passwordInput = document.getElementById('password');
+    const togglePasswordButton = document.getElementById('toggle-password');
+    const eyeOpenIcon = document.getElementById('eye-open');
+    const eyeClosedIcon = document.getElementById('eye-closed');
+
+    togglePasswordButton.addEventListener('click', function () {
+      const isHidden = passwordInput.type === 'password';
+      passwordInput.type = isHidden ? 'text' : 'password';
+
+      eyeOpenIcon.classList.toggle('hidden', !isHidden);
+      eyeClosedIcon.classList.toggle('hidden', isHidden);
+      togglePasswordButton.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Tampilkan password');
+      togglePasswordButton.setAttribute('aria-pressed', String(isHidden));
+    });
+  </script>
 </body>
 </html>
