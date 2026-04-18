@@ -3,6 +3,10 @@
   $currentUser = auth()->user();
   $displayName = $currentUser?->name ?? 'Pengguna';
   $displayInstitution = $currentUser?->instansi?->nama_instansi ?? 'Kementerian Hukum Provinsi Riau';
+  $roleName = $currentUser?->role?->value;
+  $displayRole = $roleName === 'kakanwil'
+    ? 'Kepala Kantor Wilayah'
+    : $currentUser?->role?->label();
 @endphp
 
 <header class="sticky top-0 z-10 bg-white/90 backdrop-blur border-b border-slate-200">
@@ -20,7 +24,7 @@
       </button>
 
       <div class="min-w-0">
-        <div class="truncate text-sm sm:text-base lg:text-lg font-bold tracking-tight">{{ auth()->user()?->role?->label() }}</div>
+        <div class="truncate text-sm sm:text-base lg:text-lg font-bold tracking-tight">{{ $displayRole }}</div>
         <div class="hidden sm:block text-xs text-slate-500 truncate">Kementerian Hukum Provinsi Riau</div>
       </div>
     </div>
