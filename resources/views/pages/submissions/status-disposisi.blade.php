@@ -25,13 +25,13 @@
         <h2 class="text-[18px] font-bold text-slate-800">Ubah Status & Tetapkan Disposisi</h2>
       </div>
 
-      <form method="POST" action="{{ route('submissions.status-disposisi.save', $submission) }}" class="p-5 space-y-5">
+      <form id="status-disposition-form" method="POST" action="{{ route('submissions.status-disposisi.save', $submission) }}" class="p-5 space-y-5">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label class="block text-sm font-medium text-slate-700">
             Status
-            <select name="status" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
+            <select id="status" name="status" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Status</option>
               <option value="accepted" @selected(old('status', $submission->status->value) === 'accepted')>Diterima</option>
               <option value="revised" @selected(old('status', $submission->status->value) === 'revised')>Perlu Revisi</option>
@@ -41,7 +41,7 @@
 
           <label class="block text-sm font-medium text-slate-700">
             Disposisi
-            <select name="to_user_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
+            <select id="to_user_id" name="to_user_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Disposisi</option>
               @if($kadivUser)
                 <option value="{{ $kadivUser->id }}" @selected((int) old('to_user_id') === $kadivUser->id)>
@@ -56,6 +56,7 @@
           <label class="block text-sm font-medium text-slate-700">
             Catatan Status
             <textarea
+              id="status_note"
               name="status_note"
               rows="4"
               placeholder="Masukkan Catatan Untuk Status"
@@ -66,6 +67,7 @@
           <label class="block text-sm font-medium text-slate-700">
             Catatan Disposisi
             <textarea
+              id="disposition_note"
               name="disposition_note"
               rows="4"
               placeholder="Masukkan Catatan Untuk Disposisi"
@@ -85,5 +87,54 @@
       </form>
     </div>
   </div>
+
+  <script>
+    const form = document.getElementById('status-disposition-form');
+    const statusSelect = document.getElementById('status');
+    const dispositionSelect = document.getElementById('to_user_id');
+    const statusNoteInput = document.getElementById('status_note');
+    const dispositionNoteInput = document.getElementById('disposition_note');
+
+    function applyStatusRules() {
+      const status = statusSelect.value;
+      const isRejected = status === 'rejected';
+      const needsStatusNote = status === 'rejected' || status === 'revised';
+
+      dispositionSelect.disabled = isRejected;
+      dispositionNoteInput.disabled = isRejected;
+
+      if (isRejected) {
+        dispositionSelect.value = '';
+        dispositionNoteInput.value = '';
+      }
+
+      statusNoteInput.required = needsStatusNote;
+      statusNoteInput.setCustomValidity('');
+    }
+
+    statusSelect.addEventListener('change', applyStatusRules);
+    statusNoteInput.addEventListener('invalid', function () {
+      if (statusNoteInput.validity.valueMissing) {
+        statusNoteInput.setCustomValidity('Harap isi kolom ini.');
+      }
+    });
+    statusNoteInput.addEventListener('input', function () {
+      statusNoteInput.setCustomValidity('');
+    });
+
+    form.addEventListener('submit', function (event) {
+      applyStatusRules();
+
+      const needsStatusNote = statusSelect.value === 'rejected' || statusSelect.value === 'revised';
+      if (needsStatusNote && statusNoteInput.value.trim() === '') {
+        event.preventDefault();
+        statusNoteInput.setCustomValidity('Catatan Status wajib diisi untuk status ini.');
+        statusNoteInput.reportValidity();
+        statusNoteInput.focus();
+      }
+    });
+
+    applyStatusRules();
+  </script>
 @endsection
 
