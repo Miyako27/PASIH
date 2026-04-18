@@ -17,7 +17,7 @@
     </div>
 
     <h1 class="text-center text-3xl font-extrabold tracking-tight text-[#19305D]">PASIH</h1>
-    <p class="text-center text-sm text-slate-700 mt-1">Pendampingan Analisa dan Evaluasi Hukum Daerah </p>
+    <p class="text-center text-sm text-slate-700 mt-1">Pendampingan Analisis dan Evaluasi Hukum Daerah </p>
 
     @if($errors->any())
       <div class="mt-4 rounded-lg bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-3 py-2 text-sm">{{ $errors->first() }}</div>
