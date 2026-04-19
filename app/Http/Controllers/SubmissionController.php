@@ -243,12 +243,22 @@ class SubmissionController extends Controller
 
         $validated = $request->validate([
             'status' => ['required', Rule::in(['accepted', 'revised', 'rejected'])],
-            'to_user_id' => ['nullable', 'exists:users,id', 'prohibited_if:status,rejected'],
+            'to_user_id' => [
+                'nullable',
+                'exists:users,id',
+                Rule::requiredIf(fn () => (string) $request->input('status') === 'accepted'),
+                Rule::prohibitedIf(fn () => in_array((string) $request->input('status'), ['revised', 'rejected'], true)),
+            ],
             'status_note' => [
                 'string',
                 Rule::requiredIf(fn () => in_array((string) $request->input('status'), ['revised', 'rejected'], true)),
             ],
-            'disposition_note' => ['nullable', 'string', 'prohibited_if:status,rejected'],
+            'disposition_note' => [
+                'nullable',
+                'string',
+                Rule::requiredIf(fn () => (string) $request->input('status') === 'accepted'),
+                Rule::prohibitedIf(fn () => in_array((string) $request->input('status'), ['revised', 'rejected'], true)),
+            ],
         ]);
 
         $statusNote = blank($validated['status_note'] ?? null) ? null : $validated['status_note'];

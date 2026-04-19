@@ -83,18 +83,20 @@
           >
         </label>
 
-        <label class="block text-sm font-medium text-slate-700">Deskripsi Permohonan
+        <label class="block text-sm font-medium text-slate-700">Deskripsi Permohonan <span class="text-red-500">*</span>
           <textarea
             name="description"
             rows="4"
+            required
             placeholder="Masukkan Deskripsi Permohonan"
             class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
           >{{ old('description', $submission->description) }}</textarea>
         </label>
 
-        <label class="block text-sm font-medium text-slate-700">Dokumen Pendukung Tambahan
+        <label class="block text-sm font-medium text-slate-700">Dokumen Pendukung Tambahan <span class="text-red-500">*</span>
           <input
             type="file"
+            required
             name="dokumen_pendukung"
             class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700"
           >

@@ -40,7 +40,7 @@
           </label>
 
           <label class="block text-sm font-medium text-slate-700">
-            Disposisi
+            Disposisi <span class="text-red-500">*</span> <span class="text-xs font-normal text-slate-500">(wajib untuk status Diterima)</span>
             <select id="to_user_id" name="to_user_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Disposisi</option>
               @if($kadivUser)
@@ -58,7 +58,6 @@
             <textarea
               id="status_note"
               name="status_note"
-              required
               rows="4"
               placeholder="Masukkan Catatan Untuk Status"
               class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
@@ -66,7 +65,7 @@
           </label>
 
           <label class="block text-sm font-medium text-slate-700">
-            Catatan Disposisi
+            Catatan Disposisi <span class="text-red-500">*</span> <span class="text-xs font-normal text-slate-500">(wajib untuk status Diterima)</span>
             <textarea
               id="disposition_note"
               name="disposition_note"
@@ -75,8 +74,6 @@
               class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
             >{{ old('disposition_note') }}</textarea>
           </label>
-
-          <p class="text-xs text-red-500">Catatan: Jika permohonan disetujui, wajib langsung melakukan disposisi.</p>
 
         </div>
 
@@ -102,18 +99,25 @@
     function applyStatusRules() {
       const status = statusSelect.value;
       const isRejected = status === 'rejected';
+      const isRevised = status === 'revised';
+      const isAccepted = status === 'accepted';
       const needsStatusNote = status === 'rejected' || status === 'revised';
+      const disableDisposition = isRejected || isRevised;
 
-      dispositionSelect.disabled = isRejected;
-      dispositionNoteInput.disabled = isRejected;
+      dispositionSelect.disabled = disableDisposition;
+      dispositionNoteInput.disabled = disableDisposition;
 
-      if (isRejected) {
+      if (disableDisposition) {
         dispositionSelect.value = '';
         dispositionNoteInput.value = '';
       }
 
       statusNoteInput.required = needsStatusNote;
+      dispositionSelect.required = isAccepted;
+      dispositionNoteInput.required = isAccepted;
       statusNoteInput.setCustomValidity('');
+      dispositionSelect.setCustomValidity('');
+      dispositionNoteInput.setCustomValidity('');
     }
 
     statusSelect.addEventListener('change', applyStatusRules);
@@ -125,16 +129,49 @@
     statusNoteInput.addEventListener('input', function () {
       statusNoteInput.setCustomValidity('');
     });
+    dispositionSelect.addEventListener('invalid', function () {
+      if (dispositionSelect.validity.valueMissing) {
+        dispositionSelect.setCustomValidity('Disposisi wajib dipilih untuk status diterima.');
+      }
+    });
+    dispositionSelect.addEventListener('change', function () {
+      dispositionSelect.setCustomValidity('');
+    });
+    dispositionNoteInput.addEventListener('invalid', function () {
+      if (dispositionNoteInput.validity.valueMissing) {
+        dispositionNoteInput.setCustomValidity('Catatan Disposisi wajib diisi untuk status diterima.');
+      }
+    });
+    dispositionNoteInput.addEventListener('input', function () {
+      dispositionNoteInput.setCustomValidity('');
+    });
 
     form.addEventListener('submit', function (event) {
       applyStatusRules();
 
+      const needsDisposition = statusSelect.value === 'accepted';
       const needsStatusNote = statusSelect.value === 'rejected' || statusSelect.value === 'revised';
       if (needsStatusNote && statusNoteInput.value.trim() === '') {
         event.preventDefault();
         statusNoteInput.setCustomValidity('Catatan Status wajib diisi untuk status ini.');
         statusNoteInput.reportValidity();
         statusNoteInput.focus();
+        return;
+      }
+
+      if (needsDisposition && dispositionSelect.value === '') {
+        event.preventDefault();
+        dispositionSelect.setCustomValidity('Disposisi wajib dipilih untuk status diterima.');
+        dispositionSelect.reportValidity();
+        dispositionSelect.focus();
+        return;
+      }
+
+      if (needsDisposition && dispositionNoteInput.value.trim() === '') {
+        event.preventDefault();
+        dispositionNoteInput.setCustomValidity('Catatan Disposisi wajib diisi untuk status diterima.');
+        dispositionNoteInput.reportValidity();
+        dispositionNoteInput.focus();
       }
     });
 
