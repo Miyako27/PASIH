@@ -29,7 +29,7 @@
         </div>
 
         <label class="block text-sm font-medium text-slate-700">
-          Pilih PIC (Analis)
+          Pilih PIC (Analis) <span class="text-red-500">*</span>
           <select name="analyst_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
             <option value="">-- Pilih Analis --</option>
             @foreach($analysts as $analyst)
@@ -39,8 +39,8 @@
         </label>
 
         <label class="block text-sm font-medium text-slate-700">
-          Deadline
-          <input type="date" name="deadline_at" value="{{ old('deadline_at', optional($assignment->deadline_at)->format('Y-m-d')) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">
+          Deadline <span class="text-red-500">*</span>
+          <input type="date" name="deadline_at" required value="{{ old('deadline_at', optional($assignment->deadline_at)->format('Y-m-d')) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">
         </label>
 
         <div class="pt-1">

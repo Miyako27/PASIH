@@ -47,20 +47,20 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label class="block text-sm font-medium text-slate-700">Ringkasan Analisis
+          <label class="block text-sm font-medium text-slate-700">Ringkasan Analisis <span class="text-red-500">*</span>
             <textarea name="ringkasan_analisis" rows="4" placeholder="Masukkan Ringkasan Analisis" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('ringkasan_analisis', $initialAnalysis['ringkasan_analisis'] ?? '') }}</textarea>
           </label>
 
-          <label class="block text-sm font-medium text-slate-700">Hasil Evaluasi
+          <label class="block text-sm font-medium text-slate-700">Hasil Evaluasi <span class="text-red-500">*</span>
             <textarea name="hasil_evaluasi" rows="4" placeholder="Masukkan Hasil Evaluasi" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('hasil_evaluasi', $initialAnalysis['hasil_evaluasi'] ?? '') }}</textarea>
           </label>
         </div>
 
-        <label class="block text-sm font-medium text-slate-700">Rekomendasi
+        <label class="block text-sm font-medium text-slate-700">Rekomendasi <span class="text-red-500">*</span>
           <textarea name="rekomendasi" rows="4" placeholder="Masukkan Rekomendasi" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('rekomendasi', $initialAnalysis['rekomendasi'] ?? '') }}</textarea>
         </label>
 
-        <label class="block text-sm font-medium text-slate-700">Upload Dokumen
+        <label class="block text-sm font-medium text-slate-700">Upload Dokumen <span class="text-red-500">*</span>
           <input type="file" name="file" required class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700">
         </label>
 

@@ -34,17 +34,17 @@
       <form method="POST" action="{{ route('admin.accounts.store') }}" class="p-4 space-y-4">
         @csrf
         <div>
-          <label class="block text-sm font-semibold text-slate-700">Nama</label>
+          <label class="block text-sm font-semibold text-slate-700">Nama <span class="text-red-500">*</span></label>
           <input type="text" name="name" value="{{ old('name') }}" placeholder="Masukkan Nama" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-700">Email</label>
+            <label class="block text-sm font-semibold text-slate-700">Email <span class="text-red-500">*</span></label>
             <input type="email" name="email" value="{{ old('email') }}" placeholder="Masukkan Alamat Email" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700">Password</label>
+            <label class="block text-sm font-semibold text-slate-700">Password <span class="text-red-500">*</span></label>
             <input
               type="password"
               name="password"
@@ -62,7 +62,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-semibold text-slate-700">
-                Role
+                Role <span class="text-red-500">*</span>
             </label>
             <select name="role"
                 class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
@@ -80,7 +80,7 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-semibold text-slate-700">Instansi</label>
+            <label class="block text-sm font-semibold text-slate-700">Instansi <span class="text-red-500">*</span></label>
             <select name="id_instansi" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Instansi</option>
               @foreach($institutions as $institution)

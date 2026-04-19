@@ -35,7 +35,7 @@
         </div>
 
         <label class="block text-sm font-medium text-slate-700">
-          Keputusan
+          Keputusan <span class="text-red-500">*</span>
           <select name="decision" id="decision" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
             <option value="">--Pilih Keputusan--</option>
             <option value="approve" @selected(old('decision') === 'approve')>ACC</option>
@@ -47,7 +47,7 @@
         </label>
 
         <label class="block text-sm font-medium text-slate-700">
-          Catatan Revisi
+          Catatan Revisi <span class="text-red-500">*</span> <span class="text-xs font-normal text-slate-500">(wajib jika memilih Tolak dan Minta Revisi)</span>
           <textarea name="revision_note" id="revision_note" rows="4" placeholder="Isi jika keputusan revisi" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">{{ old('revision_note') }}</textarea>
           @error('revision_note')
             <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>

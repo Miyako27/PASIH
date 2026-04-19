@@ -34,7 +34,7 @@
 
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label class="block text-sm font-medium text-slate-700">Nomor Surat
+          <label class="block text-sm font-medium text-slate-700">Nomor Surat <span class="text-red-500">*</span>
             <input
               type="text"
               name="nomor_surat"
@@ -46,7 +46,7 @@
           </label>
 
 
-          <label class="block text-sm font-medium text-slate-700">Perihal
+          <label class="block text-sm font-medium text-slate-700">Perihal <span class="text-red-500">*</span>
             <input
               type="text"
               name="perihal"
@@ -59,8 +59,9 @@
         </div>
 
 
-        <label class="block text-sm font-medium text-slate-700">Deskripsi Permohonan
+        <label class="block text-sm font-medium text-slate-700">Deskripsi Permohonan <span class="text-red-500">*</span>
           <textarea
+            required
             name="description"
             rows="4"
             placeholder="Masukkan Deskripsi Permohonan"
@@ -70,7 +71,7 @@
 
         <div>
             <label class="block text-sm font-medium text-slate-700">
-                Upload Dokumen
+                Upload Dokumen <span class="text-red-500">*</span>
             </label>
 
             <p class="text-xs text-slate-500 mt-1">

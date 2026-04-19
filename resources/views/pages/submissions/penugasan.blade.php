@@ -48,8 +48,8 @@
         </div>
 
         <label class="block text-sm font-medium text-slate-700">
-          Catatan Penugasan
-          <textarea name="instruction" rows="4" placeholder="Masukkan Catatan Untuk Penugasan" class="mt-2 w-full px-4 py-3 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('instruction') }}</textarea>
+          Catatan Penugasan <span class="text-red-500">*</span>
+          <textarea name="instruction" rows="4" required placeholder="Masukkan Catatan Untuk Penugasan" class="mt-2 w-full px-4 py-3 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('instruction') }}</textarea>
         </label>
 
         <div>

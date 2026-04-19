@@ -27,7 +27,7 @@
       @csrf
 
       <label class="block text-sm font-medium text-slate-700">
-        Email
+        Email <span class="text-red-500">*</span>
         <input
           type="email"
           name="email"
@@ -39,7 +39,7 @@
       </label>
 
       <label class="block text-sm font-medium text-slate-700">
-        Password
+        Password <span class="text-red-500">*</span>
         <div class="relative mt-1.5">
           <input
             id="password"

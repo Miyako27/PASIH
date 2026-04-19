@@ -21,7 +21,7 @@
       <input type="hidden" name="token" value="{{ $token }}">
 
       <label class="block text-sm font-medium text-slate-700">
-        Email
+        Email <span class="text-red-500">*</span>
         <input
           type="email"
           name="email"
@@ -33,7 +33,7 @@
       </label>
 
       <label class="block text-sm font-medium text-slate-700">
-        New Password
+        New Password <span class="text-red-500">*</span>
         <input
           type="password"
           name="password"
@@ -44,7 +44,7 @@
       </label>
 
       <label class="block text-sm font-medium text-slate-700">
-        Confirm Password
+        Confirm Password <span class="text-red-500">*</span>
         <input
           type="password"
           name="password_confirmation"

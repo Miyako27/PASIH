@@ -77,8 +77,8 @@ class DashboardController extends Controller
             'Sudah Disposisi' => $disposedSubmissions,
             'Belum Ada PIC' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
             'Sedang Dianalisis' => (clone $assignmentQuery)->whereIn('status', ['in_progress', 'revision_by_pic'])->count(),
-            'Menunggu ACC Kadiv' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
-            'Menunggu ACC Kakanwil' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
+            'Menunggu ACC Kepala Divisi P3H' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
+            'Menunggu ACC Kepala Kantor Wilayah' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
             'Selesai Analisis' => $completedAssignmentsCount,
         ];
 

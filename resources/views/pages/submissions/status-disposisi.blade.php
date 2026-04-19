@@ -30,8 +30,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label class="block text-sm font-medium text-slate-700">
-            Status
-            <select id="status" name="status" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
+            Status <span class="text-red-500">*</span>
+            <select id="status" name="status" required class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Status</option>
               <option value="accepted" @selected(old('status', $submission->status->value) === 'accepted')>Diterima</option>
               <option value="revised" @selected(old('status', $submission->status->value) === 'revised')>Perlu Revisi</option>
@@ -54,10 +54,11 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label class="block text-sm font-medium text-slate-700">
-            Catatan Status
+            Catatan Status <span class="text-red-500">*</span> <span class="text-xs font-normal text-slate-500">(wajib untuk status Perlu Revisi/Ditolak)</span>
             <textarea
               id="status_note"
               name="status_note"
+              required
               rows="4"
               placeholder="Masukkan Catatan Untuk Status"
               class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
@@ -74,6 +75,9 @@
               class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
             >{{ old('disposition_note') }}</textarea>
           </label>
+
+          <p class="text-xs text-red-500">Catatan: Jika permohonan disetujui, wajib langsung melakukan disposisi.</p>
+
         </div>
 
         <div>
@@ -137,4 +141,3 @@
     applyStatusRules();
   </script>
 @endsection
-

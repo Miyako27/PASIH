@@ -30,7 +30,7 @@
         @method('PUT')
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label class="block text-sm font-medium text-slate-700">Nomor Surat
+          <label class="block text-sm font-medium text-slate-700">Nomor Surat <span class="text-red-500">*</span>
             <input
               type="text"
               name="nomor_surat"
@@ -50,7 +50,7 @@
             >
           </label>
 
-          <label class="block text-sm font-medium text-slate-700">Perihal
+          <label class="block text-sm font-medium text-slate-700">Perihal <span class="text-red-500">*</span>
             <input
               type="text"
               name="perihal"
@@ -72,7 +72,7 @@
           </label>
         </div>
 
-        <label class="block text-sm font-medium text-slate-700">Judul Perda
+        <label class="block text-sm font-medium text-slate-700">Judul Perda <span class="text-red-500">*</span>
           <input
             type="text"
             name="perda_title"

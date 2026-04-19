@@ -25,7 +25,7 @@
     <form method="POST" action="{{ route('password.email') }}" class="mt-5 space-y-4">
       @csrf
       <label class="block text-sm font-medium text-slate-700">
-        Email
+        Email <span class="text-red-500">*</span>
         <input
           type="email"
           name="email"
