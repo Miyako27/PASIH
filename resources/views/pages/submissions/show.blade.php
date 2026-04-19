@@ -63,6 +63,14 @@
     @php
       $statusNote = $submission->revision_note ?: $submission->rejection_note;
       $latestDisposition = $submission->latestDisposition;
+      $revisionDocuments = $submission->documents->where('document_type', 'dokumen_pendukung');
+      $latestRevisionDocument = $revisionDocuments->sortByDesc('id')->first();
+      $latestRevisionFileUrl = !empty($latestRevisionDocument?->file_path) ? asset('storage/'.$latestRevisionDocument->file_path) : null;
+      $latestRevisionFileName = strtolower($latestRevisionDocument?->file_name ?? '');
+      $latestRevisionFilePath = strtolower($latestRevisionDocument?->file_path ?? '');
+      $latestRevisionIsPdf = str_ends_with($latestRevisionFileName, '.pdf') || str_ends_with($latestRevisionFilePath, '.pdf');
+      $latestRevisionPreviewUrl = ($latestRevisionDocument && $latestRevisionIsPdf) ? route('documents.preview.submission', $latestRevisionDocument) : null;
+      $latestRevisionPreviewDataUrl = ($latestRevisionDocument && $latestRevisionIsPdf) ? route('documents.preview.submission', ['document' => $latestRevisionDocument, 'base64' => 1]) : null;
     @endphp
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
@@ -157,6 +165,56 @@
         @empty
           <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">Belum ada dokumen.</div>
         @endforelse
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <h2 class="text-xl font-bold text-slate-800">Dokumen Revisi Permohonan</h2>
+      <p class="text-sm text-slate-500 mt-1">Dokumen terbaru dari hasil revisi</p>
+
+      <div class="mt-5">
+        @if($latestRevisionDocument)
+          <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $latestRevisionDocument->file_name }}">{{ $latestRevisionDocument->file_name }}</div>
+                <div class="text-xs text-slate-500">{{ optional($latestRevisionDocument->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
+              </div>
+              @if($latestRevisionFileUrl)
+                @php($openUrl = ($latestRevisionIsPdf && $latestRevisionPreviewUrl) ? $latestRevisionPreviewUrl : $latestRevisionFileUrl)
+                <a href="{{ $openUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                  Lihat
+                </a>
+              @else
+                <span class="text-xs text-rose-600 font-semibold">File tidak tersedia</span>
+              @endif
+            </div>
+            @if($latestRevisionFileUrl && $latestRevisionIsPdf && $latestRevisionPreviewUrl)
+              <div class="bg-slate-100 p-3 md:p-4">
+                <div
+                  class="overflow-hidden rounded-lg ring-1 ring-slate-200 bg-slate-200"
+                  data-pdf-viewer
+                  data-pdf-url="{{ $latestRevisionPreviewDataUrl }}"
+                  data-pdf-name="{{ $latestRevisionDocument->file_name }}"
+                >
+                  <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
+                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
+                    </div>
+                  </div>
+                  <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
+                    <div class="flex flex-col items-center gap-3" data-pdf-pages>
+                      <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            @endif
+          </div>
+        @else
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">-</div>
+        @endif
       </div>
     </div>
 

@@ -159,7 +159,8 @@ class SubmissionController extends Controller
             'pemda_name' => ['required', 'string', 'max:255'],
             'perda_title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
-            'dokumen_pendukung' => ['nullable', 'file', 'max:5120', 'mimes:pdf,doc,docx,zip'],
+            'dokumen_pendukung' => ['nullable', 'array'],
+            'dokumen_pendukung.*' => ['file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
         ]);
 
         $submission->update([
@@ -175,12 +176,14 @@ class SubmissionController extends Controller
         ]);
 
         if ($request->hasFile('dokumen_pendukung')) {
-            $dokumenPendukung = $this->validateUploadedFile(
-                $request->file('dokumen_pendukung'),
-                'dokumen_pendukung',
-                'Upload dokumen pendukung gagal. Periksa ukuran file dan coba lagi.'
-            );
-            $this->storeDocument($submission->id, $request->user()->id, $dokumenPendukung, 'dokumen_pendukung');
+            foreach ($request->file('dokumen_pendukung') as $file) {
+                $dokumenPendukung = $this->validateUploadedFile(
+                    $file,
+                    'dokumen_pendukung',
+                    'Upload dokumen pendukung gagal. Periksa ukuran file dan coba lagi.'
+                );
+                $this->storeDocument($submission->id, $request->user()->id, $dokumenPendukung, 'dokumen_pendukung');
+            }
         }
 
         return redirect()->route('submissions.show', $submission)->with('success', 'Pengajuan berhasil diperbarui.');
