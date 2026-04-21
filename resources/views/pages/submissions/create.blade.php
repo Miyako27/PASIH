@@ -84,6 +84,8 @@
                 type="file"
                 name="surat_permohonan"
                 required
+                oninvalid="this.setCustomValidity('Silakan unggah Surat Permohonan terlebih dahulu.')"
+                oninput="this.setCustomValidity('')"
                 class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700">
             </label>
             @error('surat_permohonan')
@@ -96,6 +98,8 @@
                 type="file"
                 name="peraturan_daerah"
                 required
+                oninvalid="this.setCustomValidity('Silakan unggah Peraturan Daerah terlebih dahulu.')"
+                oninput="this.setCustomValidity('')"
                 class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700">
             </label>
             @error('peraturan_daerah')
@@ -116,7 +120,7 @@
         </div>
 
         <div class="pt-1">
-        <button id="btn-submit" type="submit" disabled class="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed">
+        <button type="submit" class="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 4v12m0 0l-4-4m4 4l4-4" />
           </svg>
@@ -124,31 +128,6 @@
         </button>
       </div>
       </form>
-      <script>
-        const form = document.querySelector('form[action="{{ route('submissions.store') }}"]');
-        const submitButton = document.getElementById('btn-submit');
-
-        function toggleSubmitButton() {
-          const requiredFields = form.querySelectorAll('[required]');
-          let isValid = true;
-
-          requiredFields.forEach((field) => {
-            if (field.type === 'file') {
-              if (!field.files || field.files.length === 0) {
-                isValid = false;
-              }
-            } else if (!field.value || !field.value.trim()) {
-              isValid = false;
-            }
-          });
-
-          submitButton.disabled = !isValid;
-        }
-
-        form.addEventListener('input', toggleSubmitButton);
-        form.addEventListener('change', toggleSubmitButton);
-        toggleSubmitButton();
-      </script>
     </div>
   </div>
 @endsection

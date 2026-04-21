@@ -184,9 +184,10 @@ class SubmissionController extends Controller
             'perihal' => ['required', 'string', 'max:255'],
             'pemda_name' => ['required', 'string', 'max:255'],
             'perda_title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'dokumen_pendukung' => ['nullable', 'array'],
-            'dokumen_pendukung.*' => ['file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
+            'description' => ['required', 'string'],
+            'surat_permohonan' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
+            'peraturan_daerah' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
+            'peraturan_pelaksana_perda' => ['nullable', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
         ]);
 
         $submission->update([
@@ -201,15 +202,27 @@ class SubmissionController extends Controller
             'rejection_note' => null,
         ]);
 
-        if ($request->hasFile('dokumen_pendukung')) {
-            foreach ($request->file('dokumen_pendukung') as $file) {
-                $dokumenPendukung = $this->validateUploadedFile(
-                    $file,
-                    'dokumen_pendukung',
-                    'Upload dokumen pendukung gagal. Periksa ukuran file dan coba lagi.'
-                );
-                $this->storeDocument($submission->id, $request->user()->id, $dokumenPendukung, 'dokumen_pendukung');
-            }
+        $suratPermohonanFile = $this->validateUploadedFile(
+            $request->file('surat_permohonan'),
+            'surat_permohonan',
+            'Upload dokumen Surat Permohonan gagal. Pastikan ukuran file tidak melebihi batas server.'
+        );
+        $this->storeDocument($submission->id, $request->user()->id, $suratPermohonanFile, 'dokumen_pendukung');
+
+        $peraturanDaerahFile = $this->validateUploadedFile(
+            $request->file('peraturan_daerah'),
+            'peraturan_daerah',
+            'Upload dokumen Peraturan Daerah gagal. Pastikan ukuran file tidak melebihi batas server.'
+        );
+        $this->storeDocument($submission->id, $request->user()->id, $peraturanDaerahFile, 'dokumen_pendukung');
+
+        if ($request->hasFile('peraturan_pelaksana_perda')) {
+            $peraturanPelaksanaPerdaFile = $this->validateUploadedFile(
+                $request->file('peraturan_pelaksana_perda'),
+                'peraturan_pelaksana_perda',
+                'Upload dokumen Peraturan Pelaksana Perda gagal. Pastikan ukuran file tidak melebihi batas server.'
+            );
+            $this->storeDocument($submission->id, $request->user()->id, $peraturanPelaksanaPerdaFile, 'dokumen_pendukung');
         }
 
         return redirect()->route('submissions.show', $submission)->with('success', 'Pengajuan berhasil diperbarui.');

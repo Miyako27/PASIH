@@ -25,7 +25,7 @@
         <h2 class="text-[18px] font-bold text-slate-800">Ubah Surat Permohonan</h2>
       </div>
 
-      <form method="POST" action="{{ route('submissions.update', $submission) }}" enctype="multipart/form-data" class="p-4 space-y-4">
+      <form id="edit-submission-form" method="POST" action="{{ route('submissions.update', $submission) }}" enctype="multipart/form-data" class="p-4 space-y-4">
         @csrf
         @method('PUT')
 
@@ -95,34 +95,56 @@
 
         <div>
           <label class="block text-sm font-medium text-slate-700">
-            Upload Dokumen <span class="text-red-500">*</span>
+            Upload Dokumen
           </label>
 
           <p class="text-xs text-slate-500 mt-1">
-            Anda dapat menambahkan lebih dari satu dokumen. Total ukuran file maksimal 20 MB.
+            Maksimal ukuran tiap file 20 MB.
           </p>
 
-          <div id="file-container" class="mt-3 space-y-3">
-            <div class="flex gap-2 items-center">
+          <div class="mt-3 space-y-3">
+            <label class="block text-sm font-medium text-slate-700">
+              Surat Permohonan <span class="text-red-500">*</span>
               <input
                 type="file"
-                name="dokumen_pendukung[]"
+                name="surat_permohonan"
                 required
+                oninvalid="this.setCustomValidity('Silakan unggah Surat Permohonan terlebih dahulu.')"
+                oninput="this.setCustomValidity('')"
                 class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700"
               >
-            </div>
+            </label>
+            @error('surat_permohonan')
+              <p class="text-red-500 text-sm -mt-2">{{ $message }}</p>
+            @enderror
+
+            <label class="block text-sm font-medium text-slate-700">
+              Peraturan Daerah <span class="text-red-500">*</span>
+              <input
+                type="file"
+                name="peraturan_daerah"
+                required
+                oninvalid="this.setCustomValidity('Silakan unggah Peraturan Daerah terlebih dahulu.')"
+                oninput="this.setCustomValidity('')"
+                class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700"
+              >
+            </label>
+            @error('peraturan_daerah')
+              <p class="text-red-500 text-sm -mt-2">{{ $message }}</p>
+            @enderror
+
+            <label class="block text-sm font-medium text-slate-700">
+              Peraturan Pelaksana Perda
+              <input
+                type="file"
+                name="peraturan_pelaksana_perda"
+                class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700"
+              >
+            </label>
+            @error('peraturan_pelaksana_perda')
+              <p class="text-red-500 text-sm -mt-2">{{ $message }}</p>
+            @enderror
           </div>
-
-          <button
-            type="button"
-            onclick="addFileInput()"
-            class="mt-3 px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg">
-            + Tambah Dokumen
-          </button>
-
-          @error('dokumen_pendukung.*')
-            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-          @enderror
         </div>
 
         <div class="pt-1 flex items-center gap-2">
@@ -135,36 +157,6 @@
           {{-- <a href="{{ route('submissions.index') }}" class="inline-flex items-center h-10 px-4 rounded-md bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200">Batal</a> --}}
         </div>
       </form>
-
-      <script>
-        function addFileInput() {
-          const container = document.getElementById('file-container');
-          const totalInputs = container.querySelectorAll('input[type="file"]').length;
-
-          if (totalInputs >= 5) {
-            alert('Maksimal 5 dokumen.');
-            return;
-          }
-
-          const div = document.createElement('div');
-          div.classList.add('flex', 'gap-2', 'items-center');
-          div.innerHTML = `
-            <input
-              type="file"
-              name="dokumen_pendukung[]"
-              class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700">
-            <button type="button" onclick="removeFileInput(this)" class="text-red-500 text-sm">
-              Hapus
-            </button>
-          `;
-
-          container.appendChild(div);
-        }
-
-        function removeFileInput(button) {
-          button.parentElement.remove();
-        }
-      </script>
     </div>
   </div>
 @endsection

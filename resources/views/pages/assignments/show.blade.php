@@ -271,7 +271,7 @@
                 </div>
               @endif
             @else
-              <div class="px-4 py-3 text-sm text-slate-500 bg-white">Belum ada dokumen.</div>
+              <div class="px-4 py-3 text-sm text-slate-500 bg-white">-</div>
             @endif
           </div>
         @endforeach
