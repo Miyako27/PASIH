@@ -89,16 +89,16 @@
                         $analysisText = 'Dalam Analisis';
                         $analysisTone = 'permohonan-in-analysis';
                     } elseif ($assignment->status->value === 'pending_kadiv_approval') {
-                        $analysisText = 'Menunggu ACC Kadiv';
+                        $analysisText = 'Menunggu Persetujuan Kadiv';
                         $analysisTone = 'permohonan-awaiting-kadiv';
                     } elseif ($assignment->status->value === 'pending_kakanwil_approval') {
-                        $analysisText = 'Menunggu ACC Kakanwil';
+                        $analysisText = 'Menunggu Persetujuan Kakanwil';
                         $analysisTone = 'permohonan-awaiting-kakanwil';
                     } elseif ($assignment->status->value === 'revision_by_pic') {
-                        $analysisText = 'Revisi oleh PIC';
+                        $analysisText = 'Revisi oleh Penanggung Jawab';
                         $analysisTone = 'permohonan-revision';
                     } elseif ($assignment->status->value === 'assigned') {
-                        $analysisText = 'Belum ada PIC';
+                        $analysisText = 'Belum ada Penanggung Jawab';
                         $analysisTone = 'permohonan-available';
                     } else {
                         $analysisText = $assignment->status->label();
@@ -237,4 +237,3 @@
     </div>
   </div>
 @endsection
-

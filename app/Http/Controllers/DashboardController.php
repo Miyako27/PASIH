@@ -75,10 +75,10 @@ class DashboardController extends Controller
             'Permohonan Masuk' => (clone $submissionQuery)->count(),
             'Sudah Divalidasi' => $validatedSubmissions,
             'Sudah Disposisi' => $disposedSubmissions,
-            'Belum Ada PIC' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
+            'Belum Ada Penanggung Jawab' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
             'Sedang Dianalisis' => (clone $assignmentQuery)->whereIn('status', ['in_progress', 'revision_by_pic'])->count(),
-            'Menunggu ACC Kepala Divisi P3H' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
-            'Menunggu ACC Kepala Kantor Wilayah' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
+            'Menunggu Persetujuan Kepala Divisi P3H' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
+            'Menunggu Persetujuan Kepala Kantor Wilayah' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
             'Selesai Analisis' => $completedAssignmentsCount,
         ];
 
@@ -153,13 +153,13 @@ class DashboardController extends Controller
             ],
             'ketua_tim_analisis' => [
                 [
-                    'title' => 'Tentukan PIC analisis',
-                    'description' => 'Penugasan sudah dibuat tetapi PIC belum ditentukan',
+                    'title' => 'Tentukan Penanggung Jawab analisis',
+                    'description' => 'Penugasan sudah dibuat tetapi Penanggung Jawab belum ditentukan',
                     'count' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
                     'url' => route('assignments.index', ['status' => 'assigned']),
                 ],
                 [
-                    'title' => 'Pantau revisi dari PIC',
+                    'title' => 'Pantau revisi dari Penanggung Jawab',
                     'description' => 'Penugasan direvisi dan perlu dipantau progres pembaruannya',
                     'count' => (clone $assignmentQuery)->where('status', 'revision_by_pic')->count(),
                     'url' => route('assignments.index', ['status' => 'revision_by_pic']),
@@ -181,7 +181,7 @@ class DashboardController extends Controller
             ],
             'kepala_divisi_p3h' => [
                 [
-                    'title' => 'ACC hasil analisis',
+                    'title' => 'Setujui hasil analisis',
                     'description' => 'Penugasan menunggu persetujuan Kadiv',
                     'count' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
                     'url' => route('assignments.index', ['status' => 'pending_kadiv_approval']),
@@ -198,7 +198,7 @@ class DashboardController extends Controller
             ],
             'kakanwil' => [
                 [
-                    'title' => 'ACC final hasil analisis',
+                    'title' => 'Setujui final hasil analisis',
                     'description' => 'Penugasan menunggu persetujuan final Kakanwil',
                     'count' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
                     'url' => route('assignments.index', ['status' => 'pending_kakanwil_approval']),

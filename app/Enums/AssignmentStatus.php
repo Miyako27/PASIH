@@ -14,11 +14,11 @@ enum AssignmentStatus: string
     public function label(): string
     {
         return match ($this) {
-            self::Assigned => 'Belum ada PIC',
+            self::Assigned => 'Belum ada Penanggung Jawab',
             self::InProgress => 'Dalam Analisis',
-            self::PendingKadivApproval => 'Menunggu ACC Kadiv',
-            self::PendingKakanwilApproval => 'Menunggu ACC Kakanwil',
-            self::RevisionByPic => 'Revisi oleh PIC',
+            self::PendingKadivApproval => 'Menunggu Persetujuan Kadiv',
+            self::PendingKakanwilApproval => 'Menunggu Persetujuan Kakanwil',
+            self::RevisionByPic => 'Revisi oleh Penanggung Jawab',
             self::Completed => 'Selesai Analisis',
         };
     }

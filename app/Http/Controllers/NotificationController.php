@@ -135,7 +135,7 @@ class NotificationController extends Controller
                 return [
                     'type' => 'Penugasan',
                     'title' => "Ada penugasan baru untuk {$nomorSurat}",
-                    'detail' => 'Status analisis: Belum ada PIC',
+                    'detail' => 'Status analisis: Belum ada Penanggung Jawab',
                     'user_id' => $actorId,
                     'user' => $actorName,
                     'time' => $assignment->updated_at,

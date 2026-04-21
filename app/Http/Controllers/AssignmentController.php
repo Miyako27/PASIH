@@ -175,7 +175,7 @@ class AssignmentController extends Controller
             'assigned_by_id' => $request->user()->id,
         ]);
 
-        return back()->with('success', 'Penugasan berhasil dibuat. Status: Belum ada PIC.');
+        return back()->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
     }
 
     public function createFromSubmission(Request $request, Submission $submission)
@@ -208,7 +208,7 @@ class AssignmentController extends Controller
             'assigned_by_id' => $request->user()->id,
         ]);
 
-        return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat. Status: Belum ada PIC.');
+        return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
     }
 
     public function assignPicForm(Request $request, Assignment $assignment)
@@ -247,7 +247,7 @@ class AssignmentController extends Controller
             'revision_note' => null,
         ]);
 
-        return redirect()->route('assignments.index')->with('success', 'PIC berhasil ditentukan. Status menjadi Dalam Analisis.');
+        return redirect()->route('assignments.index')->with('success', 'Penanggung Jawab berhasil ditentukan. Status menjadi Dalam Analisis.');
     }
 
     public function uploadAnalysisForm(Request $request, Assignment $assignment)
@@ -332,7 +332,7 @@ class AssignmentController extends Controller
             ]);
         });
 
-        return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil diunggah. Status: Menunggu ACC Kadiv.');
+        return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil diunggah. Status: Menunggu Persetujuan Kadiv.');
     }
 
     public function approvalForm(Request $request, Assignment $assignment)
@@ -368,7 +368,7 @@ class AssignmentController extends Controller
                     'revision_note' => null,
                 ]);
 
-                return redirect()->route('assignments.index')->with('success', 'ACC Kadiv berhasil. Status: Menunggu ACC Kakanwil.');
+                return redirect()->route('assignments.index')->with('success', 'Persetujuan Kadiv berhasil. Status: Menunggu Persetujuan Kakanwil.');
             }
 
             $assignment->update([
@@ -377,7 +377,7 @@ class AssignmentController extends Controller
                 'completed_at' => null,
             ]);
 
-            return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi PIC.');
+            return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');
         }
 
         if ($validated['decision'] === 'approve') {
@@ -395,7 +395,7 @@ class AssignmentController extends Controller
                 ]);
             });
 
-            return redirect()->route('assignments.index')->with('success', 'ACC Kakanwil berhasil. Status: Selesai Analisis.');
+            return redirect()->route('assignments.index')->with('success', 'Persetujuan Kakanwil berhasil. Status: Selesai Analisis.');
         }
 
         $assignment->update([
@@ -405,7 +405,7 @@ class AssignmentController extends Controller
             'completed_at' => null,
         ]);
 
-        return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi PIC.');
+        return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');
     }
 
     public function uploadDocument(Request $request, Assignment $assignment)

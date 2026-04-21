@@ -1,16 +1,16 @@
 @extends('layouts.app')
-@section('title', 'Tentukan PIC')
+@section('title', 'Tentukan Penanggung Jawab')
 
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Tentukan PIC</h1>
+      <h1 class="pasih-page-title">Tentukan Penanggung Jawab</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('assignments.index') }}" class="hover:text-slate-700 hover:underline">Penugasan</a>
         <span class="mx-1">/</span>
-        <span>Tentukan PIC</span>
+        <span>Tentukan Penanggung Jawab</span>
       </p>
     </div>
 
@@ -29,7 +29,7 @@
         </div>
 
         <label class="block text-sm font-medium text-slate-700">
-          Pilih PIC (Analis) <span class="text-red-500">*</span>
+          Pilih Penanggung Jawab (Analis) <span class="text-red-500">*</span>
           <select name="analyst_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
             <option value="">Pilih Analis</option>
             @foreach($analysts as $analyst)
@@ -55,4 +55,3 @@
     </div>
   </div>
 @endsection
-

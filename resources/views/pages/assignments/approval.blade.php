@@ -1,16 +1,16 @@
 @extends('layouts.app')
-@section('title', 'ACC Penugasan')
+@section('title', 'Persetujuan Penugasan')
 
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">ACC Penugasan</h1>
+      <h1 class="pasih-page-title">Persetujuan Penugasan</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('assignments.index') }}" class="hover:text-slate-700 hover:underline">Penugasan</a>
         <span class="mx-1">/</span>
-        <span>ACC</span>
+        <span>Persetujuan</span>
       </p>
     </div>
 
@@ -29,7 +29,7 @@
             <input type="text" disabled value="{{ $assignment->submission->nomor_surat }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
           <label class="block text-sm font-medium text-slate-700">
-            PIC
+            Penanggung Jawab
             <input type="text" disabled value="{{ $assignment->analyst?->name ?? '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
         </div>
@@ -38,7 +38,7 @@
           Keputusan <span class="text-red-500">*</span>
           <select name="decision" id="decision" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
             <option value="">Pilih Keputusan</option>
-            <option value="approve" @selected(old('decision') === 'approve')>ACC</option>
+            <option value="approve" @selected(old('decision') === 'approve')>Persetujuan</option>
             <option value="revise" @selected(old('decision') === 'revise')>Tolak dan Minta Revisi</option>
           </select>
           @error('decision')
@@ -91,4 +91,3 @@
     })();
   </script>
 @endsection
-
