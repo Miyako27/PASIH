@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -307,7 +308,11 @@ class AssignmentController extends Controller
             'file',
             'Upload hasil analisis gagal. Pastikan ukuran file tidak melebihi batas server.'
         );
-        $stored = $this->storeAssignmentFile($file);
+        $stored = $this->storeAssignmentFile(
+            $file,
+            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->pemda_name ?? 'Instansi',
+            'Hasil Analisis'
+        );
 
         DB::transaction(function () use ($request, $assignment, $validated, $stored): void {
             AssignmentDocument::query()->create([
@@ -427,7 +432,11 @@ class AssignmentController extends Controller
             'file',
             'Upload dokumen penugasan gagal. Pastikan ukuran file tidak melebihi batas server.'
         );
-        $stored = $this->storeAssignmentFile($file);
+        $stored = $this->storeAssignmentFile(
+            $file,
+            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->pemda_name ?? 'Instansi',
+            $validated['document_type'] === 'hasil_analisis' ? 'Hasil Analisis' : 'Dokumen'
+        );
 
         AssignmentDocument::query()->create([
             'assignment_id' => $assignment->id,
@@ -471,7 +480,7 @@ class AssignmentController extends Controller
     /**
      * @return array{file_name:string,file_path:string,mime_type:?string,file_size:int|false}
      */
-    private function storeAssignmentFile(UploadedFile $file): array
+    private function storeAssignmentFile(UploadedFile $file, string $instansiName, string $documentLabel): array
     {
         $destinationPath = public_path('storage/penugasan');
 
@@ -481,19 +490,35 @@ class AssignmentController extends Controller
             ]);
         }
 
-        $originalName = $file->getClientOriginalName();
-        $storedName = time().'_'.preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
+        $displayName = $this->buildDisplayDocumentName($instansiName, $documentLabel, now());
+        $extension = $file->getClientOriginalExtension();
+        $storedName = $displayName.($extension ? '.'.$extension : '');
+        if (file_exists($destinationPath.DIRECTORY_SEPARATOR.$storedName)) {
+            $storedName = $displayName.'_'.Str::lower(Str::random(4)).($extension ? '.'.$extension : '');
+        }
         $fileSize = $file->getSize();
         $mimeType = $file->getClientMimeType();
 
         $file->move($destinationPath, $storedName);
 
         return [
-            'file_name' => $originalName,
+            'file_name' => $displayName,
             'file_path' => 'penugasan/'.$storedName,
             'mime_type' => $mimeType,
             'file_size' => $fileSize,
         ];
+    }
+
+    private function buildDisplayDocumentName(string $instansiName, string $documentLabel, \Illuminate\Support\Carbon $timestamp): string
+    {
+        $normalize = function (string $value): string {
+            $parts = preg_split('/[^A-Za-z0-9]+/', trim($value)) ?: [];
+            $parts = array_filter($parts, static fn ($part) => $part !== '');
+
+            return $parts === [] ? 'Dokumen' : implode('', $parts);
+        };
+
+        return $normalize($instansiName).'_'.$normalize($documentLabel).'_'.$timestamp->format('YmdHis');
     }
 
     /**

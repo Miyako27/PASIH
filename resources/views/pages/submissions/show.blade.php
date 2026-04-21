@@ -63,7 +63,29 @@
     @php
       $statusNote = $submission->revision_note ?: $submission->rejection_note;
       $latestDisposition = $submission->latestDisposition;
-      $revisionDocuments = $submission->documents->where('document_type', 'dokumen_pendukung');
+      $formatDisplayFileName = function ($document, string $documentLabel) use ($submission): string {
+        $fromDb = trim((string) ($document?->file_name ?? ''));
+        if ($fromDb !== '') {
+          return $fromDb;
+        }
+
+        $instansiName = (string) ($submission->submitter?->instansi?->nama_instansi ?? $submission->pemda_name ?? 'Instansi');
+        $normalize = function (string $value): string {
+          $parts = preg_split('/[^A-Za-z0-9]+/', trim($value)) ?: [];
+          $parts = array_filter($parts, static fn ($part) => $part !== '');
+
+          return $parts === [] ? 'Dokumen' : implode('', $parts);
+        };
+        $instansiPart = $normalize($instansiName);
+        $jenisPart = $normalize($documentLabel);
+        $timestampPart = optional($document?->created_at)->format('YmdHis') ?? '';
+
+        return "{$instansiPart}_{$jenisPart}_{$timestampPart}";
+      };
+      $revisionDocuments = $submission->documents
+        ->where('document_type', 'dokumen_pendukung')
+        ->sortByDesc('id')
+        ->values();
       $submissionDocuments = $submission->documents->whereIn('document_type', [
         'surat_permohonan',
         'peraturan_daerah',
@@ -72,14 +94,29 @@
       $suratPermohonanDocument = $submissionDocuments->where('document_type', 'surat_permohonan')->sortByDesc('id')->first();
       $peraturanDaerahDocument = $submissionDocuments->where('document_type', 'peraturan_daerah')->sortByDesc('id')->first();
       $peraturanPelaksanaPerdaDocument = $submissionDocuments->where('document_type', 'peraturan_pelaksana_perda')->sortByDesc('id')->first();
-      $latestRevisionDocuments = $revisionDocuments
-        ->sortByDesc('id')
-        ->take(3)
-        ->reverse()
-        ->values();
-      $suratPermohonanRevisionDocument = $latestRevisionDocuments->get(0);
-      $peraturanDaerahRevisionDocument = $latestRevisionDocuments->get(1);
-      $peraturanPelaksanaPerdaRevisionDocument = $latestRevisionDocuments->get(2);
+      $inferRevisionType = function ($document): ?string {
+        $fileName = strtolower((string) ($document->file_name ?? ''));
+        if (str_contains($fileName, '_suratpermohonan_')) {
+          return 'surat_permohonan';
+        }
+        if (str_contains($fileName, '_peraturandaerah_')) {
+          return 'peraturan_daerah';
+        }
+        if (str_contains($fileName, '_peraturanpelaksanaperda_')) {
+          return 'peraturan_pelaksana_perda';
+        }
+
+        return null;
+      };
+      $suratPermohonanRevisionDocument = $revisionDocuments->first(fn ($document) => $inferRevisionType($document) === 'surat_permohonan');
+      $peraturanDaerahRevisionDocument = $revisionDocuments->first(fn ($document) => $inferRevisionType($document) === 'peraturan_daerah');
+      $peraturanPelaksanaPerdaRevisionDocument = $revisionDocuments->first(fn ($document) => $inferRevisionType($document) === 'peraturan_pelaksana_perda');
+
+      // Fallback untuk data lama yang belum punya pola nama file baru.
+      $untypedRevisionDocuments = $revisionDocuments->filter(fn ($document) => $inferRevisionType($document) === null)->values();
+      $suratPermohonanRevisionDocument = $suratPermohonanRevisionDocument ?? $untypedRevisionDocuments->get(0);
+      $peraturanDaerahRevisionDocument = $peraturanDaerahRevisionDocument ?? $untypedRevisionDocuments->get(1);
+      $peraturanPelaksanaPerdaRevisionDocument = $peraturanPelaksanaPerdaRevisionDocument ?? $untypedRevisionDocuments->get(2);
     @endphp
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
@@ -144,10 +181,11 @@
             $isPdf = str_ends_with($fileName, '.pdf') || str_ends_with($filePath, '.pdf');
             $previewUrl = $isPdf ? route('documents.preview.submission', $document) : null;
             $previewDataUrl = $isPdf ? route('documents.preview.submission', ['document' => $document, 'base64' => 1]) : null;
+            $displayFileName = $formatDisplayFileName($document, $docCard['label']);
               @endphp
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $document->file_name }}">{{ $document->file_name }}</div>
+                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}">{{ $displayFileName }}</div>
                   <div class="text-xs text-slate-500">{{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
@@ -167,7 +205,7 @@
                     class="overflow-hidden rounded-lg ring-1 ring-slate-200 bg-slate-200"
                     data-pdf-viewer
                     data-pdf-url="{{ $previewDataUrl }}"
-                    data-pdf-name="{{ $document->file_name }}"
+                    data-pdf-name="{{ $displayFileName }}"
                   >
                     <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
                       <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
@@ -218,10 +256,11 @@
                 $isPdf = str_ends_with($fileName, '.pdf') || str_ends_with($filePath, '.pdf');
                 $previewUrl = $isPdf ? route('documents.preview.submission', $document) : null;
                 $previewDataUrl = $isPdf ? route('documents.preview.submission', ['document' => $document, 'base64' => 1]) : null;
+                $displayFileName = $formatDisplayFileName($document, $docCard['label']);
               @endphp
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $document->file_name }}">{{ $document->file_name }}</div>
+                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}">{{ $displayFileName }}</div>
                   <div class="text-xs text-slate-500">{{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
@@ -241,7 +280,7 @@
                     class="overflow-hidden rounded-lg ring-1 ring-slate-200 bg-slate-200"
                     data-pdf-viewer
                     data-pdf-url="{{ $previewDataUrl }}"
-                    data-pdf-name="{{ $document->file_name }}"
+                    data-pdf-name="{{ $displayFileName }}"
                   >
                     <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
                       <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>

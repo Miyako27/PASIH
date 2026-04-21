@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Rule;
 
@@ -104,7 +105,9 @@ class SubmissionController extends Controller
                 $submission->id,
                 $request->user()->id,
                 $suratPermohonanFile,
-                'surat_permohonan'
+                'surat_permohonan',
+                $request->user()->instansi?->nama_instansi,
+                'Surat Permohonan'
             );
 
             $peraturanDaerahFile = $this->validateUploadedFile(
@@ -117,7 +120,9 @@ class SubmissionController extends Controller
                 $submission->id,
                 $request->user()->id,
                 $peraturanDaerahFile,
-                'peraturan_daerah'
+                'peraturan_daerah',
+                $request->user()->instansi?->nama_instansi,
+                'Peraturan Daerah'
             );
 
             if ($request->hasFile('peraturan_pelaksana_perda')) {
@@ -131,7 +136,9 @@ class SubmissionController extends Controller
                     $submission->id,
                     $request->user()->id,
                     $peraturanPelaksanaPerdaFile,
-                    'peraturan_pelaksana_perda'
+                    'peraturan_pelaksana_perda',
+                    $request->user()->instansi?->nama_instansi,
+                    'Peraturan Pelaksana Perda'
                 );
             }
         });
@@ -207,14 +214,28 @@ class SubmissionController extends Controller
             'surat_permohonan',
             'Upload dokumen Surat Permohonan gagal. Pastikan ukuran file tidak melebihi batas server.'
         );
-        $this->storeDocument($submission->id, $request->user()->id, $suratPermohonanFile, 'dokumen_pendukung');
+        $this->storeDocument(
+            $submission->id,
+            $request->user()->id,
+            $suratPermohonanFile,
+            'dokumen_pendukung',
+            $request->user()->instansi?->nama_instansi,
+            'Surat Permohonan'
+        );
 
         $peraturanDaerahFile = $this->validateUploadedFile(
             $request->file('peraturan_daerah'),
             'peraturan_daerah',
             'Upload dokumen Peraturan Daerah gagal. Pastikan ukuran file tidak melebihi batas server.'
         );
-        $this->storeDocument($submission->id, $request->user()->id, $peraturanDaerahFile, 'dokumen_pendukung');
+        $this->storeDocument(
+            $submission->id,
+            $request->user()->id,
+            $peraturanDaerahFile,
+            'dokumen_pendukung',
+            $request->user()->instansi?->nama_instansi,
+            'Peraturan Daerah'
+        );
 
         if ($request->hasFile('peraturan_pelaksana_perda')) {
             $peraturanPelaksanaPerdaFile = $this->validateUploadedFile(
@@ -222,7 +243,14 @@ class SubmissionController extends Controller
                 'peraturan_pelaksana_perda',
                 'Upload dokumen Peraturan Pelaksana Perda gagal. Pastikan ukuran file tidak melebihi batas server.'
             );
-            $this->storeDocument($submission->id, $request->user()->id, $peraturanPelaksanaPerdaFile, 'dokumen_pendukung');
+            $this->storeDocument(
+                $submission->id,
+                $request->user()->id,
+                $peraturanPelaksanaPerdaFile,
+                'dokumen_pendukung',
+                $request->user()->instansi?->nama_instansi,
+                'Peraturan Pelaksana Perda'
+            );
         }
 
         return redirect()->route('submissions.show', $submission)->with('success', 'Pengajuan berhasil diperbarui.');
@@ -383,7 +411,14 @@ class SubmissionController extends Controller
             'Upload dokumen gagal. Periksa ukuran file dan coba lagi.'
         );
 
-        $this->storeDocument($submission->id, $request->user()->id, $resultFile, $validated['document_type']);
+        $this->storeDocument(
+            $submission->id,
+            $request->user()->id,
+            $resultFile,
+            $validated['document_type'],
+            $submission->submitter?->instansi?->nama_instansi ?? $submission->pemda_name,
+            $validated['document_type'] === 'hasil_analisis' ? 'Hasil Analisis' : 'Rekomendasi'
+        );
 
         if ((bool) ($validated['mark_completed'] ?? false)) {
             $submission->update([
@@ -395,7 +430,14 @@ class SubmissionController extends Controller
         return back()->with('success', 'Dokumen hasil berhasil diunggah.');
     }
 
-    private function storeDocument(int $submissionId, int $userId, UploadedFile $file, string $type): void
+    private function storeDocument(
+        int $submissionId,
+        int $userId,
+        UploadedFile $file,
+        string $type,
+        ?string $instansiName = null,
+        ?string $documentLabel = null
+    ): void
 {
     $destinationPath = public_path('storage/permohonan');
 
@@ -405,8 +447,16 @@ class SubmissionController extends Controller
         ]);
     }
 
-    $originalName = $file->getClientOriginalName();
-    $storedName = time().'_'.preg_replace('/[^A-Za-z0-9._-]/', '_', $originalName);
+    $displayName = $this->buildDisplayDocumentName(
+        $instansiName ?? 'Instansi',
+        $documentLabel ?? $this->mapDocumentTypeToLabel($type),
+        now()
+    );
+    $extension = $file->getClientOriginalExtension();
+    $storedName = $displayName.($extension ? '.'.$extension : '');
+    if (file_exists($destinationPath.DIRECTORY_SEPARATOR.$storedName)) {
+        $storedName = $displayName.'_'.Str::lower(Str::random(4)).($extension ? '.'.$extension : '');
+    }
 
     $fileSize = $file->getSize();
     $mimeType = $file->getClientMimeType();
@@ -418,7 +468,7 @@ class SubmissionController extends Controller
         'submission_id' => $submissionId,
         'uploaded_by' => $userId,
         'document_type' => $type,
-        'file_name' => $originalName,
+        'file_name' => $displayName,
         'file_path' => 'permohonan/'.$storedName,
         'mime_type' => $mimeType,
         'file_size' => $fileSize,
@@ -435,6 +485,29 @@ class SubmissionController extends Controller
         }
 
         return $file;
+    }
+
+    private function mapDocumentTypeToLabel(string $type): string
+    {
+        return match ($type) {
+            'surat_permohonan' => 'Surat Permohonan',
+            'peraturan_daerah' => 'Peraturan Daerah',
+            'peraturan_pelaksana_perda' => 'Peraturan Pelaksana Perda',
+            'hasil_analisis' => 'Hasil Analisis',
+            default => 'Dokumen',
+        };
+    }
+
+    private function buildDisplayDocumentName(string $instansiName, string $documentLabel, \Illuminate\Support\Carbon $timestamp): string
+    {
+        $normalize = function (string $value): string {
+            $parts = preg_split('/[^A-Za-z0-9]+/', trim($value)) ?: [];
+            $parts = array_filter($parts, static fn ($part) => $part !== '');
+
+            return $parts === [] ? 'Dokumen' : implode('', $parts);
+        };
+
+        return $normalize($instansiName).'_'.$normalize($documentLabel).'_'.$timestamp->format('YmdHis');
     }
 
     private function authorizeView(Request $request, Submission $submission): void
