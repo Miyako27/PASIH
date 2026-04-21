@@ -72,7 +72,19 @@
 
           <div class="my-3 mx-1 h-px bg-slate-300"></div>
 
-          <div class="pt-1">
+          <div class="px-1">
+            <a
+              href="{{ route('password.change') }}"
+              class="inline-flex w-full cursor-pointer items-center gap-2 rounded-xl border border-transparent bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition duration-100 hover:bg-slate-100 active:bg-slate-200 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-200"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3v1.5m-13.5 0V8.25a3 3 0 013-3h7.5a3 3 0 013 3v1.5m-13.5 0h13.5m-13.5 0A2.25 2.25 0 003 12v6.75A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V12a2.25 2.25 0 00-2.25-2.25m-6.75 5.25v3" />
+              </svg>
+              Ubah Password
+            </a>
+          </div>
+
+          <div class="px-1">
             <form method="POST" action="{{ route('logout') }}">
               @csrf
               <button
