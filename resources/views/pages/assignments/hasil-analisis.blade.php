@@ -19,10 +19,10 @@
           <span class="h-8 px-2 inline-flex items-center rounded-md border border-slate-300">{{ $results->perPage() }}</span>
           <span>Data</span>
         </div>
-        <div class="flex items-center gap-2 text-sm text-slate-700">
-          <span>Cari:</span>
-          <input type="text" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
-        </div>
+        <form method="GET" action="{{ route('assignments.analysis-results') }}" class="flex items-center gap-2 text-sm text-slate-700">
+          <label for="q">Cari:</label>
+          <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
+        </form>
       </div>
 
       <div class="overflow-x-auto">

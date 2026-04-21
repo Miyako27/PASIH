@@ -25,6 +25,7 @@ class AssignmentController extends Controller
             ->with(['submission.submitter.instansi', 'analyst'])
             ->latest();
         $status = trim((string) $request->string('status'));
+        $search = trim((string) $request->string('q'));
         $allowedStatuses = ['assigned', 'in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'];
 
         if ($role === 'analis_hukum') {
@@ -35,10 +36,28 @@ class AssignmentController extends Controller
             $query->where('status', $status);
         }
 
+        if ($search !== '') {
+            $query->where(function ($builder) use ($search): void {
+                $builder
+                    ->whereHas('submission', function ($submissionQuery) use ($search): void {
+                        $submissionQuery
+                            ->where('nomor_surat', 'like', "%{$search}%")
+                            ->orWhere('perihal', 'like', "%{$search}%")
+                            ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
+                                $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
+                            });
+                    })
+                    ->orWhereHas('analyst', function ($analystQuery) use ($search): void {
+                        $analystQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         return view('pages.assignments.index', [
             'assignments' => $query->paginate(10)->withQueryString(),
             'analysts' => User::query()->where('role', 'analis_hukum')->orderBy('name')->get(),
             'status' => $status,
+            'search' => $search,
         ]);
     }
 
@@ -71,6 +90,7 @@ class AssignmentController extends Controller
     public function analysisResults(Request $request)
     {
         abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true), 403);
+        $search = trim((string) $request->string('q'));
 
         $resultsQuery = Assignment::query()
             ->with(['submission', 'analyst', 'latestAnalysisDocument'])
@@ -85,8 +105,23 @@ class AssignmentController extends Controller
             });
         }
 
+        if ($search !== '') {
+            $resultsQuery->where(function ($query) use ($search): void {
+                $query
+                    ->whereHas('submission', function ($submissionQuery) use ($search): void {
+                        $submissionQuery
+                            ->where('nomor_surat', 'like', "%{$search}%")
+                            ->orWhere('perihal', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('analyst', function ($analystQuery) use ($search): void {
+                        $analystQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
         return view('pages.assignments.hasil-analisis', [
-            'results' => $resultsQuery->paginate(5),
+            'results' => $resultsQuery->paginate(5)->withQueryString(),
+            'search' => $search,
         ]);
     }
 
