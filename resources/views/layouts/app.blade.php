@@ -69,6 +69,24 @@
           if (text) return text;
         }
 
+        const parent = el.parentElement;
+        if (parent) {
+          const siblingLabel = parent.querySelector(':scope > label');
+          if (siblingLabel) {
+            const text = extractLabelText(siblingLabel);
+            if (text) return text;
+          }
+        }
+
+        let prev = el.previousElementSibling;
+        while (prev) {
+          if (prev.tagName === 'LABEL') {
+            const text = extractLabelText(prev);
+            if (text) return text;
+          }
+          prev = prev.previousElementSibling;
+        }
+
         const fromName = (el.getAttribute('name') || '').trim();
         return normalizeLabelText(fromName.replace(/_/g, ' ')) || 'kolom ini';
       };

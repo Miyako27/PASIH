@@ -36,13 +36,13 @@
         @method('PUT')
         <div>
           <label class="block text-sm font-semibold text-slate-700">Nama <span class="text-red-500">*</span></label>
-          <input type="text" name="name" value="{{ old('name', $account->name) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+          <input type="text" name="name" value="{{ old('name', $account->name) }}" required class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-semibold text-slate-700">Email <span class="text-red-500">*</span></label>
-            <input type="email" name="email" value="{{ old('email', $account->email) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <input type="email" name="email" value="{{ old('email', $account->email) }}" required class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700">Password Baru (opsional)</label>
@@ -65,6 +65,7 @@
             <label class="block text-sm font-semibold text-slate-700">Role <span class="text-red-500">*</span></label>
             <select
               name="role"
+              required
               class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]"
             >
               <option value="">Pilih Role</option>
@@ -80,7 +81,7 @@
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700">Instansi <span class="text-red-500">*</span></label>
-            <select name="id_instansi" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
+            <select name="id_instansi" required class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               @foreach($institutions as $institution)
                 <option value="{{ $institution->id_instansi }}" @selected((string) old('id_instansi', $account->id_instansi) === (string) $institution->id_instansi)>{{ $institution->nama_instansi }}</option>
               @endforeach

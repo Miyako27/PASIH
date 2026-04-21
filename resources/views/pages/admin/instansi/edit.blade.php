@@ -37,17 +37,17 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-semibold text-slate-700">Nama Instansi <span class="text-red-500">*</span></label>
-            <input type="text" name="nama_instansi" value="{{ old('nama_instansi', $institution->nama_instansi) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <input type="text" name="nama_instansi" value="{{ old('nama_instansi', $institution->nama_instansi) }}" required class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700">Jenis <span class="text-red-500">*</span></label>
-            <input type="text" name="jenis_instansi" value="{{ old('jenis_instansi', $institution->jenis_instansi) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
+            <input type="text" name="jenis_instansi" value="{{ old('jenis_instansi', $institution->jenis_instansi) }}" required class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">
           </div>
         </div>
 
         <div>
           <label class="block text-sm font-semibold text-slate-700">Alamat <span class="text-red-500">*</span></label>
-          <textarea name="alamat" rows="4" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]0">{{ old('alamat', $institution->alamat) }}</textarea>
+          <textarea name="alamat" rows="4" required class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('alamat', $institution->alamat) }}</textarea>
         </div>
 
         <div class="pt-1">
