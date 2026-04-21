@@ -25,7 +25,7 @@
         <h2 class="text-[18px] font-bold text-slate-800">Ubah Status & Tetapkan Disposisi</h2>
       </div>
 
-      <form id="status-disposition-form" method="POST" action="{{ route('submissions.status-disposisi.save', $submission) }}" class="p-5 space-y-5">
+      <form id="status-disposition-form" method="POST" action="{{ route('submissions.status-disposisi.save', $submission) }}" class="p-5 space-y-5" novalidate>
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -54,9 +54,10 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label class="block text-sm font-medium text-slate-700">
-            Catatan Status <span class="text-red-500">*</span> <span class="text-xs font-normal text-slate-500">(wajib untuk status Perlu Revisi/Ditolak)</span>
+            Catatan Status <span class="text-red-500">*</span>
             <textarea
               id="status_note"
+              required
               name="status_note"
               rows="4"
               placeholder="Masukkan Catatan Untuk Status"
@@ -101,7 +102,7 @@
       const isRejected = status === 'rejected';
       const isRevised = status === 'revised';
       const isAccepted = status === 'accepted';
-      const needsStatusNote = status === 'rejected' || status === 'revised';
+      const needsStatusNote = true;
       const disableDisposition = isRejected || isRevised;
 
       dispositionSelect.disabled = disableDisposition;
@@ -120,40 +121,37 @@
       dispositionNoteInput.setCustomValidity('');
     }
 
-    statusSelect.addEventListener('change', applyStatusRules);
-    statusNoteInput.addEventListener('invalid', function () {
-      if (statusNoteInput.validity.valueMissing) {
-        statusNoteInput.setCustomValidity('Harap isi kolom ini.');
-      }
+    statusSelect.addEventListener('change', function () {
+      statusSelect.setCustomValidity('');
+      applyStatusRules();
     });
-    statusNoteInput.addEventListener('input', function () {
-      statusNoteInput.setCustomValidity('');
-    });
-    dispositionSelect.addEventListener('invalid', function () {
-      if (dispositionSelect.validity.valueMissing) {
-        dispositionSelect.setCustomValidity('Disposisi wajib dipilih untuk status diterima.');
-      }
-    });
-    dispositionSelect.addEventListener('change', function () {
-      dispositionSelect.setCustomValidity('');
-    });
-    dispositionNoteInput.addEventListener('invalid', function () {
-      if (dispositionNoteInput.validity.valueMissing) {
-        dispositionNoteInput.setCustomValidity('Catatan Disposisi wajib diisi untuk status diterima.');
-      }
-    });
-    dispositionNoteInput.addEventListener('input', function () {
-      dispositionNoteInput.setCustomValidity('');
-    });
+    statusNoteInput.addEventListener('input', function () { statusNoteInput.setCustomValidity(''); });
+    dispositionSelect.addEventListener('change', function () { dispositionSelect.setCustomValidity(''); });
+    dispositionNoteInput.addEventListener('input', function () { dispositionNoteInput.setCustomValidity(''); });
 
     form.addEventListener('submit', function (event) {
       applyStatusRules();
 
-      const needsDisposition = statusSelect.value === 'accepted';
-      const needsStatusNote = statusSelect.value === 'rejected' || statusSelect.value === 'revised';
+      const status = statusSelect.value;
+      const needsDisposition = status === 'accepted';
+      const needsStatusNote = true;
+
+      statusSelect.setCustomValidity('');
+      statusNoteInput.setCustomValidity('');
+      dispositionSelect.setCustomValidity('');
+      dispositionNoteInput.setCustomValidity('');
+
+      if (status === '') {
+        event.preventDefault();
+        statusSelect.setCustomValidity('Silakan pilih status terlebih dahulu.');
+        statusSelect.reportValidity();
+        statusSelect.focus();
+        return;
+      }
+
       if (needsStatusNote && statusNoteInput.value.trim() === '') {
         event.preventDefault();
-        statusNoteInput.setCustomValidity('Catatan Status wajib diisi untuk status ini.');
+        statusNoteInput.setCustomValidity('Silakan isi catatan status terlebih dahulu.');
         statusNoteInput.reportValidity();
         statusNoteInput.focus();
         return;
@@ -161,7 +159,7 @@
 
       if (needsDisposition && dispositionSelect.value === '') {
         event.preventDefault();
-        dispositionSelect.setCustomValidity('Disposisi wajib dipilih untuk status diterima.');
+        dispositionSelect.setCustomValidity('Silakan pilih disposisi terlebih dahulu.');
         dispositionSelect.reportValidity();
         dispositionSelect.focus();
         return;
@@ -169,7 +167,7 @@
 
       if (needsDisposition && dispositionNoteInput.value.trim() === '') {
         event.preventDefault();
-        dispositionNoteInput.setCustomValidity('Catatan Disposisi wajib diisi untuk status diterima.');
+        dispositionNoteInput.setCustomValidity('Silakan isi catatan disposisi terlebih dahulu.');
         dispositionNoteInput.reportValidity();
         dispositionNoteInput.focus();
       }

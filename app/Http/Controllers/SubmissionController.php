@@ -320,8 +320,8 @@ class SubmissionController extends Controller
                 Rule::prohibitedIf(fn () => in_array((string) $request->input('status'), ['revised', 'rejected'], true)),
             ],
             'status_note' => [
+                'required',
                 'string',
-                Rule::requiredIf(fn () => in_array((string) $request->input('status'), ['revised', 'rejected'], true)),
             ],
             'disposition_note' => [
                 'nullable',
