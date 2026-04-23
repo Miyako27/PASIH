@@ -40,7 +40,7 @@
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="divide-y divide-slate-200">
             @forelse($assignments as $assignment)
               @php
                 $rowNumber = ($assignments->firstItem() ?? 1) + $loop->index;
@@ -60,8 +60,23 @@
                 $isKadiv = $userRole === 'kepala_divisi_p3h';
                 $isKakanwil = $userRole === 'kakanwil';
                 $isAnalystOwner = $userRole === 'analis_hukum' && $assignment->analyst_id === auth()->id();
+
+                $rowBgColor = null;
+                if ($assignment->pic_assigned_at !== null) {
+                    $now = now();
+                    $twoMonthsAfterPicAssigned = $assignment->pic_assigned_at->copy()->addMonthsNoOverflow(2);
+                    $threeMonthsAfterPicAssigned = $assignment->pic_assigned_at->copy()->addMonthsNoOverflow(3);
+
+                    if ($now->lt($twoMonthsAfterPicAssigned)) {
+                        $rowBgColor = '#D1FAE5';
+                    } elseif ($now->lte($threeMonthsAfterPicAssigned)) {
+                        $rowBgColor = '#FEF08A';
+                    } else {
+                        $rowBgColor = '#FECACA';
+                    }
+                }
               @endphp
-              <tr class="border-t border-slate-100 text-slate-700">
+              <tr class="text-slate-700" @if($rowBgColor !== null) style="background-color: {{ $rowBgColor }};" @endif>
                 <td class="px-4 py-3">{{ $rowNumber }}</td>
                 <td class="px-4 py-3">{{ $submission->nomor_surat }}</td>
                 <td class="px-4 py-3">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</td>
