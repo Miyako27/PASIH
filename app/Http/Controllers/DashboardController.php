@@ -27,6 +27,8 @@ class DashboardController extends Controller
             ]);
         }
 
+        $periodStart = now()->subYear();
+
         $submissionQuery = Submission::query();
         $assignmentQuery = Assignment::query();
 
@@ -44,15 +46,23 @@ class DashboardController extends Controller
             });
         }
 
-        $acceptedSubmissions = (clone $submissionQuery)->where('status', 'accepted')->count();
-        $inAnalysisAssignments = (clone $assignmentQuery)
+        $periodSubmissionQuery = (clone $submissionQuery)
+            ->where('created_at', '>=', $periodStart);
+        $periodAssignmentQuery = (clone $assignmentQuery)
+            ->whereHas('submission', function ($query) use ($periodStart) {
+                $query->where('created_at', '>=', $periodStart);
+            });
+
+        $acceptedSubmissions = (clone $periodSubmissionQuery)->where('status', 'accepted')->count();
+        $completedSubmissionsCount = (clone $periodSubmissionQuery)->where('status', 'completed')->count();
+        $inAnalysisAssignments = (clone $periodAssignmentQuery)
             ->whereIn('status', ['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic'])
             ->count();
-        $completedAssignmentsCount = (clone $assignmentQuery)->where('status', 'completed')->count();
-        $validatedSubmissions = (clone $submissionQuery)
+        $completedAssignmentsCount = (clone $periodAssignmentQuery)->where('status', 'completed')->count();
+        $validatedSubmissions = (clone $periodSubmissionQuery)
             ->whereIn('status', ['accepted', 'disposed', 'assigned', 'completed'])
             ->count();
-        $disposedSubmissions = (clone $submissionQuery)
+        $disposedSubmissions = (clone $periodSubmissionQuery)
             ->where(function ($query) {
                 $query
                     ->where('status', 'disposed')
@@ -61,24 +71,31 @@ class DashboardController extends Controller
             ->count();
 
         $stats = [
-            'total_submissions' => (clone $submissionQuery)->count(),
-            'submitted' => (clone $submissionQuery)->where('status', 'submitted')->count(),
+            'total_submissions' => (clone $periodSubmissionQuery)->count(),
+            'submitted' => (clone $periodSubmissionQuery)->where('status', 'submitted')->count(),
             'in_progress' => $acceptedSubmissions,
             'in_analysis' => $inAnalysisAssignments,
             'completed' => $completedAssignmentsCount,
-            'total_assignments' => (clone $assignmentQuery)->count(),
+            'completed_submissions' => $completedSubmissionsCount,
+            'total_assignments' => (clone $periodAssignmentQuery)->count(),
         ];
 
-        $recentSubmissions = (clone $submissionQuery)->with('submitter')->latest()->limit(6)->get();
+        $summarySubmissionQuery = (clone $periodSubmissionQuery);
+        $summaryStats = [
+            'total_submissions' => (clone $summarySubmissionQuery)->count(),
+            'completed_submissions' => (clone $summarySubmissionQuery)->where('status', 'completed')->count(),
+        ];
+
+        $recentSubmissions = (clone $periodSubmissionQuery)->with('submitter')->latest()->limit(6)->get();
 
         $bottleneck = [
-            'Permohonan Masuk' => (clone $submissionQuery)->count(),
+            'Permohonan Masuk' => (clone $periodSubmissionQuery)->count(),
             'Sudah Divalidasi' => $validatedSubmissions,
             'Sudah Disposisi' => $disposedSubmissions,
-            'Belum Ada Penanggung Jawab' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
-            'Sedang Dianalisis' => (clone $assignmentQuery)->whereIn('status', ['in_progress', 'revision_by_pic'])->count(),
-            'Menunggu Persetujuan Kepala Divisi P3H' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
-            'Menunggu Persetujuan Kepala Kantor Wilayah' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
+            'Belum Ada Penanggung Jawab' => (clone $periodAssignmentQuery)->where('status', 'assigned')->count(),
+            'Sedang Dianalisis' => (clone $periodAssignmentQuery)->whereIn('status', ['in_progress', 'revision_by_pic'])->count(),
+            'Menunggu Persetujuan Kepala Divisi P3H' => (clone $periodAssignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
+            'Menunggu Persetujuan Kepala Kantor Wilayah' => (clone $periodAssignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
             'Selesai Analisis' => $completedAssignmentsCount,
         ];
 
@@ -102,7 +119,10 @@ class DashboardController extends Controller
 
         $institutionSubmissionCounts = Instansi::query()
             ->leftJoin('users', 'users.id_instansi', '=', 'instansi.id_instansi')
-            ->leftJoin('submissions', 'submissions.submitter_id', '=', 'users.id')
+            ->leftJoin('submissions', function ($join) use ($periodStart) {
+                $join->on('submissions.submitter_id', '=', 'users.id')
+                    ->where('submissions.created_at', '>=', $periodStart);
+            })
             ->groupBy('instansi.id_instansi', 'instansi.nama_instansi')
             ->select('instansi.nama_instansi')
             ->selectRaw('COUNT(submissions.id) as total_permohonan')
@@ -216,7 +236,7 @@ class DashboardController extends Controller
             default => [],
         };
 
-        $completedAssignments = (clone $assignmentQuery)
+        $completedAssignments = (clone $periodAssignmentQuery)
             ->where('status', 'completed')
             ->whereNotNull('assigned_at')
             ->whereNotNull('completed_at')
@@ -231,6 +251,7 @@ class DashboardController extends Controller
 
         return view('pages.dashboard', [
             'stats' => $stats,
+            'summaryStats' => $summaryStats,
             'recentSubmissions' => $recentSubmissions,
             'bottleneck' => $bottleneck,
             'taskNotifications' => $taskNotifications,

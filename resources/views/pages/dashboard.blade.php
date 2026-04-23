@@ -9,6 +9,11 @@
     $total = max($punctuality['total'], 1);
     $onTimePercent = (int) round(($onTime / $total) * 100);
     $latePercent = 100 - $onTimePercent;
+
+    $totalSubmissions = max((int) ($summaryStats['total_submissions'] ?? 0), 0);
+    $completedSubmissions = max((int) ($summaryStats['completed_submissions'] ?? 0), 0);
+    $summaryBase = max($totalSubmissions, 1);
+    $completedSubmissionsPercent = (int) round(($completedSubmissions / $summaryBase) * 100);
   @endphp
 
   <div class="space-y-5">
@@ -114,6 +119,38 @@
     </div>
 
     <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
+      <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Ringkasan Permohonan</h2>
+      <p class="mt-1 text-[14px] text-slate-500">Menampilkan total permohonan dan jumlah yang telah selesai</p>
+
+      <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <div class="grid grid-cols-1 md:grid-cols-[220px_1fr] items-center gap-5">
+          <div class="flex justify-center">
+            <div
+              class="relative h-44 w-44 rounded-full ring-1 ring-slate-200"
+              style="background: conic-gradient(#006A4E 0% {{ $completedSubmissionsPercent }}%, #E2E8F0 {{ $completedSubmissionsPercent }}% 100%);"
+            >
+              <div class="absolute inset-[18px] rounded-full bg-white flex flex-col items-center justify-center text-center px-2">
+                <div class="text-[11px] font-medium tracking-wide text-slate-500">Selesai</div>
+                <div class="mt-1 text-2xl font-extrabold leading-none text-slate-800">{{ $completedSubmissionsPercent }}%</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-3">
+            <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">
+              <div class="text-xs font-semibold tracking-wide text-slate-500">Seluruh Permohonan</div>
+              <div class="mt-1 text-3xl font-extrabold leading-none text-slate-900">{{ $totalSubmissions }}</div>
+            </div>
+            <div class="rounded-xl bg-white border border-slate-200 px-4 py-3">
+              <div class="text-xs font-semibold tracking-wide text-slate-500">Permohonan Selesai</div>
+              <div class="mt-1 text-3xl font-extrabold leading-none text-emerald-700">{{ $completedSubmissions }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
       <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Jumlah Permohonan per Instansi</h2>
       <p class="mt-1 text-[14px] text-slate-500">Ringkasan jumlah permohonan dari tiap instansi yang terdaftar</p>
 
@@ -188,4 +225,3 @@
     </div>
   </div>
 @endsection
-
