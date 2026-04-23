@@ -10,6 +10,14 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
+    return view('welcome');
+})->name('home');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
@@ -20,8 +28,6 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::redirect('/', '/dashboard');
-
     Route::get('/ubah-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.change');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

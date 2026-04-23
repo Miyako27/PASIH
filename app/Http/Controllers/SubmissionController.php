@@ -82,6 +82,7 @@ class SubmissionController extends Controller
         $validated = $request->validate([
             'nomor_surat' => ['required', 'string', 'max:255'],
             'perihal' => ['required', 'string', 'max:255'],
+            'perda_title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'surat_permohonan' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
             'peraturan_daerah' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
@@ -94,8 +95,8 @@ class SubmissionController extends Controller
                 'submitter_id' => $request->user()->id,
                 'nomor_surat' => $validated['nomor_surat'],
                 'perihal' => $validated['perihal'],
-                'pemda_name' => $request->user()->name,
-                'perda_title' => $validated['perihal'],
+                'pemda_name' => $request->user()->instansi?->nama_instansi ?? $request->user()->name,
+                'perda_title' => $validated['perda_title'],
                 'description' => $validated['description'] ?? null,
                 'status' => 'submitted',
                 'submitted_at' => now(),
@@ -196,7 +197,6 @@ class SubmissionController extends Controller
         $validated = $request->validate([
             'nomor_surat' => ['required', 'string', 'max:255'],
             'perihal' => ['required', 'string', 'max:255'],
-            'pemda_name' => ['required', 'string', 'max:255'],
             'perda_title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'surat_permohonan' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
@@ -207,7 +207,7 @@ class SubmissionController extends Controller
         $submission->update([
             'nomor_surat' => $validated['nomor_surat'],
             'perihal' => $validated['perihal'],
-            'pemda_name' => $validated['pemda_name'],
+            'pemda_name' => $request->user()->instansi?->nama_instansi ?? $request->user()->name,
             'perda_title' => $validated['perda_title'],
             'description' => $validated['description'] ?? null,
             'status' => 'submitted',

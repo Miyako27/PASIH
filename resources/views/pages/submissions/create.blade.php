@@ -34,6 +34,17 @@
 
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="block text-sm font-medium text-slate-700">Nama Perda <span class="text-red-500">*</span>
+            <input
+              type="text"
+              name="perda_title"
+              value="{{ old('perda_title') }}"
+              placeholder="Masukkan Nama Perda"
+              required
+              class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
+            >
+          </label>
+
           <label class="block text-sm font-medium text-slate-700">Nomor Surat <span class="text-red-500">*</span>
             <input
               type="text"
@@ -44,9 +55,9 @@
               class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
             >
           </label>
+        </div>
 
-
-          <label class="block text-sm font-medium text-slate-700">Perihal <span class="text-red-500">*</span>
+        <label class="block text-sm font-medium text-slate-700">Perihal <span class="text-red-500">*</span>
             <input
               type="text"
               name="perihal"
@@ -56,8 +67,6 @@
               class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
             >
           </label>
-        </div>
-
 
         <label class="block text-sm font-medium text-slate-700">Deskripsi Permohonan <span class="text-red-500">*</span>
           <textarea
