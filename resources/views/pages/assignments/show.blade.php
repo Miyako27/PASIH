@@ -102,19 +102,9 @@
         'hasil_evaluasi' => '',
         'rekomendasi' => '',
       ];
-
-      $analysisNotes = (string) ($latestAnalysisDocument?->notes ?? '');
-      if ($analysisNotes !== '') {
-        if (preg_match('/Ringkasan:\s*(.*?)\n\nHasil Evaluasi:/s', $analysisNotes, $m)) {
-          $analysisFields['ringkasan_analisis'] = trim($m[1]);
-        }
-        if (preg_match('/Hasil Evaluasi:\s*(.*?)\n\nRekomendasi:/s', $analysisNotes, $m)) {
-          $analysisFields['hasil_evaluasi'] = trim($m[1]);
-        }
-        if (preg_match('/Rekomendasi:\s*(.*)$/s', $analysisNotes, $m)) {
-          $analysisFields['rekomendasi'] = trim($m[1]);
-        }
-      }
+      $analysisFields['ringkasan_analisis'] = trim((string) ($latestAnalysisDocument?->ringkasan_analisis ?? ''));
+      $analysisFields['hasil_evaluasi'] = trim((string) ($latestAnalysisDocument?->hasil_evaluasi ?? ''));
+      $analysisFields['rekomendasi'] = trim((string) ($latestAnalysisDocument?->rekomendasi ?? ''));
     @endphp
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">

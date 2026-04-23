@@ -68,6 +68,11 @@ class Assignment extends Model
         return $this->hasMany(AssignmentDocument::class);
     }
 
+    public function kemenkumReplyDocument()
+    {
+        return $this->hasOne(AssignmentKemenkumReplyDocument::class)->latestOfMany('id');
+    }
+
     public function latestAnalysisDocument()
     {
         return $this->hasOne(AssignmentDocument::class)

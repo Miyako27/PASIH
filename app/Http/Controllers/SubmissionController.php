@@ -25,7 +25,13 @@ class SubmissionController extends Controller
         $status = trim((string) $request->string('status'));
         $allowedStatuses = ['submitted', 'revised', 'rejected', 'accepted', 'disposed', 'assigned', 'completed'];
 
-        $query = Submission::query()->with(['submitter.instansi', 'divisionOperator', 'latestDisposition.toUser', 'assignments.analyst'])->latest();
+        $query = Submission::query()->with([
+            'submitter.instansi',
+            'divisionOperator',
+            'latestDisposition.toUser',
+            'assignments.analyst',
+            'assignments.kemenkumReplyDocument',
+        ])->latest();
 
         if ($user->role->value === 'operator_pemda') {
             $query->where('submitter_id', $user->id);
@@ -158,6 +164,7 @@ class SubmissionController extends Controller
             'latestDisposition.toUser',
             'assignments.analyst',
             'assignments.documents',
+            'assignments.kemenkumReplyDocument',
         ]);
 
         return view('pages.submissions.show', [

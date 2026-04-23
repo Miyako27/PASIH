@@ -63,6 +63,9 @@
     @php
       $statusNote = $submission->revision_note ?: $submission->rejection_note;
       $latestDisposition = $submission->latestDisposition;
+      $suratBalasanKemenkum = $submission->assignments
+        ->sortByDesc('id')
+        ->first(fn ($assignment) => $assignment->kemenkumReplyDocument)?->kemenkumReplyDocument;
       $formatDisplayFileName = function ($document, string $documentLabel) use ($submission): string {
         $fromDb = trim((string) ($document?->file_name ?? ''));
         if ($fromDb !== '') {
@@ -153,6 +156,64 @@
           <div class="text-xs uppercase tracking-wide text-slate-500">Catatan Disposisi</div>
           <div class="mt-1 text-sm text-slate-700">{{ $latestDisposition?->note ?: '-' }}</div>
         </div>
+      </div>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+      <h2 class="text-xl font-bold text-slate-800">Surat Balasan Kemenkum</h2>
+      <p class="text-sm text-slate-500 mt-1">Terkait permohonan analisis peraturan daerah</p>
+
+      <div class="mt-5">
+        @if($suratBalasanKemenkum)
+          @php
+            $fileUrl = !empty($suratBalasanKemenkum->file_path) ? asset('storage/'.$suratBalasanKemenkum->file_path) : null;
+            $fileName = strtolower($suratBalasanKemenkum->file_name ?? '');
+            $filePath = strtolower($suratBalasanKemenkum->file_path ?? '');
+            $isPdf = str_ends_with($fileName, '.pdf') || str_ends_with($filePath, '.pdf');
+            $previewUrl = $isPdf ? route('documents.preview.suratbalasan', $suratBalasanKemenkum) : null;
+            $previewDataUrl = $isPdf ? route('documents.preview.suratbalasan', ['document' => $suratBalasanKemenkum, 'base64' => 1]) : null;
+            $displayFileName = $formatDisplayFileName($suratBalasanKemenkum, 'Surat Balasan Kemenkum');
+          @endphp
+          <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
+            <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
+              <div class="min-w-0 flex-1">
+                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}">{{ $displayFileName }}</div>
+                <div class="text-xs text-slate-500">{{ optional($suratBalasanKemenkum->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
+              </div>
+              @if($fileUrl)
+                <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
+                  Lihat
+                </a>
+              @else
+                <span class="text-xs text-rose-600 font-semibold">File tidak tersedia</span>
+              @endif
+            </div>
+            @if($fileUrl && $isPdf && $previewUrl)
+              <div class="bg-slate-100 p-3 md:p-4">
+                <div
+                  class="overflow-hidden rounded-lg ring-1 ring-slate-200 bg-slate-200"
+                  data-pdf-viewer
+                  data-pdf-url="{{ $previewDataUrl }}"
+                  data-pdf-name="{{ $displayFileName }}"
+                >
+                  <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
+                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
+                    <div class="flex items-center gap-1">
+                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
+                    </div>
+                  </div>
+                  <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
+                    <div class="flex flex-col items-center gap-3" data-pdf-pages>
+                      <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            @endif
+          </div>
+        @else
+          <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 px-4 py-3 text-sm text-slate-500">-</div>
+        @endif
       </div>
     </div>
 

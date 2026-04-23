@@ -8,21 +8,22 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('assignment_documents', function (Blueprint $table) {
+        Schema::create('suratbalasan_documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('assignment_id')->constrained('assignments')->cascadeOnDelete();
             $table->foreignId('uploaded_by')->constrained('users')->cascadeOnDelete();
-            $table->string('document_type');
             $table->string('file_name');
             $table->string('file_path');
             $table->string('mime_type')->nullable();
             $table->unsignedBigInteger('file_size')->nullable();
             $table->timestamps();
+
+            $table->unique('assignment_id');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('assignment_documents');
+        Schema::dropIfExists('suratbalasan_documents');
     }
 };

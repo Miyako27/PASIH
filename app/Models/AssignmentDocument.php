@@ -17,7 +17,9 @@ class AssignmentDocument extends Model
         'file_path',
         'mime_type',
         'file_size',
-        'notes',
+        'ringkasan_analisis',
+        'hasil_evaluasi',
+        'rekomendasi',
     ];
 
     public function assignment()

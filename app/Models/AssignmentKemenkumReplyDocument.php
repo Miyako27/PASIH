@@ -5,22 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubmissionDocument extends Model
+class AssignmentKemenkumReplyDocument extends Model
 {
     use HasFactory;
 
+    protected $table = 'suratbalasan_documents';
+
     protected $fillable = [
-        'submission_id',
+        'assignment_id',
         'uploaded_by',
-        'document_type',
         'file_name',
         'file_path',
         'mime_type',
         'file_size',
     ];
 
-    public function submission()
+    public function assignment()
     {
-        return $this->belongsTo(Submission::class);
+        return $this->belongsTo(Assignment::class);
     }
 }

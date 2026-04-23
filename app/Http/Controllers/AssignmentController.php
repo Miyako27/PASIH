@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Assignment;
 use App\Models\AssignmentDocument;
+use App\Models\AssignmentKemenkumReplyDocument;
 use App\Models\Submission;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -150,7 +151,7 @@ class AssignmentController extends Controller
         return view('pages.assignments.show-hasil-analisis', [
             'assignment' => $assignment,
             'latestAnalysisDocument' => $latestAnalysisDocument,
-            'analysisFields' => $this->extractAnalysisFieldsFromNotes($latestAnalysisDocument?->notes),
+            'analysisFields' => $this->extractAnalysisFieldsFromDocument($latestAnalysisDocument),
         ]);
     }
 
@@ -233,20 +234,45 @@ class AssignmentController extends Controller
         $validated = $request->validate([
             'analyst_id' => ['required', 'exists:users,id'],
             'deadline_at' => ['nullable', 'date'],
+            'surat_balasan_kemenkum' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
         ]);
 
         $analyst = User::query()->findOrFail($validated['analyst_id']);
         abort_unless($analyst->role->value === 'analis_hukum', 422);
 
-        $assignment->update([
-            'analyst_id' => $analyst->id,
-            'pic_assigned_by_id' => $request->user()->id,
-            'pic_assigned_at' => now(),
-            'deadline_at' => $validated['deadline_at'] ?? null,
-            'status' => 'in_progress',
-            'started_at' => $assignment->started_at ?? now(),
-            'revision_note' => null,
-        ]);
+        $file = $this->validateUploadedFile(
+            $request->file('surat_balasan_kemenkum'),
+            'surat_balasan_kemenkum',
+            'Upload surat balasan Kemenkum gagal. Pastikan ukuran file tidak melebihi batas server.'
+        );
+        $stored = $this->storeAssignmentFile(
+            $file,
+            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->pemda_name ?? 'Instansi',
+            'Surat Balasan Kemenkum'
+        );
+
+        DB::transaction(function () use ($request, $assignment, $analyst, $validated, $stored): void {
+            $assignment->update([
+                'analyst_id' => $analyst->id,
+                'pic_assigned_by_id' => $request->user()->id,
+                'pic_assigned_at' => now(),
+                'deadline_at' => $validated['deadline_at'] ?? null,
+                'status' => 'in_progress',
+                'started_at' => $assignment->started_at ?? now(),
+                'revision_note' => null,
+            ]);
+
+            AssignmentKemenkumReplyDocument::query()->updateOrCreate(
+                ['assignment_id' => $assignment->id],
+                [
+                    'uploaded_by' => $request->user()->id,
+                    'file_name' => $stored['file_name'],
+                    'file_path' => $stored['file_path'],
+                    'mime_type' => $stored['mime_type'],
+                    'file_size' => $stored['file_size'],
+                ]
+            );
+        });
 
         return redirect()->route('assignments.index')->with('success', 'Penanggung Jawab berhasil ditentukan. Status menjadi Dalam Analisis.');
     }
@@ -261,7 +287,7 @@ class AssignmentController extends Controller
         );
 
         $assignment->load(['submission', 'latestAnalysisDocument']);
-        $initialAnalysis = $this->extractAnalysisFieldsFromNotes($assignment->latestAnalysisDocument?->notes);
+        $initialAnalysis = $this->extractAnalysisFieldsFromDocument($assignment->latestAnalysisDocument);
 
         return view('pages.assignments.upload-hasil', [
             'assignment' => $assignment,
@@ -279,7 +305,7 @@ class AssignmentController extends Controller
         );
 
         $assignment->load(['submission', 'latestAnalysisDocument']);
-        $initialAnalysis = $this->extractAnalysisFieldsFromNotes($assignment->latestAnalysisDocument?->notes);
+        $initialAnalysis = $this->extractAnalysisFieldsFromDocument($assignment->latestAnalysisDocument);
 
         return view('pages.assignments.edit-hasil-analisis', [
             'assignment' => $assignment,
@@ -323,7 +349,9 @@ class AssignmentController extends Controller
                 'file_path' => $stored['file_path'],
                 'mime_type' => $stored['mime_type'],
                 'file_size' => $stored['file_size'],
-                'notes' => "Ringkasan: {$validated['ringkasan_analisis']}\n\nHasil Evaluasi: {$validated['hasil_evaluasi']}\n\nRekomendasi: {$validated['rekomendasi']}",
+                'ringkasan_analisis' => $validated['ringkasan_analisis'],
+                'hasil_evaluasi' => $validated['hasil_evaluasi'],
+                'rekomendasi' => $validated['rekomendasi'],
             ]);
 
             $assignment->update([
@@ -424,7 +452,6 @@ class AssignmentController extends Controller
         $validated = $request->validate([
             'document_type' => ['required', Rule::in(['hasil_analisis', 'rekomendasi', 'lampiran'])],
             'file' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
-            'notes' => ['nullable', 'string'],
         ]);
 
         $file = $this->validateUploadedFile(
@@ -446,7 +473,6 @@ class AssignmentController extends Controller
             'file_path' => $stored['file_path'],
             'mime_type' => $stored['mime_type'],
             'file_size' => $stored['file_size'],
-            'notes' => $validated['notes'] ?? null,
         ]);
 
         return back()->with('success', 'Dokumen penugasan berhasil diunggah.');
@@ -521,17 +547,7 @@ class AssignmentController extends Controller
         return $normalize($instansiName).'_'.$normalize($documentLabel).'_'.$timestamp->format('YmdHis');
     }
 
-    /**
-     * Convert stored notes format into form-friendly values.
-     *
-     * Stored format:
-     * Ringkasan: ...
-     *
-     * Hasil Evaluasi: ...
-     *
-     * Rekomendasi: ...
-     */
-    private function extractAnalysisFieldsFromNotes(?string $notes): array
+    private function extractAnalysisFieldsFromDocument(?AssignmentDocument $document): array
     {
         $result = [
             'ringkasan_analisis' => '',
@@ -539,21 +555,13 @@ class AssignmentController extends Controller
             'rekomendasi' => '',
         ];
 
-        if (blank($notes)) {
+        if (! $document) {
             return $result;
         }
 
-        if (preg_match('/Ringkasan:\s*(.*?)\n\nHasil Evaluasi:/s', $notes, $m)) {
-            $result['ringkasan_analisis'] = trim($m[1]);
-        }
-
-        if (preg_match('/Hasil Evaluasi:\s*(.*?)\n\nRekomendasi:/s', $notes, $m)) {
-            $result['hasil_evaluasi'] = trim($m[1]);
-        }
-
-        if (preg_match('/Rekomendasi:\s*(.*)$/s', $notes, $m)) {
-            $result['rekomendasi'] = trim($m[1]);
-        }
+        $result['ringkasan_analisis'] = trim((string) ($document->ringkasan_analisis ?? ''));
+        $result['hasil_evaluasi'] = trim((string) ($document->hasil_evaluasi ?? ''));
+        $result['rekomendasi'] = trim((string) ($document->rekomendasi ?? ''));
 
         return $result;
     }

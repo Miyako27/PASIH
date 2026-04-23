@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/assignments/{document}/preview', [DocumentPreviewController::class, 'previewAssignment'])
         ->whereNumber('document')
         ->name('documents.preview.assignment');
+    Route::get('/documents/suratbalasan/{document}/preview', [DocumentPreviewController::class, 'previewSuratBalasan'])
+        ->whereNumber('document')
+        ->name('documents.preview.suratbalasan');
 
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/accounts', [AccountManagementController::class, 'index'])->name('admin.accounts.index');

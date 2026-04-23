@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AssignmentDocument;
+use App\Models\AssignmentKemenkumReplyDocument;
 use App\Models\SubmissionDocument;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,11 @@ class DocumentPreviewController extends Controller
     }
 
     public function previewAssignment(Request $request, AssignmentDocument $document)
+    {
+        return $this->previewPdf($request, $document->file_path, $document->file_name, $document->mime_type);
+    }
+
+    public function previewSuratBalasan(Request $request, AssignmentKemenkumReplyDocument $document)
     {
         return $this->previewPdf($request, $document->file_path, $document->file_name, $document->mime_type);
     }

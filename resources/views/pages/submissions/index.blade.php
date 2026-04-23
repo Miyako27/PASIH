@@ -60,6 +60,7 @@
               <th class="px-4 py-3 text-left">Disposisi</th>
               <th class="px-4 py-3 text-left">Status Permohonan</th>
               <th class="px-4 py-3 text-left">Status Analisis</th>
+              <th class="px-4 py-3 text-left">Surat Balasan</th>
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
           </thead>
@@ -68,6 +69,10 @@
               @php
                 $rowNumber = ($submissions->firstItem() ?? 1) + $loop->index;
                 $assignment = $submission->assignments->sortByDesc('id')->first();
+                $assignmentWithSuratBalasan = $submission->assignments
+                    ->sortByDesc('id')
+                    ->first(fn ($item) => $item->kemenkumReplyDocument);
+                $suratBalasanDocument = $assignmentWithSuratBalasan?->kemenkumReplyDocument;
                 $dispositionUser = $submission->divisionOperator ?? $submission->latestDisposition?->toUser;
                 $dispositionRoleLabel = $dispositionUser ? 'Kepala Divisi P3H' : '-';
 
@@ -115,6 +120,15 @@
                 <td class="px-4 py-3">{{ $dispositionRoleLabel }}</td>
                 <td class="px-4 py-3"><x-ui.badge :tone="$statusTone">{{ $submission->status->label() }}</x-ui.badge></td>
                 <td class="px-4 py-3"><x-ui.badge :tone="$analysisTone">{{ $analysisText }}</x-ui.badge></td>
+                <td class="px-4 py-3 text-center">
+                  @if($suratBalasanDocument && !empty($suratBalasanDocument->file_path))
+                    <a href="{{ asset('storage/'.$suratBalasanDocument->file_path) }}" target="_blank" class="inline-flex w-full items-center justify-center text-rose-600 hover:underline" title="Lihat Surat Balasan" aria-label="Lihat Surat Balasan">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6zm7 1.5L18.5 9H14a1 1 0 01-1-1V3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16z"/></svg>
+                    </a>
+                  @else
+                    <span class="text-slate-500">Belum ada surat balasan</span>
+                  @endif
+                </td>
                 <td class="px-4 py-3">
                   <div class="flex items-center gap-1.5">
                     <a href="{{ route('submissions.show', $submission) }}" class="h-8 w-8 rounded-md bg-blue-600 text-white inline-flex items-center justify-center" title="Detail">
@@ -219,7 +233,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="9" class="px-4 py-6 text-center text-slate-500">Belum ada data permohonan.</td>
+                <td colspan="10" class="px-4 py-6 text-center text-slate-500">Belum ada data permohonan.</td>
               </tr>
             @endforelse
           </tbody>
