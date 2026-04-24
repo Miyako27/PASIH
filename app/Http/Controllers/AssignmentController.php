@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Assignment;
+use App\Models\AssignmentAnalysisApproval;
 use App\Models\AssignmentDocument;
 use App\Models\AssignmentKemenkumReplyDocument;
+use App\Models\AssignmentPicUpdate;
 use App\Models\Submission;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,14 +26,14 @@ class AssignmentController extends Controller
         abort_unless(in_array($role, ['ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'analis_hukum'], true), 403);
 
         $query = Assignment::query()
-            ->with(['submission.submitter.instansi', 'analyst'])
+            ->with(['submission.submitter.instansi', 'latestPicUpdate.analyst'])
             ->latest();
         $status = trim((string) $request->string('status'));
         $search = trim((string) $request->string('q'));
         $allowedStatuses = ['assigned', 'in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'];
 
         if ($role === 'analis_hukum') {
-            $query->where('analyst_id', $user->id);
+            $query->whereAnalyst($user->id);
         }
 
         if (in_array($status, $allowedStatuses, true)) {
@@ -49,7 +51,7 @@ class AssignmentController extends Controller
                                 $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
                             });
                     })
-                    ->orWhereHas('analyst', function ($analystQuery) use ($search): void {
+                    ->orWhereHas('latestPicUpdate.analyst', function ($analystQuery) use ($search): void {
                         $analystQuery->where('name', 'like', "%{$search}%");
                     });
             });
@@ -70,11 +72,11 @@ class AssignmentController extends Controller
 
         $assignment->load([
             'assignedBy',
-            'picAssignedBy',
-            'analyst',
+            'latestPicUpdate.analyst',
+            'latestPicUpdate.picAssignedBy',
             'documents',
             'submission.submitter.instansi',
-            'submission.divisionOperator',
+            'submission.latestStatus',
             'submission.latestDisposition.toUser',
             'submission.dispositions.toUser',
             'submission.documents',
@@ -95,12 +97,12 @@ class AssignmentController extends Controller
         $search = trim((string) $request->string('q'));
 
         $resultsQuery = Assignment::query()
-            ->with(['submission', 'analyst', 'latestAnalysisDocument'])
+            ->with(['submission', 'latestPicUpdate.analyst', 'latestAnalysisDocument'])
             ->where('status', 'completed')
-            ->latest('completed_at');
+            ->latest('updated_at');
 
         if ($request->user()->role->value === 'analis_hukum') {
-            $resultsQuery->where('analyst_id', $request->user()->id);
+            $resultsQuery->whereAnalyst($request->user()->id);
         } elseif ($request->user()->role->value === 'operator_pemda') {
             $resultsQuery->whereHas('submission', function ($query) use ($request) {
                 $query->where('submitter_id', $request->user()->id);
@@ -115,7 +117,7 @@ class AssignmentController extends Controller
                             ->where('nomor_surat', 'like', "%{$search}%")
                             ->orWhere('perihal', 'like', "%{$search}%");
                     })
-                    ->orWhereHas('analyst', function ($analystQuery) use ($search): void {
+                    ->orWhereHas('latestPicUpdate.analyst', function ($analystQuery) use ($search): void {
                         $analystQuery->where('name', 'like', "%{$search}%");
                     });
             });
@@ -132,7 +134,7 @@ class AssignmentController extends Controller
         abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true), 403);
         abort_unless($assignment->status->value === 'completed', 404);
 
-        $assignment->load(['submission.submitter.instansi', 'analyst', 'assignedBy', 'documents']);
+        $assignment->load(['submission.submitter.instansi', 'latestPicUpdate.analyst', 'assignedBy', 'documents']);
 
         $user = $request->user();
         if ($user->role->value === 'analis_hukum') {
@@ -167,15 +169,13 @@ class AssignmentController extends Controller
         Assignment::query()->create([
             'submission_id' => $validated['submission_id'],
             'assigned_by_id' => $request->user()->id,
-            'analyst_id' => null,
             'instruction' => $validated['instruction'] ?? null,
             'status' => 'assigned',
-            'assigned_at' => now(),
         ]);
 
-        Submission::query()->whereKey($validated['submission_id'])->update([
-            'assigned_by_id' => $request->user()->id,
-        ]);
+        Submission::query()->whereKey($validated['submission_id'])->each(function (Submission $submission) use ($request): void {
+            $submission->recordStatus('assigned', $request->user()->id);
+        });
 
         return back()->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
     }
@@ -200,15 +200,11 @@ class AssignmentController extends Controller
         Assignment::query()->create([
             'submission_id' => $submission->id,
             'assigned_by_id' => $request->user()->id,
-            'analyst_id' => null,
             'instruction' => $validated['instruction'] ?? null,
             'status' => 'assigned',
-            'assigned_at' => now(),
         ]);
 
-        $submission->update([
-            'assigned_by_id' => $request->user()->id,
-        ]);
+        $submission->recordStatus('assigned', $request->user()->id);
 
         return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
     }
@@ -253,13 +249,14 @@ class AssignmentController extends Controller
 
         DB::transaction(function () use ($request, $assignment, $analyst, $validated, $stored): void {
             $assignment->update([
-                'analyst_id' => $analyst->id,
-                'pic_assigned_by_id' => $request->user()->id,
-                'pic_assigned_at' => now(),
-                'deadline_at' => $validated['deadline_at'] ?? null,
                 'status' => 'in_progress',
-                'started_at' => $assignment->started_at ?? now(),
-                'revision_note' => null,
+            ]);
+
+            AssignmentPicUpdate::query()->create([
+                'assignment_id' => $assignment->id,
+                'pic_assigned_by_id' => $request->user()->id,
+                'analyst_id' => $analyst->id,
+                'deadline_at' => $validated['deadline_at'] ?? null,
             ]);
 
             AssignmentKemenkumReplyDocument::query()->updateOrCreate(
@@ -356,12 +353,6 @@ class AssignmentController extends Controller
 
             $assignment->update([
                 'status' => 'pending_kadiv_approval',
-                'started_at' => $assignment->started_at ?? now(),
-                'submitted_for_review_at' => now(),
-                'approved_by_kadiv_at' => null,
-                'approved_by_kakanwil_at' => null,
-                'revision_note' => null,
-                'completed_at' => null,
             ]);
         });
 
@@ -374,7 +365,7 @@ class AssignmentController extends Controller
         abort_unless(in_array($role, ['kepala_divisi_p3h', 'kakanwil'], true), 403);
         abort_unless($this->canReviewAssignmentByRole($role, $assignment), 422);
 
-        $assignment->load(['submission', 'analyst', 'assignedBy']);
+        $assignment->load(['submission', 'latestPicUpdate.analyst', 'assignedBy']);
 
         return view('pages.assignments.approval', [
             'assignment' => $assignment,
@@ -397,8 +388,14 @@ class AssignmentController extends Controller
             if ($validated['decision'] === 'approve') {
                 $assignment->update([
                     'status' => 'pending_kakanwil_approval',
-                    'approved_by_kadiv_at' => now(),
+                ]);
+
+                AssignmentAnalysisApproval::query()->create([
+                    'assignment_id' => $assignment->id,
+                    'assigned_by_id' => $request->user()->id,
                     'revision_note' => null,
+                    'approved_by_kadiv_at' => now(),
+                    'approved_by_kakanwil_at' => null,
                 ]);
 
                 return redirect()->route('assignments.index')->with('success', 'Persetujuan Kadiv berhasil. Status: Menunggu Persetujuan Kakanwil.');
@@ -406,26 +403,38 @@ class AssignmentController extends Controller
 
             $assignment->update([
                 'status' => 'revision_by_pic',
+            ]);
+
+            AssignmentAnalysisApproval::query()->create([
+                'assignment_id' => $assignment->id,
+                'assigned_by_id' => $request->user()->id,
                 'revision_note' => $validated['revision_note'],
-                'completed_at' => null,
+                'approved_by_kadiv_at' => null,
+                'approved_by_kakanwil_at' => null,
             ]);
 
             return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');
         }
 
         if ($validated['decision'] === 'approve') {
-            DB::transaction(function () use ($assignment): void {
+            $approverId = $request->user()->id;
+
+            DB::transaction(function () use ($assignment, $approverId): void {
+                $lastKadivApprovalAt = $assignment->approved_by_kadiv_at;
+
                 $assignment->update([
                     'status' => 'completed',
-                    'approved_by_kakanwil_at' => now(),
-                    'revision_note' => null,
-                    'completed_at' => now(),
                 ]);
 
-                $assignment->submission()->update([
-                    'status' => 'completed',
-                    'finished_at' => now(),
+                AssignmentAnalysisApproval::query()->create([
+                    'assignment_id' => $assignment->id,
+                    'assigned_by_id' => $approverId,
+                    'revision_note' => null,
+                    'approved_by_kadiv_at' => $lastKadivApprovalAt,
+                    'approved_by_kakanwil_at' => now(),
                 ]);
+
+                $assignment->submission?->recordStatus('completed', $approverId);
             });
 
             return redirect()->route('assignments.index')->with('success', 'Persetujuan Kakanwil berhasil. Status: Selesai Analisis.');
@@ -433,9 +442,14 @@ class AssignmentController extends Controller
 
         $assignment->update([
             'status' => 'revision_by_pic',
+        ]);
+
+        AssignmentAnalysisApproval::query()->create([
+            'assignment_id' => $assignment->id,
+            'assigned_by_id' => $request->user()->id,
             'revision_note' => $validated['revision_note'],
+            'approved_by_kadiv_at' => $assignment->approved_by_kadiv_at,
             'approved_by_kakanwil_at' => null,
-            'completed_at' => null,
         ]);
 
         return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');

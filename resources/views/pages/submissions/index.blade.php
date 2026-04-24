@@ -59,7 +59,7 @@
               <th class="px-4 py-3 text-left">Instansi Pengaju</th>
               <th class="px-4 py-3 text-left">Disposisi</th>
               <th class="px-4 py-3 text-left">Status Permohonan</th>
-              <th class="px-4 py-3 text-left">Status Analisis</th>
+              <th class="px-4 py-3 text-left w-52 min-w-[13rem]">Status Analisis</th>
               <th class="px-4 py-3 text-left">Surat Balasan</th>
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
@@ -119,7 +119,7 @@
                 <td class="px-4 py-3">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</td>
                 <td class="px-4 py-3">{{ $dispositionRoleLabel }}</td>
                 <td class="px-4 py-3"><x-ui.badge :tone="$statusTone">{{ $submission->status->label() }}</x-ui.badge></td>
-                <td class="px-4 py-3"><x-ui.badge :tone="$analysisTone">{{ $analysisText }}</x-ui.badge></td>
+                <td class="px-4 py-3 w-52 min-w-[13rem]"><x-ui.badge :tone="$analysisTone">{{ $analysisText }}</x-ui.badge></td>
                 <td class="px-4 py-3 text-center">
                   @if($suratBalasanDocument && !empty($suratBalasanDocument->file_path))
                     <a href="{{ asset('storage/'.$suratBalasanDocument->file_path) }}" target="_blank" class="inline-flex w-full items-center justify-center text-rose-600 hover:underline" title="Lihat Surat Balasan" aria-label="Lihat Surat Balasan">

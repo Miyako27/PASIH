@@ -61,7 +61,7 @@
     </div>
 
     @php
-      $statusNote = $submission->revision_note ?: $submission->rejection_note;
+      $statusNote = $submission->status_note;
       $latestDisposition = $submission->latestDisposition;
       $suratBalasanKemenkum = $submission->assignments
         ->sortByDesc('id')

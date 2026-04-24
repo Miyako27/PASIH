@@ -33,7 +33,7 @@
         default => 'analisis-submitted',
       };
 
-      $statusNote = $submission->revision_note ?: $submission->rejection_note;
+      $statusNote = $submission->status_note;
       $formatDisplayFileName = function ($document, string $documentLabel) use ($submission): string {
         $fromDb = trim((string) ($document?->file_name ?? ''));
         if ($fromDb !== '') {

@@ -40,9 +40,9 @@ class DashboardController extends Controller
         }
 
         if ($user->role->value === 'analis_hukum') {
-            $assignmentQuery->where('analyst_id', $user->id);
+            $assignmentQuery->whereAnalyst($user->id);
             $submissionQuery->whereHas('assignments', function ($query) use ($user) {
-                $query->where('analyst_id', $user->id);
+                $query->whereAnalyst($user->id);
             });
         }
 
@@ -53,26 +53,26 @@ class DashboardController extends Controller
                 $query->where('created_at', '>=', $periodStart);
             });
 
-        $acceptedSubmissions = (clone $periodSubmissionQuery)->where('status', 'accepted')->count();
-        $completedSubmissionsCount = (clone $periodSubmissionQuery)->where('status', 'completed')->count();
+        $acceptedSubmissions = (clone $periodSubmissionQuery)->whereStatus('accepted')->count();
+        $completedSubmissionsCount = (clone $periodSubmissionQuery)->whereStatus('completed')->count();
         $inAnalysisAssignments = (clone $periodAssignmentQuery)
             ->whereIn('status', ['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic'])
             ->count();
         $completedAssignmentsCount = (clone $periodAssignmentQuery)->where('status', 'completed')->count();
         $validatedSubmissions = (clone $periodSubmissionQuery)
-            ->whereIn('status', ['accepted', 'disposed', 'assigned', 'completed'])
+            ->whereStatusIn(['accepted', 'disposed', 'assigned', 'completed'])
             ->count();
         $disposedSubmissions = (clone $periodSubmissionQuery)
             ->where(function ($query) {
                 $query
-                    ->where('status', 'disposed')
+                    ->whereStatus('disposed')
                     ->orWhereHas('assignments');
             })
             ->count();
 
         $stats = [
             'total_submissions' => (clone $periodSubmissionQuery)->count(),
-            'submitted' => (clone $periodSubmissionQuery)->where('status', 'submitted')->count(),
+            'submitted' => (clone $periodSubmissionQuery)->whereStatus('submitted')->count(),
             'in_progress' => $acceptedSubmissions,
             'in_analysis' => $inAnalysisAssignments,
             'completed' => $completedAssignmentsCount,
@@ -83,7 +83,7 @@ class DashboardController extends Controller
         $summarySubmissionQuery = (clone $periodSubmissionQuery);
         $summaryStats = [
             'total_submissions' => (clone $summarySubmissionQuery)->count(),
-            'completed_submissions' => (clone $summarySubmissionQuery)->where('status', 'completed')->count(),
+            'completed_submissions' => (clone $summarySubmissionQuery)->whereStatus('completed')->count(),
         ];
 
         $recentSubmissions = (clone $periodSubmissionQuery)->with('submitter')->latest()->limit(6)->get();
@@ -144,13 +144,13 @@ class DashboardController extends Controller
                 [
                     'title' => 'Perbaiki permohonan yang direvisi',
                     'description' => 'Permohonan perlu diperbaiki lalu dikirim ulang',
-                    'count' => (clone $submissionQuery)->where('status', 'revised')->count(),
+                    'count' => (clone $submissionQuery)->whereStatus('revised')->count(),
                     'url' => route('submissions.index', ['status' => 'revised']),
                 ],
                 [
                     'title' => 'Pantau permohonan menunggu validasi',
                     'description' => 'Permohonan masih menunggu proses validasi operator kanwil',
-                    'count' => (clone $submissionQuery)->where('status', 'submitted')->count(),
+                    'count' => (clone $submissionQuery)->whereStatus('submitted')->count(),
                     'url' => route('submissions.index', ['status' => 'submitted']),
                 ],
             ],
@@ -158,14 +158,14 @@ class DashboardController extends Controller
                 [
                     'title' => 'Validasi permohonan masuk',
                     'description' => 'Permohonan berstatus diajukan/revisi menunggu validasi dan disposisi',
-                    'count' => Submission::query()->whereIn('status', ['submitted', 'revised'])->count(),
+                    'count' => Submission::query()->whereStatusIn(['submitted', 'revised'])->count(),
                     'url' => route('submissions.index'),
                 ],
                 [
                     'title' => 'Lanjutkan disposisi permohonan diterima',
                     'description' => 'Permohonan diterima namun belum didisposisikan ke Kadiv',
                     'count' => Submission::query()
-                        ->where('status', 'accepted')
+                        ->whereStatus('accepted')
                         ->whereDoesntHave('dispositions')
                         ->count(),
                     'url' => route('submissions.index', ['status' => 'accepted']),
@@ -210,7 +210,7 @@ class DashboardController extends Controller
                     'title' => 'Buat penugasan baru',
                     'description' => 'Permohonan sudah siap namun belum dibuat penugasan',
                     'count' => (clone $submissionQuery)
-                        ->whereIn('status', ['accepted', 'disposed', 'assigned'])
+                        ->whereStatusIn(['accepted', 'disposed', 'assigned'])
                         ->whereDoesntHave('assignments')
                         ->count(),
                     'url' => route('submissions.index'),
@@ -227,7 +227,7 @@ class DashboardController extends Controller
                     'title' => 'Buat penugasan baru',
                     'description' => 'Permohonan sudah siap namun belum dibuat penugasan',
                     'count' => (clone $submissionQuery)
-                        ->whereIn('status', ['accepted', 'disposed', 'assigned'])
+                        ->whereStatusIn(['accepted', 'disposed', 'assigned'])
                         ->whereDoesntHave('assignments')
                         ->count(),
                     'url' => route('submissions.index'),
@@ -238,8 +238,6 @@ class DashboardController extends Controller
 
         $completedAssignments = (clone $periodAssignmentQuery)
             ->where('status', 'completed')
-            ->whereNotNull('assigned_at')
-            ->whereNotNull('completed_at')
             ->get();
 
         $onTime = $completedAssignments->filter(function (Assignment $assignment): bool {

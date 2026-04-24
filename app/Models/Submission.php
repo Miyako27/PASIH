@@ -10,33 +10,19 @@ class Submission extends Model
 {
     use HasFactory;
 
+    protected $with = [
+        'latestStatus',
+        'latestDisposition.toUser',
+    ];
+
     protected $fillable = [
         'submitter_id',
-        'kanwil_operator_id',
-        'division_operator_id',
-        'assigned_by_id',
         'nomor_surat',
         'perihal',
         'pemda_name',
-        'perda_title',
+        'pemda_title',
         'description',
-        'status',
-        'revision_note',
-        'rejection_note',
-        'submitted_at',
-        'reviewed_at',
-        'finished_at',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'status' => SubmissionStatus::class,
-            'submitted_at' => 'datetime',
-            'reviewed_at' => 'datetime',
-            'finished_at' => 'datetime',
-        ];
-    }
 
     public function submitter()
     {
@@ -48,23 +34,149 @@ class Submission extends Model
         return $this->hasMany(SubmissionDocument::class);
     }
 
+    public function statuses()
+    {
+        return $this->hasMany(SubmissionStatusLog::class);
+    }
+
+    public function latestStatus()
+    {
+        return $this->hasOne(SubmissionStatusLog::class)->latestOfMany('id');
+    }
+
     public function dispositions()
     {
-        return $this->hasMany(Disposition::class);
+        return $this->hasMany(SubmissionDisposition::class);
     }
 
     public function latestDisposition()
     {
-        return $this->hasOne(Disposition::class)->latestOfMany('id');
-    }
-
-    public function divisionOperator()
-    {
-        return $this->belongsTo(User::class, 'division_operator_id');
+        return $this->hasOne(SubmissionDisposition::class)->latestOfMany('id');
     }
 
     public function assignments()
     {
         return $this->hasMany(Assignment::class);
     }
+
+    public function scopeWhereStatus($query, string $status)
+    {
+        return $query->whereHas('latestStatus', function ($statusQuery) use ($status): void {
+            $statusQuery->where('status', $status);
+        });
+    }
+
+    public function scopeWhereStatusIn($query, array $statuses)
+    {
+        return $query->whereHas('latestStatus', function ($statusQuery) use ($statuses): void {
+            $statusQuery->whereIn('status', $statuses);
+        });
+    }
+
+    public function getStatusAttribute(): SubmissionStatus
+    {
+        $statusValue = $this->latestStatus?->status ?? SubmissionStatus::Submitted->value;
+
+        return SubmissionStatus::tryFrom((string) $statusValue) ?? SubmissionStatus::Submitted;
+    }
+
+    public function getSubmittedAtAttribute()
+    {
+        return $this->created_at;
+    }
+
+    public function getReviewedAtAttribute()
+    {
+        $latestStatus = $this->latestStatus;
+        if (! $latestStatus) {
+            return null;
+        }
+
+        return in_array($latestStatus->status, ['accepted', 'revised', 'rejected'], true)
+            ? $latestStatus->created_at
+            : null;
+    }
+
+    public function getFinishedAtAttribute()
+    {
+        $latestStatus = $this->latestStatus;
+
+        return $latestStatus?->status === SubmissionStatus::Completed->value
+            ? $latestStatus->created_at
+            : null;
+    }
+
+    public function getRevisionNoteAttribute()
+    {
+        return $this->latestStatus?->note;
+    }
+
+    public function getRejectionNoteAttribute()
+    {
+        return $this->latestStatus?->note;
+    }
+
+    public function getStatusNoteAttribute()
+    {
+        return $this->latestStatus?->note;
+    }
+
+    public function getKanwilOperatorIdAttribute()
+    {
+        return $this->latestStatus?->kanwil_operator_id;
+    }
+
+    public function getDivisionOperatorIdAttribute()
+    {
+        return $this->latestDisposition?->to_user_id;
+    }
+
+    public function getDivisionOperatorAttribute()
+    {
+        return $this->latestDisposition?->toUser;
+    }
+
+    public function getPemdaNameAttribute(): string
+    {
+        return trim((string) ($this->attributes['pemda_name'] ?? ''));
+    }
+
+    public function getPemdaTitleAttribute(): string
+    {
+        return trim((string) ($this->attributes['pemda_title'] ?? ''));
+    }
+
+    public function getPerdaTitleAttribute(): string
+    {
+        return $this->pemda_title;
+    }
+
+    public function setPemdaNameAttribute(string $value): void
+    {
+        $this->attributes['pemda_name'] = trim($value);
+    }
+
+    public function setPemdaTitleAttribute(string $value): void
+    {
+        $this->attributes['pemda_title'] = trim($value);
+    }
+
+    public function setPerdaTitleAttribute(string $value): void
+    {
+        $this->attributes['pemda_title'] = trim($value);
+    }
+
+    public function recordStatus(string $status, ?int $kanwilOperatorId = null, ?string $note = null): void
+    {
+        $this->statuses()->create([
+            'kanwil_operator_id' => $kanwilOperatorId,
+            'status' => $status,
+            'note' => $note,
+        ]);
+
+        $this->unsetRelation('latestStatus');
+        $this->unsetRelation('statuses');
+        $this->load('latestStatus');
+    }
+
 }

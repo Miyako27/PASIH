@@ -37,16 +37,14 @@ class NotificationController extends Controller
             ->select([
                 'id',
                 'nomor_surat',
-                'status',
                 'submitter_id',
-                'kanwil_operator_id',
-                'division_operator_id',
                 'updated_at',
-            ]);
+            ])
+            ->with(['latestStatus', 'latestDisposition']);
 
         $assignmentQuery = Assignment::query()
-            ->select(['id', 'submission_id', 'status', 'assigned_by_id', 'analyst_id', 'updated_at'])
-            ->with('submission:id,nomor_surat');
+            ->select(['id', 'submission_id', 'status', 'assigned_by_id', 'updated_at'])
+            ->with(['submission:id,nomor_surat', 'latestPicUpdate']);
 
         if ($user->role->value === 'operator_pemda') {
             $submissionQuery->where('submitter_id', $user->id);
@@ -56,9 +54,9 @@ class NotificationController extends Controller
         }
 
         if ($user->role->value === 'analis_hukum') {
-            $assignmentQuery->where('analyst_id', $user->id);
+            $assignmentQuery->whereAnalyst($user->id);
             $submissionQuery->whereHas('assignments', function ($query) use ($user) {
-                $query->where('analyst_id', $user->id);
+                $query->whereAnalyst($user->id);
             });
         }
 
@@ -85,7 +83,10 @@ class NotificationController extends Controller
 
         $submissionNotifications = $submissions->map(function (Submission $submission) use ($userNames, $user) {
             $status = $submission->status->value;
-            $actorId = $submission->kanwil_operator_id ?? $submission->division_operator_id ?? $submission->submitter_id;
+            $actorId = $submission->latestStatus?->kanwil_operator_id
+                ?? $submission->latestDisposition?->kanwil_operator_id
+                ?? $submission->division_operator_id
+                ?? $submission->submitter_id;
             $actorName = $userNames->get($actorId) ?? 'Sistem';
 
             if (in_array($status, ['accepted', 'revised', 'rejected'], true)) {

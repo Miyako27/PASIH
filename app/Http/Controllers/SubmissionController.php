@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Disposition;
 use App\Models\Submission;
+use App\Models\SubmissionDisposition;
 use App\Models\SubmissionDocument;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -27,9 +27,9 @@ class SubmissionController extends Controller
 
         $query = Submission::query()->with([
             'submitter.instansi',
-            'divisionOperator',
+            'latestStatus',
             'latestDisposition.toUser',
-            'assignments.analyst',
+            'assignments.latestPicUpdate.analyst',
             'assignments.kemenkumReplyDocument',
         ])->latest();
 
@@ -38,11 +38,11 @@ class SubmissionController extends Controller
         }
 
         if (in_array($user->role->value, ['kakanwil', 'kepala_divisi_p3h'], true)) {
-            $query->whereIn('status', ['disposed', 'assigned', 'completed', 'accepted']);
+            $query->whereStatusIn(['disposed', 'assigned', 'completed', 'accepted']);
         }
 
         if (in_array($status, $allowedStatuses, true)) {
-            $query->where('status', $status);
+            $query->whereStatus($status);
         }
 
         if ($search !== '') {
@@ -51,7 +51,7 @@ class SubmissionController extends Controller
                     ->where('nomor_surat', 'like', "%{$search}%")
                     ->orWhere('perihal', 'like', "%{$search}%")
                     ->orWhere('pemda_name', 'like', "%{$search}%")
-                    ->orWhere('perda_title', 'like', "%{$search}%");
+                    ->orWhere('pemda_title', 'like', "%{$search}%");
             });
         }
 
@@ -95,12 +95,11 @@ class SubmissionController extends Controller
                 'submitter_id' => $request->user()->id,
                 'nomor_surat' => $validated['nomor_surat'],
                 'perihal' => $validated['perihal'],
-                'pemda_name' => $request->user()->instansi?->nama_instansi ?? $request->user()->name,
-                'perda_title' => $validated['perda_title'],
+                'pemda_name' => trim((string) ($request->user()->instansi?->nama_instansi ?? $request->user()->name)),
+                'pemda_title' => trim((string) $validated['perda_title']),
                 'description' => $validated['description'] ?? null,
-                'status' => 'submitted',
-                'submitted_at' => now(),
             ]);
+            $submission->recordStatus('submitted');
 
             $suratPermohonanFile = $this->validateUploadedFile(
                 $request->file('surat_permohonan'),
@@ -162,8 +161,9 @@ class SubmissionController extends Controller
             'submitter.instansi',
             'documents',
             'dispositions.toUser',
+            'latestStatus',
             'latestDisposition.toUser',
-            'assignments.analyst',
+            'assignments.latestPicUpdate.analyst',
             'assignments.documents',
             'assignments.kemenkumReplyDocument',
         ]);
@@ -207,14 +207,11 @@ class SubmissionController extends Controller
         $submission->update([
             'nomor_surat' => $validated['nomor_surat'],
             'perihal' => $validated['perihal'],
-            'pemda_name' => $request->user()->instansi?->nama_instansi ?? $request->user()->name,
-            'perda_title' => $validated['perda_title'],
+            'pemda_name' => trim((string) ($request->user()->instansi?->nama_instansi ?? $request->user()->name)),
+            'pemda_title' => trim((string) $validated['perda_title']),
             'description' => $validated['description'] ?? null,
-            'status' => 'submitted',
-            'reviewed_at' => null,
-            'revision_note' => null,
-            'rejection_note' => null,
         ]);
+        $submission->recordStatus('submitted');
 
         $suratPermohonanFile = $this->validateUploadedFile(
             $request->file('surat_permohonan'),
@@ -288,15 +285,7 @@ class SubmissionController extends Controller
 
         $statusNote = blank($validated['note'] ?? null) ? null : $validated['note'];
 
-        $submission->update([
-            'kanwil_operator_id' => $request->user()->id,
-            'status' => $validated['status'],
-            'reviewed_at' => now(),
-            // Gunakan revision_note sebagai catatan status umum (accepted/revised),
-            // sementara rejected tetap memakai rejection_note.
-            'revision_note' => in_array($validated['status'], ['accepted', 'revised'], true) ? $statusNote : null,
-            'rejection_note' => $validated['status'] === 'rejected' ? $statusNote : null,
-        ]);
+        $submission->recordStatus($validated['status'], $request->user()->id, $statusNote);
 
         return back()->with('success', 'Status pengajuan diperbarui.');
     }
@@ -341,30 +330,17 @@ class SubmissionController extends Controller
         $statusNote = blank($validated['status_note'] ?? null) ? null : $validated['status_note'];
 
         DB::transaction(function () use ($request, $submission, $validated, $statusNote): void {
-            $submission->update([
-                'kanwil_operator_id' => $request->user()->id,
-                'status' => $validated['status'],
-                'reviewed_at' => now(),
-                // Gunakan revision_note sebagai catatan status umum (accepted/revised),
-                // sementara rejected tetap memakai rejection_note.
-                'revision_note' => in_array($validated['status'], ['accepted', 'revised'], true) ? $statusNote : null,
-                'rejection_note' => $validated['status'] === 'rejected' ? $statusNote : null,
-            ]);
+            $submission->recordStatus($validated['status'], $request->user()->id, $statusNote);
 
             if (! empty($validated['to_user_id'])) {
                 $toUser = User::query()->findOrFail($validated['to_user_id']);
                 abort_unless($toUser->role->value === 'kepala_divisi_p3h', 422);
 
-                Disposition::query()->create([
+                SubmissionDisposition::query()->create([
                     'submission_id' => $submission->id,
-                    'from_user_id' => $request->user()->id,
+                    'kanwil_operator_id' => $request->user()->id,
                     'to_user_id' => $toUser->id,
-                    'note' => $validated['disposition_note'] ?? null,
-                    'disposed_at' => now(),
-                ]);
-
-                $submission->update([
-                    'division_operator_id' => $toUser->id,
+                    'disposition_note' => $validated['disposition_note'] ?? null,
                 ]);
             }
         });
@@ -386,18 +362,14 @@ class SubmissionController extends Controller
         $toUser = User::query()->findOrFail($validated['to_user_id']);
         abort_unless($toUser->role->value === 'kepala_divisi_p3h', 422);
 
-        Disposition::query()->create([
+        SubmissionDisposition::query()->create([
             'submission_id' => $submission->id,
-            'from_user_id' => $request->user()->id,
+            'kanwil_operator_id' => $request->user()->id,
             'to_user_id' => $toUser->id,
-            'note' => $validated['note'] ?? null,
-            'disposed_at' => now(),
+            'disposition_note' => $validated['note'] ?? null,
         ]);
 
-        $submission->update([
-            'status' => 'disposed',
-            'division_operator_id' => $toUser->id,
-        ]);
+        $submission->recordStatus('disposed', $request->user()->id, $validated['note'] ?? null);
 
         return back()->with('success', 'Permohonan berhasil didisposisikan.');
     }
@@ -428,10 +400,7 @@ class SubmissionController extends Controller
         );
 
         if ((bool) ($validated['mark_completed'] ?? false)) {
-            $submission->update([
-                'status' => 'completed',
-                'finished_at' => now(),
-            ]);
+            $submission->recordStatus('completed');
         }
 
         return back()->with('success', 'Dokumen hasil berhasil diunggah.');
@@ -529,7 +498,9 @@ class SubmissionController extends Controller
             return;
         }
 
-        if ($role === 'analis_hukum' && $submission->assignments()->where('analyst_id', $request->user()->id)->exists()) {
+        if ($role === 'analis_hukum' && $submission->assignments()->whereHas('latestPicUpdate', function ($builder) use ($request): void {
+            $builder->where('analyst_id', $request->user()->id);
+        })->exists()) {
             return;
         }
 
