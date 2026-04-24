@@ -36,7 +36,7 @@
                 Menyediakan hasil analisis dan evaluasi peraturan daerah yang dapat diakses serta dimanfaatkan oleh masyarakat, termasuk untuk keperluan akademik dan penelitian
             </p>
 
-            <a class="cta" href="{{ url('/hasil-analisis') }}">Lihat Hasil Analisis</a>
+            <a class="cta" href="{{ route('public.analysis.index') }}">Lihat Hasil Analisis</a>
         </div>
 
         <svg class="wave" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">

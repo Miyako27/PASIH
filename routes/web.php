@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\InstitutionManagementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentPreviewController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PublicAnalysisController;
 use App\Http\Controllers\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
@@ -17,6 +18,18 @@ Route::get('/', function () {
 
     return view('welcome');
 })->name('home');
+
+Route::get('/publik/hasil-analisis', [PublicAnalysisController::class, 'index'])
+    ->name('public.analysis.index');
+Route::get('/publik/hasil-analisis/{assignment}', [PublicAnalysisController::class, 'show'])
+    ->whereNumber('assignment')
+    ->name('public.analysis.show');
+Route::get('/publik/documents/submissions/{document}/preview', [DocumentPreviewController::class, 'previewSubmission'])
+    ->whereNumber('document')
+    ->name('public.documents.preview.submission');
+Route::get('/publik/documents/assignments/{document}/preview', [DocumentPreviewController::class, 'previewAssignment'])
+    ->whereNumber('document')
+    ->name('public.documents.preview.assignment');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
