@@ -1,25 +1,8 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hasil Analisis Publik</title>
-    @vite(['resources/css/app.css'])
-</head>
-<body class="min-h-screen bg-slate-100 text-slate-800">
-    <header class="border-b border-slate-200 bg-white">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-            <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <img src="{{ asset('images/loginlogo2.png') }}" alt="Logo" class="h-11 w-11 rounded-lg object-cover">
-                <div>
-                    <div class="text-xl font-bold text-blue-950">PASIH</div>
-                    <div class="text-xs text-slate-500">Hasil Analisis Peraturan Daerah</div>
-                </div>
-            </a>
-            <a href="{{ route('login') }}" class="inline-flex items-center h-10 px-5 rounded-full bg-blue-950 text-white font-semibold hover:bg-blue-900">Masuk</a>
-        </div>
-    </header>
+@extends('layouts.public')
 
+@section('title', 'Hasil Analisis Publik')
+
+@section('content')
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-5">
         <div>
             <h1 class="text-4xl font-extrabold tracking-tight text-blue-950">Hasil Analisis</h1>
@@ -149,5 +132,4 @@
             </div>
         </div>
     </main>
-</body>
-</html>
+@endsection
