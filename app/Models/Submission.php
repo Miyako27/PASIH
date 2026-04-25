@@ -12,6 +12,7 @@ class Submission extends Model
 
     protected $with = [
         'latestStatus',
+        'latestReviewStatus',
         'latestDisposition.toUser',
     ];
 
@@ -42,6 +43,13 @@ class Submission extends Model
     public function latestStatus()
     {
         return $this->hasOne(SubmissionStatusLog::class)->latestOfMany('id');
+    }
+
+    public function latestReviewStatus()
+    {
+        return $this->hasOne(SubmissionStatusLog::class)
+            ->whereIn('status', ['accepted', 'revised', 'rejected'])
+            ->latestOfMany('id');
     }
 
     public function dispositions()
@@ -87,14 +95,11 @@ class Submission extends Model
 
     public function getReviewedAtAttribute()
     {
-        $latestStatus = $this->latestStatus;
-        if (! $latestStatus) {
-            return null;
+        if ($this->latestReviewStatus?->created_at) {
+            return $this->latestReviewStatus->created_at;
         }
 
-        return in_array($latestStatus->status, ['accepted', 'revised', 'rejected'], true)
-            ? $latestStatus->created_at
-            : null;
+        return $this->latestDisposition?->disposed_at;
     }
 
     public function getFinishedAtAttribute()
@@ -175,8 +180,9 @@ class Submission extends Model
         ]);
 
         $this->unsetRelation('latestStatus');
+        $this->unsetRelation('latestReviewStatus');
         $this->unsetRelation('statuses');
-        $this->load('latestStatus');
+        $this->load(['latestStatus', 'latestReviewStatus']);
     }
 
 }

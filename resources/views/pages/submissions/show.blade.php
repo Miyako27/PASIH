@@ -137,7 +137,7 @@
           <div class="mt-1 text-sm text-slate-800">{{ $submission->status->label() }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Review Status</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Review Terakhir</div>
           <div class="mt-1 text-sm text-slate-800">{{ optional($submission->reviewed_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
@@ -196,7 +196,7 @@
                   data-pdf-url="{{ $previewDataUrl }}"
                   data-pdf-name="{{ $displayFileName }}"
                 >
-                  
+
                   <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                     <div class="flex flex-col items-center gap-3" data-pdf-pages>
                       <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
@@ -263,7 +263,7 @@
                     data-pdf-url="{{ $previewDataUrl }}"
                     data-pdf-name="{{ $displayFileName }}"
                   >
-                    
+
                     <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                       <div class="flex flex-col items-center gap-3" data-pdf-pages>
                         <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
@@ -333,7 +333,7 @@
                     data-pdf-url="{{ $previewDataUrl }}"
                     data-pdf-name="{{ $displayFileName }}"
                   >
-                    
+
                     <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                       <div class="flex flex-col items-center gap-3" data-pdf-pages>
                         <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>

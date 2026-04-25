@@ -84,9 +84,9 @@ class SubmissionController extends Controller
             'perihal' => ['required', 'string', 'max:255'],
             'perda_title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'surat_permohonan' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
-            'peraturan_daerah' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
-            'peraturan_pelaksana_perda' => ['nullable', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
+            'surat_permohonan' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
+            'peraturan_daerah' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
+            'peraturan_pelaksana_perda' => ['nullable', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
         ]);
 
         DB::transaction(function () use ($request, $validated): void {
@@ -199,9 +199,9 @@ class SubmissionController extends Controller
             'perihal' => ['required', 'string', 'max:255'],
             'perda_title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'surat_permohonan' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
-            'peraturan_daerah' => ['required', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
-            'peraturan_pelaksana_perda' => ['nullable', 'file', 'max:20480', 'mimes:pdf,doc,docx,jpg,jpeg,png,webp'],
+            'surat_permohonan' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
+            'peraturan_daerah' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
+            'peraturan_pelaksana_perda' => ['nullable', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
         ]);
 
         $submission->update([
