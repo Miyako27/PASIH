@@ -124,7 +124,7 @@
           <div class="mt-1 text-sm text-slate-800">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Judul Perda</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Judul Peraturan Daerah</div>
           <div class="mt-1 text-sm text-slate-800">{{ $submission->perda_title ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
@@ -218,7 +218,7 @@
           <div class="mt-1 text-sm text-slate-800">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Judul Perda</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Judul Peraturan Daerah</div>
           <div class="mt-1 text-sm text-slate-800">{{ $submission->perda_title }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">

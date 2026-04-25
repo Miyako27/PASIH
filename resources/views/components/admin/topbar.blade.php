@@ -1,5 +1,5 @@
 @php
-  $notificationCount = \App\Http\Controllers\NotificationController::buildNotifications(auth()->user(), 9)->count();
+  $notificationCount = \App\Http\Controllers\NotificationController::countUnreadNotifications(auth()->user(), 30);
   $currentUser = auth()->user();
   $displayName = $currentUser?->name ?? 'Pengguna';
   $displayInstitution = $currentUser?->instansi?->nama_instansi ?? 'Kementerian Hukum Provinsi Riau';

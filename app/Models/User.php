@@ -18,6 +18,7 @@ class User extends Authenticatable
         'role',
         'id_role',
         'id_instansi',
+        'notifications_seen_at',
     ];
 
     protected $hidden = [
@@ -29,6 +30,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'notifications_seen_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
         ];

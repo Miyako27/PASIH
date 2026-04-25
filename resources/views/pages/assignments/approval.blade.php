@@ -38,7 +38,7 @@
           Keputusan <span class="text-red-500">*</span>
           <select name="decision" id="decision" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
             <option value="">Pilih Keputusan</option>
-            <option value="approve" @selected(old('decision') === 'approve')>Persetujuan</option>
+            <option value="approve" @selected(old('decision') === 'approve')>Setujui</option>
             <option value="revise" @selected(old('decision') === 'revise')>Tolak dan Minta Revisi</option>
           </select>
           @error('decision')
