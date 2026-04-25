@@ -53,9 +53,8 @@
           <thead class="bg-slate-50 text-slate-600">
             <tr>
               <th class="px-4 py-3 text-center">No</th>
-              <th class="px-4 py-3 text-left">Nomor Surat</th>
+              <th class="px-4 py-3 text-left">Judul Perda</th>
               <th class="px-4 py-3 text-left">Tanggal Pengajuan</th>
-              <th class="px-4 py-3 text-left">Perihal</th>
               <th class="px-4 py-3 text-left">Instansi Pengaju</th>
               <th class="px-4 py-3 text-left">Disposisi</th>
               <th class="px-4 py-3 text-left">Status Permohonan</th>
@@ -113,9 +112,8 @@
               @endphp
               <tr class="border-t border-slate-100 text-slate-700">
                 <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
-                <td class="px-4 py-3">{{ $submission->nomor_surat }}</td>
+                <td class="px-4 py-3">{{ $submission->pemda_title ?: '-' }}</td>
                 <td class="px-4 py-3">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</td>
-                <td class="px-4 py-3">{{ $submission->perihal }}</td>
                 <td class="px-4 py-3">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</td>
                 <td class="px-4 py-3">{{ $dispositionRoleLabel }}</td>
                 <td class="px-4 py-3"><x-ui.badge :tone="$statusTone">{{ $submission->status->label() }}</x-ui.badge></td>
@@ -233,7 +231,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="10" class="px-4 py-6 text-center text-slate-500">Belum ada data permohonan.</td>
+                <td colspan="9" class="px-4 py-6 text-center text-slate-500">Belum ada data permohonan.</td>
               </tr>
             @endforelse
           </tbody>

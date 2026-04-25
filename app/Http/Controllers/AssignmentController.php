@@ -102,7 +102,7 @@ class AssignmentController extends Controller
         $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 5;
 
         $resultsQuery = Assignment::query()
-            ->with(['submission', 'latestPicUpdate.analyst', 'latestAnalysisDocument'])
+            ->with(['submission.submitter.instansi', 'submission.documents', 'latestPicUpdate.analyst', 'latestAnalysisDocument'])
             ->where('status', 'completed')
             ->latest('updated_at');
 

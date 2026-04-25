@@ -36,10 +36,11 @@
           <thead class="bg-slate-50 text-slate-600">
             <tr>
               <th class="px-4 py-3 text-center">No</th>
-              <th class="px-4 py-3 text-left">Nomor Surat</th>
-              <th class="px-4 py-3 text-left">Perihal</th>
-              <th class="px-4 py-3 text-left">Analis</th>
-              <th class="px-4 py-3 text-left">Status Analisis</th>
+              <th class="px-4 py-3 text-left">Judul Perda</th>
+              <th class="px-4 py-3 text-left">Instansi Pengaju</th>
+              <th class="px-4 py-3 text-center">Tahun</th>
+              <th class="px-4 py-3 text-left">Analis Hukum</th>
+              <th class="px-4 py-3 text-center">Peraturan Daerah</th>
               <th class="px-4 py-3 text-center">Dokumen Hasil Analisis</th>
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
@@ -48,17 +49,29 @@
             @forelse($results as $item)
               @php
                 $rowNumber = ($results->firstItem() ?? 1) + $loop->index;
-                $doc = $item->latestAnalysisDocument;
+                $submission = $item->submission;
+                $yearCompleted = optional($item->completed_at)->format('Y') ?: '-';
+                $perdaDocument = $submission?->documents?->where('document_type', 'peraturan_daerah')->sortByDesc('id')->first();
+                $analysisDocument = $item->latestAnalysisDocument;
               @endphp
               <tr class="border-t border-slate-100 text-slate-700">
                 <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
-                <td class="px-4 py-3">{{ $item->submission->nomor_surat }}</td>
-                <td class="px-4 py-3">{{ $item->submission->perihal }}</td>
-                <td class="px-4 py-3">{{ $item->analyst?->name ?? '-' }}</td>
-                <td class="px-4 py-3"><x-ui.badge tone="green">Selesai Analisis</x-ui.badge></td>
+                <td class="px-4 py-3">{{ $submission?->pemda_title ?: $submission?->perda_title ?: '-' }}</td>
+                <td class="px-4 py-3">{{ $submission?->submitter?->instansi?->nama_instansi ?? '-' }}</td>
+                <td class="px-4 py-3 text-center">{{ $yearCompleted }}</td>
+                <td class="px-4 py-3">{{ $item->analyst?->name ?? $item->latestPicUpdate?->analyst?->name ?? '-' }}</td>
                 <td class="px-4 py-3 text-center">
-                  @if($doc)
-                    <a href="{{ asset('storage/'.$doc->file_path) }}" target="_blank" class="inline-flex w-full items-center justify-center text-rose-600 hover:underline" title="Lihat Dokumen Hasil" aria-label="Lihat Dokumen Hasil">
+                  @if($perdaDocument && !empty($perdaDocument->file_path))
+                    <a href="{{ asset('storage/'.$perdaDocument->file_path) }}" target="_blank" class="inline-flex w-full items-center justify-center text-rose-600 hover:underline" title="Lihat Dokumen Peraturan Daerah" aria-label="Lihat Dokumen Peraturan Daerah">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6zm7 1.5L18.5 9H14a1 1 0 01-1-1V3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16z"/></svg>
+                    </a>
+                  @else
+                    <span class="text-slate-400">-</span>
+                  @endif
+                </td>
+                <td class="px-4 py-3 text-center">
+                  @if($analysisDocument && !empty($analysisDocument->file_path))
+                    <a href="{{ asset('storage/'.$analysisDocument->file_path) }}" target="_blank" class="inline-flex w-full items-center justify-center text-rose-600 hover:underline" title="Lihat Dokumen Hasil Analisis" aria-label="Lihat Dokumen Hasil Analisis">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6zm7 1.5L18.5 9H14a1 1 0 01-1-1V3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16z"/></svg>
                     </a>
                   @else
@@ -75,7 +88,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="7" class="px-4 py-6 text-center text-slate-500">Belum ada hasil analisis selesai.</td>
+                <td colspan="8" class="px-4 py-6 text-center text-slate-500">Belum ada hasil analisis selesai.</td>
               </tr>
             @endforelse
           </tbody>

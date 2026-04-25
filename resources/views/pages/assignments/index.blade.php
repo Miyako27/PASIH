@@ -38,9 +38,9 @@
           <thead class="bg-slate-50 text-slate-600">
             <tr>
               <th class="px-4 py-3 text-center">No</th>
+              <th class="px-4 py-3 text-left">Judul Perda</th>
               <th class="px-4 py-3 text-left">Nomor Surat</th>
               <th class="px-4 py-3 text-left">Tanggal Pengajuan</th>
-              <th class="px-4 py-3 text-left">Perihal</th>
               <th class="px-4 py-3 text-left">Instansi Pengaju</th>
               <th class="px-4 py-3 text-left">Status Analisis</th>
               <th class="px-4 py-3 text-left">Penanggung Jawab</th>
@@ -85,9 +85,9 @@
               @endphp
               <tr class="text-slate-700" @if($rowBgColor !== null) style="background-color: {{ $rowBgColor }};" @endif>
                 <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
+                <td class="px-4 py-3">{{ $submission->pemda_title ?: $submission->perda_title ?: '-' }}</td>
                 <td class="px-4 py-3">{{ $submission->nomor_surat }}</td>
                 <td class="px-4 py-3">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</td>
-                <td class="px-4 py-3">{{ $submission->perihal }}</td>
                 <td class="px-4 py-3">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</td>
                 <td class="px-4 py-3"><x-ui.badge :tone="$statusTone">{{ $assignment->status->label() }}</x-ui.badge></td>
                 <td class="px-4 py-3">{{ $assignment->analyst?->name ?? 'Belum ada Penanggung Jawab' }}</td>
