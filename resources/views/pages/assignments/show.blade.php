@@ -183,7 +183,7 @@
           <div class="mt-1 text-sm text-slate-800">{{ $submission->status->label() }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-          <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Terakhir Diperbarui</div>
+          <div class="text-xs uppercase tracking-wide text-slate-500">Status Terakhir Diperbarui</div>
           <div class="mt-1 text-sm text-slate-800">{{ optional($submission->reviewed_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
