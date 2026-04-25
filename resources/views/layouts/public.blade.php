@@ -87,7 +87,7 @@
             <a
                 href="{{ route('login') }}"
                 data-sidebar-link
-                class="mt-3 inline-flex items-center justify-center h-10 px-5 rounded-full bg-[#1f275e] text-white text-sm font-semibold hover:bg-[#27316a]"
+                class="mt-3 block w-full rounded-xl px-4 py-3 text-sm font-semibold bg-[#1f275e] text-white hover:bg-[#27316a] text-center"
             >
                 Masuk
             </a>
