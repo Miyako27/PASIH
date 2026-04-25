@@ -152,7 +152,7 @@
 
     <div class="rounded-2xl bg-white ring-1 ring-slate-200 p-5">
       <h2 class="text-[20px] font-bold tracking-tight text-slate-800">Jumlah Permohonan per Instansi</h2>
-      <p class="mt-1 text-[14px] text-slate-500">Ringkasan jumlah permohonan dari tiap instansi yang terdaftar</p>
+      <p class="mt-1 text-[14px] text-slate-500">Ringkasan jumlah permohonan dari setiap instansi yang terdaftar</p>
 
       <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
         @forelse($institutionSubmissionCounts as $instansi)
