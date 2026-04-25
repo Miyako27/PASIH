@@ -81,7 +81,7 @@
                                 <span>{{ $perdaDoc->file_name ?? 'Dokumen Perda' }}</span>
                                 <span id="perda-page-info" class="text-slate-500"></span>
                             </div>
-                            <div class="text-xs text-slate-500">{{ optional($perdaDoc->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
+                            <div class="text-xs text-slate-500">Diunggah : {{ optional($perdaDoc->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                         </div>
                         <a href="{{ $perdaOpenUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">Lihat</a>
                     </div>
@@ -129,7 +129,7 @@
                                 <span>{{ $analysisDoc->file_name ?? 'Dokumen Hasil Analisis' }}</span>
                                 <span id="analysis-page-info" class="text-slate-500"></span>
                             </div>
-                            <div class="text-xs text-slate-500">{{ optional($analysisDoc->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
+                            <div class="text-xs text-slate-500">Diunggah : {{ optional($analysisDoc->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                         </div>
                         <a href="{{ $analysisOpenUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">Lihat</a>
                     </div>

@@ -528,10 +528,29 @@ function initResponsiveTables() {
     });
 }
 
+function initPublicTopbarScrollState() {
+    if (!document.body.classList.contains('public-page')) {
+        return;
+    }
+
+    const topbar = document.querySelector('.public-page .topbar');
+    if (!topbar) {
+        return;
+    }
+
+    const updateTopbarState = () => {
+        topbar.classList.toggle('is-scrolled', window.scrollY > 8);
+    };
+
+    updateTopbarState();
+    window.addEventListener('scroll', updateTopbarState, { passive: true });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     bindConfirmForms();
     showFlashSuccess();
     initInlinePdfViewers();
     initSidebarDrawer();
     initResponsiveTables();
+    initPublicTopbarScrollState();
 });

@@ -55,7 +55,7 @@
         PASIH
     </div>
     <div class="text-xs text-white/70 mt-1 leading-relaxed">
-        Pendampingan Analisis & Evaluasi Hukum Daerah
+        Pendampingan Analisis &amp; Evaluasi Peraturan Daerah Kementerian Hukum Provinsi Riau
     </div>
 
 </div>
@@ -100,7 +100,7 @@
       <img src="{{ asset('images/LogoInstansi.png') }}" alt="Logo PASIH" class="w-11 h-11 object-contain">
       <div class="min-w-0">
         <div class="font-extrabold tracking-tight text-lg truncate">PASIH</div>
-        <div class="text-[11px] text-white/70 leading-relaxed">Pendampingan Analisa & Evaluasi Hukum Daerah</div>
+        <div class="text-[11px] text-white/70 leading-relaxed">Pendampingan Analisis &amp; Evaluasi Peraturan Daerah Kementerian Hukum Provinsi Riau</div>
       </div>
     </div>
     <button

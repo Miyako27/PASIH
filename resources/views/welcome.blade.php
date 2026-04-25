@@ -1,35 +1,15 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PASIH - Home Page</title>
+@extends('layouts.public')
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+@section('title', 'PASIH - Home Page')
+@section('public_body_class', 'welcome-page')
 
-    @vite(['resources/css/app.css'])
-</head>
-<body class="welcome-page">
-    <header class="topbar">
-        <div class="brand">
-            <img class="brand-logo" src="{{ asset('images/loginlogo2.png') }}" alt="Logo Kementerian Hukum">
-            <div>
-                <div class="brand-title">PASIH</div>
-                <p class="brand-subtitle">Pendampingan Analisis &amp; Evaluasi Peraturan Daerah Kementerian Hukum Provinsi Riau</p>
-            </div>
-        </div>
-
-        <a class="login-btn" href="{{ route('login') }}">Masuk</a>
-    </header>
-
+@section('content')
     <main class="hero">
         <div class="hero-inner">
             <h1 class="headline">
                 Hasil Analisis
                 <br>
-                <span class="headline-accent">Peraturan Daerah</span> Kemenkum Riau
+                <span class="headline-accent">Peraturan Daerah</span> Kementerian Hukum Riau
             </h1>
 
             <p class="subtitle">
@@ -43,7 +23,9 @@
             <path d="M0,44 C130,18 290,22 430,34 C590,48 740,54 890,34 C1030,16 1190,20 1310,32 C1368,38 1412,40 1440,36 L1440,120 L0,120 Z" fill="var(--bg-secondary)"></path>
         </svg>
     </main>
+@endsection
 
+@section('public_footer')
     <footer class="footer">
         <div class="footer-content">
             <section>
@@ -105,5 +87,4 @@
             &copy; {{ date('Y') }} PASIH - Kementerian Hukum Provinsi Riau. Dikembangkan bersama Politeknik Caltex Riau.
         </div>
     </footer>
-</body>
-</html>
+@endsection

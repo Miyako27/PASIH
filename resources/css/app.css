@@ -379,6 +379,24 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     transition: transform 0.2s ease;
 }
 
+.welcome-page .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.welcome-page .menu-btn {
+    display: none;
+    height: 36px;
+    width: 36px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    background: #ffffff;
+    align-items: center;
+    justify-content: center;
+}
+
 .welcome-page .login-btn:hover {
     transform: translateY(-1px);
 }
@@ -415,7 +433,7 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
 .welcome-page .subtitle {
     margin: 26px auto 0;
     max-width: 1240px;
-    font-size: clamp(18px, 2vw, 28px);
+    font-size: clamp(14px, 1.5vw, 22px);
     line-height: 1.48;
     color: var(--text-muted);
     font-weight: 500;
@@ -603,6 +621,14 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     position: sticky;
     top: 0;
     z-index: 50;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease, backdrop-filter 0.25s ease, border-color 0.25s ease;
+}
+
+.public-page .topbar.is-scrolled {
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom-color: #e2e8f0;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .public-page .brand {
@@ -653,6 +679,24 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     transition: transform 0.2s ease;
 }
 
+.public-page .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.public-page .menu-btn {
+    display: none;
+    height: 36px;
+    width: 36px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    background: #ffffff;
+    align-items: center;
+    justify-content: center;
+}
+
 .public-page .login-btn:hover {
     transform: translateY(-1px);
 }
@@ -686,11 +730,11 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     }
 
     .public-page .topbar {
-        height: auto;
-        gap: 12px;
-        align-items: flex-start;
-        flex-direction: column;
-        padding: 14px 16px;
+        height: 68px;
+        gap: 10px;
+        align-items: center;
+        flex-direction: row;
+        padding: 0 16px;
     }
 
     .public-page .brand-logo {
@@ -741,7 +785,7 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
 
     .welcome-page .subtitle {
         margin-top: 18px;
-        font-size: 18px;
+        font-size: 14px;
         line-height: 1.55;
     }
 
@@ -789,5 +833,27 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
 
     .welcome-page .office-item .muted {
         font-size: 14px;
+    }
+}
+
+@media (max-width: 767px) {
+    [data-sidebar-close] {
+        display: none !important;
+    }
+
+    .welcome-page .login-btn {
+        display: none;
+    }
+
+    .welcome-page .menu-btn {
+        display: inline-flex;
+    }
+
+    .public-page .login-btn {
+        display: none;
+    }
+
+    .public-page .menu-btn {
+        display: inline-flex;
     }
 }

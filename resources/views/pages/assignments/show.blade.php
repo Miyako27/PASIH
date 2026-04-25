@@ -267,7 +267,7 @@
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
                   <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
-                  <div class="text-xs text-slate-500">{{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
+                  <div class="text-xs text-slate-500">Diunggah : {{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
                   @php
@@ -336,7 +336,7 @@
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
                   <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
-                  <div class="text-xs text-slate-500">{{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
+                  <div class="text-xs text-slate-500">Diunggah : {{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
                   @php
@@ -410,7 +410,7 @@
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
               <div class="min-w-0 flex-1">
                 <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
-                <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $primaryAnalysisDocument->document_type) }}</div>
+                <div class="text-xs text-slate-500">Diunggah : {{ optional($primaryAnalysisDocument->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
               </div>
               @if($fileUrl)
                 <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
@@ -464,7 +464,7 @@
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
               <div class="min-w-0 flex-1">
                 <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
-                <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $document->document_type) }}</div>
+                <div class="text-xs text-slate-500">Diunggah : {{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
               </div>
               @if($fileUrl)
                 <a href="{{ ($isPdf && $previewUrl) ? $previewUrl : $fileUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
