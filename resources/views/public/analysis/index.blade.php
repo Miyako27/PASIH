@@ -66,12 +66,12 @@
                 <table class="w-full text-sm">
                     <thead class="bg-slate-50 text-slate-600">
                         <tr>
-                            <th class="px-4 py-3 text-left">No</th>
-                            <th class="px-4 py-3 text-left">Judul Perda</th>
+                            <th class="px-4 py-3 text-center">No</th>
+                            <th class="px-4 py-3 text-left">Peraturan Daerah</th>
                             <th class="px-4 py-3 text-left">Instansi Pengaju</th>
-                            <th class="px-4 py-3 text-left">Tahun</th>
-                            <th class="px-4 py-3 text-center">Dokumen Perda</th>
-                            <th class="px-4 py-3 text-center">Dokumen Hasil Analisis</th>
+                            <th class="px-4 py-3 text-center">Tahun</th>
+                            <th class="px-4 py-3 text-center">Peraturan Daerah</th>
+                            <th class="px-4 py-3 text-center">Hasil Analisis</th>
                             <th class="px-4 py-3 text-left">Aksi</th>
                         </tr>
                     </thead>
@@ -85,10 +85,10 @@
                                 $yearCompleted = optional($item->completed_at)->format('Y') ?: '-';
                             @endphp
                             <tr class="border-t border-slate-100 text-slate-700">
-                                <td class="px-4 py-3">{{ $rowNumber }}</td>
+                                <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
                                 <td class="px-4 py-3">{{ $submission?->perda_title ?: '-' }}</td>
                                 <td class="px-4 py-3">{{ $submission?->submitter?->instansi?->nama_instansi ?? '-' }}</td>
-                                <td class="px-4 py-3">{{ $yearCompleted }}</td>
+                                <td class="px-4 py-3 text-center">{{ $yearCompleted }}</td>
                                 <td class="px-4 py-3 text-center">
                                     @if($perdaDocument && !empty($perdaDocument->file_path))
                                         <a href="{{ asset('storage/'.$perdaDocument->file_path) }}" target="_blank" class="inline-flex w-full items-center justify-center text-rose-600 hover:underline" title="Lihat Dokumen Perda" aria-label="Lihat Dokumen Perda">
