@@ -309,18 +309,20 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
 
     /* Mobile style for "Tambah Data" buttons on non-public pages. */
     body:not(.public-page) .pasih-add-btn {
-        min-height: 3.5rem;
-        height: 3.5rem;
-        min-width: 10.5rem;
-        padding-inline: 1rem;
-        border-radius: 1rem;
-        gap: 0.625rem;
-        white-space: normal;
-        line-height: 1.15;
+        min-height: 2.75rem;
+        height: 2.75rem;
+        min-width: 8.75rem;
+        padding-inline: 0.875rem;
+        border-radius: 0.875rem;
+        gap: 0.5rem;
+        justify-content: center;
+        text-align: center;
+        white-space: nowrap;
+        line-height: 1;
     }
 
     body:not(.public-page) .pasih-add-btn > span:first-child {
-        font-size: 1.25rem;
+        font-size: 1rem;
         line-height: 1;
     }
 }
