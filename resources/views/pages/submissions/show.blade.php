@@ -85,19 +85,19 @@
 
         return "{$instansiPart}_{$jenisPart}_{$timestampPart}";
       };
-      $revisionDocuments = $submission->documents
-        ->where('document_type', 'dokumen_pendukung')
-        ->sortByDesc('id')
-        ->values();
       $submissionDocuments = $submission->documents->whereIn('document_type', [
         'surat_permohonan',
         'peraturan_daerah',
         'peraturan_pelaksana_perda',
+        'dokumen_pendukung',
       ]);
-      $suratPermohonanDocument = $submissionDocuments->where('document_type', 'surat_permohonan')->sortByDesc('id')->first();
-      $peraturanDaerahDocument = $submissionDocuments->where('document_type', 'peraturan_daerah')->sortByDesc('id')->first();
-      $peraturanPelaksanaPerdaDocument = $submissionDocuments->where('document_type', 'peraturan_pelaksana_perda')->sortByDesc('id')->first();
-      $inferRevisionType = function ($document): ?string {
+
+      $inferSubmissionDocumentType = function ($document): ?string {
+        $documentType = (string) ($document->document_type ?? '');
+        if (in_array($documentType, ['surat_permohonan', 'peraturan_daerah', 'peraturan_pelaksana_perda'], true)) {
+          return $documentType;
+        }
+
         $fileName = strtolower((string) ($document->file_name ?? ''));
         if (str_contains($fileName, '_suratpermohonan_')) {
           return 'surat_permohonan';
@@ -111,15 +111,16 @@
 
         return null;
       };
-      $suratPermohonanRevisionDocument = $revisionDocuments->first(fn ($document) => $inferRevisionType($document) === 'surat_permohonan');
-      $peraturanDaerahRevisionDocument = $revisionDocuments->first(fn ($document) => $inferRevisionType($document) === 'peraturan_daerah');
-      $peraturanPelaksanaPerdaRevisionDocument = $revisionDocuments->first(fn ($document) => $inferRevisionType($document) === 'peraturan_pelaksana_perda');
 
-      // Fallback untuk data lama yang belum punya pola nama file baru.
-      $untypedRevisionDocuments = $revisionDocuments->filter(fn ($document) => $inferRevisionType($document) === null)->values();
-      $suratPermohonanRevisionDocument = $suratPermohonanRevisionDocument ?? $untypedRevisionDocuments->get(0);
-      $peraturanDaerahRevisionDocument = $peraturanDaerahRevisionDocument ?? $untypedRevisionDocuments->get(1);
-      $peraturanPelaksanaPerdaRevisionDocument = $peraturanPelaksanaPerdaRevisionDocument ?? $untypedRevisionDocuments->get(2);
+      $latestSubmissionDocumentByType = function (string $type) use ($submissionDocuments, $inferSubmissionDocumentType) {
+        return $submissionDocuments
+          ->sortByDesc('id')
+          ->first(fn ($document) => $inferSubmissionDocumentType($document) === $type);
+      };
+
+      $suratPermohonanDocument = $latestSubmissionDocumentByType('surat_permohonan');
+      $peraturanDaerahDocument = $latestSubmissionDocumentByType('peraturan_daerah');
+      $peraturanPelaksanaPerdaDocument = $latestSubmissionDocumentByType('peraturan_pelaksana_perda');
     @endphp
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
@@ -280,74 +281,6 @@
       </div>
     </div>
 
-    <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
-      <h2 class="text-xl font-bold text-slate-800">Dokumen Revisi Permohonan</h2>
-      <p class="text-sm text-slate-500 mt-1">Dokumen terbaru dari hasil revisi</p>
-
-      <div class="mt-5 space-y-4">
-        @foreach([
-          ['label' => 'Surat Permohonan', 'document' => $suratPermohonanRevisionDocument],
-          ['label' => 'Peraturan Daerah', 'document' => $peraturanDaerahRevisionDocument],
-          ['label' => 'Peraturan Pelaksana Perda', 'document' => $peraturanPelaksanaPerdaRevisionDocument],
-        ] as $docCard)
-          @php
-            $document = $docCard['document'];
-          @endphp
-          <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
-            <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
-              <div class="text-sm text-slate-800">{{ $docCard['label'] }}</div>
-            </div>
-            @if(! $document)
-              <div class="px-4 py-3 text-sm text-slate-500 bg-white">-</div>
-            @else
-              @php
-                $fileUrl = !empty($document->file_path) ? asset('storage/'.$document->file_path) : null;
-                $fileName = strtolower($document->file_name ?? '');
-                $filePath = strtolower($document->file_path ?? '');
-                $isPdf = str_ends_with($fileName, '.pdf') || str_ends_with($filePath, '.pdf');
-                $previewUrl = $isPdf ? route('documents.preview.submission', $document) : null;
-                $previewDataUrl = $isPdf ? route('documents.preview.submission', ['document' => $document, 'base64' => 1]) : null;
-                $displayFileName = $formatDisplayFileName($document, $docCard['label']);
-              @endphp
-              <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
-                <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
-                  <div class="text-xs text-slate-500">Diunggah : {{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
-                </div>
-                @if($fileUrl)
-                  @php
-                    $openUrl = ($isPdf && $previewUrl) ? $previewUrl : $fileUrl;
-                  @endphp
-                  <a href="{{ $openUrl }}" target="_blank" class="inline-flex shrink-0 items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">
-                    Lihat
-                  </a>
-                @else
-                  <span class="text-xs text-rose-600 font-semibold">File tidak tersedia</span>
-                @endif
-              </div>
-              @if($fileUrl && $isPdf && $previewUrl)
-                <div class="bg-slate-100 p-3 md:p-4">
-                  <div
-                    class="overflow-hidden rounded-lg ring-1 ring-slate-200 bg-slate-200"
-                    data-pdf-viewer
-                    data-pdf-url="{{ $previewDataUrl }}"
-                    data-pdf-name="{{ $displayFileName }}"
-                  >
-
-                    <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
-                      <div class="flex flex-col items-center gap-3" data-pdf-pages>
-                        <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              @endif
-            @endif
-          </div>
-        @endforeach
-      </div>
-    </div>
-
     @if($submission->submitter_id === auth()->id() && in_array($submission->status->value, ['submitted', 'revised'], true))
       <a href="{{ route('submissions.edit', $submission) }}" class="inline-flex items-center gap-2 h-10 px-4 rounded-lg bg-amber-400 text-white text-sm font-semibold hover:bg-amber-500">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -358,4 +291,3 @@
     @endif
   </div>
 @endsection
-

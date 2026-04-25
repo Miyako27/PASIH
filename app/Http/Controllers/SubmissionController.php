@@ -295,7 +295,7 @@ class SubmissionController extends Controller
             );
         }
 
-        return redirect()->route('submissions.show', $submission)->with('success', 'Pengajuan berhasil diperbarui.');
+        return redirect()->route('submissions.index')->with('success', 'Pengajuan berhasil diperbarui.');
     }
 
     public function destroy(Request $request, Submission $submission)

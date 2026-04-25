@@ -142,7 +142,9 @@ class AssignmentController extends Controller
                     });
 
                 if ($searchYear !== null) {
-                    $query->orWhereYear('completed_at', $searchYear);
+                    $query->orWhereHas('latestApproval', function ($approvalQuery) use ($searchYear): void {
+                        $approvalQuery->whereYear('approved_by_kakanwil_at', $searchYear);
+                    });
                 }
 
                 if ($matchedStatuses !== []) {

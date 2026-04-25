@@ -83,7 +83,7 @@
             Upload Dokumen
           </label>
           <p class="text-xs text-slate-500 mt-1">
-            Maksimal ukuran tiap file 5 MB.
+            Format: PDF/DOC/DOCX, maksimal ukuran tiap file 5 MB.
           </p>
 
           <div class="mt-3 space-y-3">

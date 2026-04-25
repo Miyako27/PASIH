@@ -45,7 +45,9 @@ class PublicAnalysisController extends Controller
                 });
 
                 if ($searchYear !== null) {
-                    $builder->orWhereYear('completed_at', $searchYear);
+                    $builder->orWhereHas('latestApproval', function ($approvalQuery) use ($searchYear): void {
+                        $approvalQuery->whereYear('approved_by_kakanwil_at', $searchYear);
+                    });
                 }
 
                 if ($isCompletedKeyword) {
