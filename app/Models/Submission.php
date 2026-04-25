@@ -95,11 +95,7 @@ class Submission extends Model
 
     public function getReviewedAtAttribute()
     {
-        if ($this->latestReviewStatus?->created_at) {
-            return $this->latestReviewStatus->created_at;
-        }
-
-        return $this->latestDisposition?->disposed_at;
+        return $this->latestStatus?->updated_at;
     }
 
     public function getFinishedAtAttribute()
