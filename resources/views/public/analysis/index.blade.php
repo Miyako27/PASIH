@@ -16,8 +16,8 @@
         <div class="rounded-xl bg-white ring-1 ring-slate-200 p-4 sm:p-5">
             <form method="GET" action="{{ route('public.analysis.index') }}" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                 <div>
-                    <label for="instansi_id" class="block mb-1 text-slate-600">Instansi</label>
-                    <select id="instansi_id" name="instansi_id" class="h-10 w-full rounded-md border border-slate-300" onchange="this.form.submit()">
+                    <label for="instansi_id" class="public-analysis-filter-label block mb-1 text-slate-600">Instansi</label>
+                    <select id="instansi_id" name="instansi_id" class="public-analysis-filter-select h-10 w-full rounded-md border border-slate-300" onchange="this.form.submit()">
                         <option value="0">Semua Instansi</option>
                         @foreach($instansiOptions as $instansi)
                             <option value="{{ $instansi->id_instansi }}" @selected($instansiId === (int) $instansi->id_instansi)>{{ $instansi->nama_instansi }}</option>
@@ -25,8 +25,8 @@
                     </select>
                 </div>
                 <div>
-                    <label for="year" class="block mb-1 text-slate-600">Tahun Selesai</label>
-                    <select id="year" name="year" class="h-10 w-full rounded-md border border-slate-300" onchange="this.form.submit()">
+                    <label for="year" class="public-analysis-filter-label block mb-1 text-slate-600">Tahun Selesai</label>
+                    <select id="year" name="year" class="public-analysis-filter-select h-10 w-full rounded-md border border-slate-300" onchange="this.form.submit()">
                         <option value="">Semua Tahun</option>
                         @foreach($years as $yearOption)
                             <option value="{{ $yearOption }}" @selected((string) $year === (string) $yearOption)>{{ $yearOption }}</option>

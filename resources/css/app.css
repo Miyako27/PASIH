@@ -318,6 +318,18 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
         width: 9.5rem;
     }
 
+    .public-page .public-analysis-filter-label {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    .public-page .public-analysis-filter-select {
+        min-height: 2.5rem !important;
+        height: 2.5rem !important;
+        font-size: 0.8125rem !important;
+        line-height: 1.2rem;
+    }
+
     /* Mobile style for "Tambah Data" buttons on non-public pages. */
     body:not(.public-page) .pasih-add-btn {
         min-height: 2.75rem;
@@ -757,6 +769,10 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
     padding: 14px 20px;
 }
 
+.public-page .public-analysis-filter-select {
+    font-size: 0.875rem;
+}
+
 @media (max-width: 960px) {
     .welcome-page .topbar {
         height: auto;
@@ -812,6 +828,18 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
         height: 32px;
         font-size: 15px;
         padding-inline: 10px;
+    }
+
+    .public-page .public-analysis-filter-label {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    .public-page .public-analysis-filter-select {
+        min-height: 2.5rem;
+        height: 2.5rem;
+        font-size: 0.8125rem !important;
+        line-height: 1.2rem;
     }
 
     .welcome-page .hero {
