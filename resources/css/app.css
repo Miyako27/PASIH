@@ -362,7 +362,7 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
 }
 
 .welcome-page .login-btn {
-    min-width: 104px;
+    min-width: 92px;
     height: 32px;
     border-radius: 999px;
     border: 0;
@@ -375,7 +375,7 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 16px;
+    padding: 0 12px;
     transition: transform 0.2s ease;
 }
 
@@ -636,7 +636,7 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
 }
 
 .public-page .login-btn {
-    min-width: 104px;
+    min-width: 92px;
     height: 32px;
     border-radius: 999px;
     border: 0;
@@ -649,7 +649,7 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0 16px;
+    padding: 0 12px;
     transition: transform 0.2s ease;
 }
 
@@ -715,17 +715,17 @@ main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-4 {
     }
 
     .welcome-page .login-btn {
-        min-width: 96px;
+        min-width: 90px;
         height: 32px;
         font-size: 15px;
-        padding-inline: 14px;
+        padding-inline: 10px;
     }
 
     .public-page .login-btn {
-        min-width: 96px;
+        min-width: 90px;
         height: 32px;
         font-size: 15px;
-        padding-inline: 14px;
+        padding-inline: 10px;
     }
 
     .welcome-page .hero {

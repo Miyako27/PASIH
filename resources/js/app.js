@@ -215,16 +215,22 @@ async function ensurePdfJs() {
 async function initInlinePdfViewer(root) {
     const url = root.dataset.pdfUrl;
     const displayName = root.dataset.pdfName || 'Dokumen PDF';
+    const pageInfoTarget = root.dataset.pdfPageInfoTarget || '';
     const pagesContainer = root.querySelector('[data-pdf-pages]');
     const scrollContainer = root.querySelector('[data-pdf-scroll]');
     const metaElement = root.querySelector('[data-pdf-meta]');
+    const pageInfoElement = pageInfoTarget
+        ? document.getElementById(pageInfoTarget)
+        : root.closest('.rounded-xl')?.querySelector('[data-pdf-page-info]');
 
-    if (!url || !pagesContainer || !scrollContainer || !metaElement) {
+    if (!url || !pagesContainer || !scrollContainer) {
         return;
     }
 
     const setStatus = (text) => {
-        metaElement.textContent = text;
+        if (metaElement) {
+            metaElement.textContent = text;
+        }
     };
 
     const setError = (text) => {
@@ -233,7 +239,6 @@ async function initInlinePdfViewer(root) {
     };
 
     const setIdleState = () => {
-        setStatus('Preview belum dimuat');
         pagesContainer.innerHTML = '<div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>';
     };
 
@@ -355,16 +360,22 @@ async function initInlinePdfViewer(root) {
             renderToken = 0;
 
             setStatus(`${displayName} | ${pdf.numPages} halaman`);
+            if (pageInfoElement) {
+                pageInfoElement.textContent = ` | ${pdf.numPages} halaman`;
+            }
             setControlEnabled(true);
             await renderAllPages();
         } catch (error) {
             setControlEnabled(false);
-            setError('File PDF tidak dapat ditampilkan. Silakan tekan Muat Ulang.');
+            if (pageInfoElement) {
+                pageInfoElement.textContent = '';
+            }
+            setError('File PDF tidak dapat ditampilkan.');
         } finally {
             loading = false;
             if (loadButton) {
                 loadButton.disabled = false;
-                loadButton.textContent = 'Muat Ulang';
+                loadButton.textContent = 'Muat';
             }
         }
     };

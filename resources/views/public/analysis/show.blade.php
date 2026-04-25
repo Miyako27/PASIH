@@ -26,26 +26,42 @@
 
             <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-                    <div class="text-xs uppercase tracking-wide text-slate-500">Judul Perda</div>
+                    <div class="text-xs uppercase tracking-wide text-slate-500">Judul Peraturan Daerah</div>
                     <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission?->perda_title ?: '-' }}</div>
                 </div>
                 <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-                    <div class="text-xs uppercase tracking-wide text-slate-500">Tahun Selesai Analisis</div>
+                    <div class="text-xs uppercase tracking-wide text-slate-500">Tahun</div>
                     <div class="mt-1 text-sm font-semibold text-slate-800">{{ $yearCompleted }}</div>
                 </div>
-                <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+                <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
                     <div class="text-xs uppercase tracking-wide text-slate-500">Instansi</div>
                     <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission?->submitter?->instansi?->nama_instansi ?? '-' }}</div>
-                </div>
-                <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
-                    <div class="text-xs uppercase tracking-wide text-slate-500">Nomor Surat</div>
-                    <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission?->nomor_surat ?? '-' }}</div>
                 </div>
             </div>
         </div>
 
         <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
-            <h2 class="text-xl font-bold text-slate-800">Dokumen Perda</h2>
+            <h2 class="text-xl font-bold text-slate-800">Ringkasan Hasil Analisis</h2>
+            <p class="text-sm text-slate-500 mt-1">Isi pokok hasil analisis dari analis hukum</p>
+
+            <div class="mt-5 space-y-4">
+                <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+                    <div class="text-xs uppercase tracking-wide text-slate-500">Ringkasan Analisis</div>
+                    <div class="mt-1 text-sm text-slate-800 whitespace-pre-line">{{ trim((string) ($analysisDoc?->ringkasan_analisis ?? '')) ?: '-' }}</div>
+                </div>
+                <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+                    <div class="text-xs uppercase tracking-wide text-slate-500">Hasil Evaluasi</div>
+                    <div class="mt-1 text-sm text-slate-800 whitespace-pre-line">{{ trim((string) ($analysisDoc?->hasil_evaluasi ?? '')) ?: '-' }}</div>
+                </div>
+                <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
+                    <div class="text-xs uppercase tracking-wide text-slate-500">Rekomendasi</div>
+                    <div class="mt-1 text-sm text-slate-800 whitespace-pre-line">{{ trim((string) ($analysisDoc?->rekomendasi ?? '')) ?: '-' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
+            <h2 class="text-xl font-bold text-slate-800">Dokumen Peraturan daerah</h2>
             <p class="text-sm text-slate-500 mt-1">Dokumen peraturan daerah yang dianalisis</p>
 
             <div class="mt-5 rounded-xl ring-1 ring-slate-200 overflow-hidden">
@@ -61,7 +77,10 @@
                     @endphp
                     <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
                         <div class="min-w-0 flex-1">
-                            <div class="truncate text-sm font-semibold text-slate-800">{{ $perdaDoc->file_name ?? 'Dokumen Perda' }}</div>
+                            <div class="truncate text-sm font-semibold text-slate-800">
+                                <span>{{ $perdaDoc->file_name ?? 'Dokumen Perda' }}</span>
+                                <span id="perda-page-info" class="text-slate-500"></span>
+                            </div>
                             <div class="text-xs text-slate-500">{{ optional($perdaDoc->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                         </div>
                         <a href="{{ $perdaOpenUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">Lihat</a>
@@ -73,13 +92,8 @@
                                 data-pdf-viewer
                                 data-pdf-url="{{ $perdaPreviewDataUrl }}"
                                 data-pdf-name="{{ $perdaDoc->file_name ?? 'Dokumen Perda' }}"
+                                data-pdf-page-info-target="perda-page-info"
                             >
-                                <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
-                                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
-                                    </div>
-                                </div>
                                 <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                                     <div class="flex flex-col items-center gap-3" data-pdf-pages>
                                         <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
@@ -95,8 +109,8 @@
         </div>
 
         <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
-            <h2 class="text-xl font-bold text-slate-800">Dokumen Hasil Analisis Terbaru</h2>
-            <p class="text-sm text-slate-500 mt-1">Jika ada revisi, dokumen terbaru ditampilkan di sini</p>
+            <h2 class="text-xl font-bold text-slate-800">Dokumen Hasil Analisis</h2>
+            <p class="text-sm text-slate-500 mt-1">Hasil analisis dari peraturan daerah yang diajukan</p>
 
             <div class="mt-5 rounded-xl ring-1 ring-slate-200 overflow-hidden">
                 @if($analysisDoc && !empty($analysisDoc->file_path))
@@ -111,7 +125,10 @@
                     @endphp
                     <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
                         <div class="min-w-0 flex-1">
-                            <div class="truncate text-sm font-semibold text-slate-800">{{ $analysisDoc->file_name ?? 'Dokumen Hasil Analisis' }}</div>
+                            <div class="truncate text-sm font-semibold text-slate-800">
+                                <span>{{ $analysisDoc->file_name ?? 'Dokumen Hasil Analisis' }}</span>
+                                <span id="analysis-page-info" class="text-slate-500"></span>
+                            </div>
                             <div class="text-xs text-slate-500">{{ optional($analysisDoc->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                         </div>
                         <a href="{{ $analysisOpenUrl }}" target="_blank" class="inline-flex items-center h-8 px-3 rounded-lg bg-white text-slate-700 text-xs font-semibold ring-1 ring-slate-300 hover:bg-slate-100">Lihat</a>
@@ -123,13 +140,8 @@
                                 data-pdf-viewer
                                 data-pdf-url="{{ $analysisPreviewDataUrl }}"
                                 data-pdf-name="{{ $analysisDoc->file_name ?? 'Dokumen Hasil Analisis' }}"
+                                data-pdf-page-info-target="analysis-page-info"
                             >
-                                <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
-                                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
-                                    </div>
-                                </div>
                                 <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                                     <div class="flex flex-col items-center gap-3" data-pdf-pages>
                                         <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>

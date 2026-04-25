@@ -178,7 +178,7 @@
               @endphp
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}">{{ $displayFileName }}</div>
+                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                   <div class="text-xs text-slate-500">{{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
@@ -200,12 +200,7 @@
                     data-pdf-url="{{ $previewDataUrl }}"
                     data-pdf-name="{{ $displayFileName }}"
                   >
-                    <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
-                      <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
-                      <div class="flex items-center gap-1">
-                        <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
-                      </div>
-                    </div>
+                    
                     <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                       <div class="flex flex-col items-center gap-3" data-pdf-pages>
                         <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
@@ -251,7 +246,7 @@
               @endphp
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}">{{ $displayFileName }}</div>
+                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                   <div class="text-xs text-slate-500">{{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
@@ -273,12 +268,7 @@
                     data-pdf-url="{{ $previewDataUrl }}"
                     data-pdf-name="{{ $displayFileName }}"
                   >
-                    <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
-                      <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
-                      <div class="flex items-center gap-1">
-                        <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
-                      </div>
-                    </div>
+                    
                     <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                       <div class="flex flex-col items-center gap-3" data-pdf-pages>
                         <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
@@ -331,7 +321,7 @@
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
               <div class="min-w-0 flex-1">
-                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}">{{ $displayFileName }}</div>
+                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                 <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $primaryAnalysisDocument->document_type) }}</div>
               </div>
               @if($fileUrl)
@@ -350,12 +340,7 @@
                   data-pdf-url="{{ $previewDataUrl }}"
                   data-pdf-name="{{ $displayFileName }}"
                 >
-                  <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
-                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
-                    <div class="flex items-center gap-1">
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
-                    </div>
-                  </div>
+                  
                   <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                     <div class="flex flex-col items-center gap-3" data-pdf-pages>
                       <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>
@@ -389,7 +374,7 @@
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
               <div class="min-w-0 flex-1">
-                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}">{{ $displayFileName }}</div>
+                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                 <div class="text-xs text-slate-500">{{ str_replace('_', ' ', $document->document_type) }}</div>
               </div>
               @if($fileUrl)
@@ -408,12 +393,7 @@
                   data-pdf-url="{{ $previewDataUrl }}"
                   data-pdf-name="{{ $displayFileName }}"
                 >
-                  <div class="flex items-center justify-between gap-2 border-b border-slate-200 bg-white px-3 py-2">
-                    <div class="truncate text-xs font-semibold text-slate-600" data-pdf-meta>Memuat dokumen...</div>
-                    <div class="flex items-center gap-1">
-                      <button type="button" class="inline-flex items-center h-7 px-2 rounded-md text-xs font-semibold text-white bg-slate-700 hover:bg-slate-800" data-pdf-action="load">Tampilkan</button>
-                    </div>
-                  </div>
+                  
                   <div class="h-[58vh] min-h-[420px] max-h-[840px] overflow-auto p-3" data-pdf-scroll>
                     <div class="flex flex-col items-center gap-3" data-pdf-pages>
                       <div class="text-xs text-slate-500">Menyiapkan preview PDF...</div>

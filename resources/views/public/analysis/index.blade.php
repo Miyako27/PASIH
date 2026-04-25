@@ -6,14 +6,18 @@
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-5">
         <div>
             <h1 class="text-4xl font-extrabold tracking-tight text-blue-950">Hasil Analisis</h1>
-            <p class="mt-2 text-sm text-slate-600">Daftar hasil analisis peraturan daerah yang dapat diakses masyarakat.</p>
+            <p class="mt-1 pasih-page-breadcrumb">
+                <a href="{{ route('home') }}" class="hover:text-slate-700 hover:underline">Beranda</a>
+                <span class="mx-1">/</span>
+                <span>Hasil Analisis</span>
+            </p>
         </div>
 
         <div class="rounded-xl bg-white ring-1 ring-slate-200 p-4 sm:p-5">
-            <form method="GET" action="{{ route('public.analysis.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3 text-sm">
+            <form method="GET" action="{{ route('public.analysis.index') }}" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                 <div>
                     <label for="instansi_id" class="block mb-1 text-slate-600">Instansi</label>
-                    <select id="instansi_id" name="instansi_id" class="h-10 w-full rounded-md border border-slate-300">
+                    <select id="instansi_id" name="instansi_id" class="h-10 w-full rounded-md border border-slate-300" onchange="this.form.submit()">
                         <option value="0">Semua Instansi</option>
                         @foreach($instansiOptions as $instansi)
                             <option value="{{ $instansi->id_instansi }}" @selected($instansiId === (int) $instansi->id_instansi)>{{ $instansi->nama_instansi }}</option>
@@ -22,19 +26,15 @@
                 </div>
                 <div>
                     <label for="year" class="block mb-1 text-slate-600">Tahun Selesai</label>
-                    <select id="year" name="year" class="h-10 w-full rounded-md border border-slate-300">
+                    <select id="year" name="year" class="h-10 w-full rounded-md border border-slate-300" onchange="this.form.submit()">
                         <option value="">Semua Tahun</option>
                         @foreach($years as $yearOption)
                             <option value="{{ $yearOption }}" @selected((string) $year === (string) $yearOption)>{{ $yearOption }}</option>
                         @endforeach
                     </select>
                 </div>
-                <div class="flex items-end gap-2">
-                    <input type="hidden" name="q" value="{{ $search }}">
-                    <input type="hidden" name="per_page" value="{{ $perPage }}">
-                    <button type="submit" class="inline-flex items-center h-10 px-5 rounded-full bg-[#dbbb44] text-black font-semibold hover:bg-[#cfb03d] transition-colors">Filter</button>
-                    <a href="{{ route('public.analysis.index', ['q' => $search, 'per_page' => $perPage]) }}" class="inline-flex items-center h-10 px-4 rounded-full bg-slate-100 text-slate-700 font-semibold hover:bg-slate-200">Reset</a>
-                </div>
+                <input type="hidden" name="q" value="{{ $search }}">
+                <input type="hidden" name="per_page" value="{{ $perPage }}">
             </form>
         </div>
 
@@ -70,8 +70,8 @@
                             <th class="px-4 py-3 text-left">Judul Perda</th>
                             <th class="px-4 py-3 text-left">Instansi Pengaju</th>
                             <th class="px-4 py-3 text-left">Tahun</th>
-                            <th class="px-4 py-3 text-left">Dokumen Perda</th>
-                            <th class="px-4 py-3 text-left">Dokumen Hasil Analisis</th>
+                            <th class="px-4 py-3 text-center">Dokumen Perda</th>
+                            <th class="px-4 py-3 text-center">Dokumen Hasil Analisis</th>
                             <th class="px-4 py-3 text-left">Aksi</th>
                         </tr>
                     </thead>
