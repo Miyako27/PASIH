@@ -15,12 +15,16 @@ class DashboardController extends Controller
         $user = $request->user();
 
         if ($user->role->value === 'admin') {
+            $oneYearAgo = now()->subYear();
+
             return view('pages.admin.dashboard', [
                 'stats' => [
-                    'total_accounts' => User::query()->count(),
-                    'total_instansi' => Instansi::query()->count(),
-                    'total_submissions' => Submission::query()->count(),
-                    'total_assignments' => Assignment::query()->count(),
+                    'total_accounts' => User::query()
+                        ->where('created_at', '>=', $oneYearAgo)
+                        ->count(),
+                    'total_instansi' => Instansi::query()
+                        ->where('created_at', '>=', $oneYearAgo)
+                        ->count(),
                 ],
                 'recentAccounts' => User::query()->with('instansi')->latest()->limit(5)->get(),
                 'recentActivities' => NotificationController::buildActivities($user, 10),

@@ -3,9 +3,11 @@
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Admin\AccountManagementController;
+use App\Http\Controllers\Admin\GuideManagementController;
 use App\Http\Controllers\Admin\InstitutionManagementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentPreviewController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PublicAnalysisController;
 use App\Http\Controllers\SubmissionController;
@@ -54,6 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/documents/suratbalasan/{document}/preview', [DocumentPreviewController::class, 'previewSuratBalasan'])
         ->whereNumber('document')
         ->name('documents.preview.suratbalasan');
+    Route::get('/documents/guides/{document}/preview', [DocumentPreviewController::class, 'previewGuide'])
+        ->whereNumber('document')
+        ->name('documents.preview.guide');
 
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/accounts', [AccountManagementController::class, 'index'])->name('admin.accounts.index');
@@ -71,6 +76,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin/instansi/{instansi}/edit', [InstitutionManagementController::class, 'edit'])->name('admin.instansi.edit');
         Route::put('/admin/instansi/{instansi}', [InstitutionManagementController::class, 'update'])->name('admin.instansi.update');
         Route::delete('/admin/instansi/{instansi}', [InstitutionManagementController::class, 'destroy'])->name('admin.instansi.destroy');
+
+        Route::get('/admin/buku-panduan', [GuideManagementController::class, 'index'])->name('admin.guides.index');
+        Route::get('/admin/buku-panduan/create', [GuideManagementController::class, 'create'])->name('admin.guides.create');
+        Route::post('/admin/buku-panduan', [GuideManagementController::class, 'store'])->name('admin.guides.store');
+        Route::get('/admin/buku-panduan/{guide}', [GuideManagementController::class, 'show'])->name('admin.guides.show');
+        Route::get('/admin/buku-panduan/{guide}/edit', [GuideManagementController::class, 'edit'])->name('admin.guides.edit');
+        Route::put('/admin/buku-panduan/{guide}', [GuideManagementController::class, 'update'])->name('admin.guides.update');
+        Route::delete('/admin/buku-panduan/{guide}', [GuideManagementController::class, 'destroy'])->name('admin.guides.destroy');
+    });
+
+    Route::middleware('role:operator_pemda,operator_kanwil,ketua_tim_analisis,kakanwil,kepala_divisi_p3h,analis_hukum')->group(function () {
+        Route::get('/buku-panduan', [GuideController::class, 'index'])->name('guides.index');
     });
 
     Route::get('/submissions', [SubmissionController::class, 'index'])->name('submissions.index');

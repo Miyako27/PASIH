@@ -8,53 +8,30 @@
       <div class="mt-2 h-1 w-20 rounded-full bg-amber-400"></div>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #2B3056 0%, #3A4070 50%, #4A5080 100%);">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #475569 0%, #64748B 50%, #94A3B8 100%);">
         <div class="flex items-start justify-between gap-3">
           <div class="text-sm font-semibold text-white/90">Total Akun</div>
           <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2M10 7a4 4 0 100-8 4 4 0 000 8zm11 14v-2a4 4 0 00-3-3.87M17 3.13a4 4 0 010 7.75" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white/90 overflow-visible" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632z" />
             </svg>
           </div>
         </div>
         <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['total_accounts'] }}</div>
       </div>
 
-      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #FFD82B 0%, #FFAB4A 50%, #FF9F2E 100%);">
+      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #006A4E 0%, #1B7F5C 50%, #2A8F6A 100%);">
         <div class="flex items-start justify-between gap-3">
           <div class="text-sm font-semibold text-white/90">Total Instansi</div>
           <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white/90 overflow-visible" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 21V7l7-4 7 4v14M9 11h.01M12 11h.01M15 11h.01M9 15h.01M12 15h.01M15 15h.01" />
             </svg>
           </div>
         </div>
         <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['total_instansi'] }}</div>
-      </div>
-
-      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #475569 0%, #64748B 50%, #94A3B8 100%);">
-        <div class="flex items-start justify-between gap-3">
-          <div class="text-sm font-semibold text-white/90">Total Permohonan</div>
-          <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l4 4v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2zm8 0v4h4M9 13h6M9 17h6M9 9h3" />
-            </svg>
-          </div>
-        </div>
-        <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['total_submissions'] }}</div>
-      </div>
-
-      <div class="rounded-2xl p-5 text-white" style="background: linear-gradient(90deg, #006A4E 0%, #1B7F5C 50%, #2A8F6A 100%);">
-        <div class="flex items-start justify-between gap-3">
-          <div class="text-sm font-semibold text-white/90">Total Penugasan</div>
-          <div class="h-14 w-14 rounded-2xl border border-white/15 bg-white/10 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12h14V7a2 2 0 00-2-2h-2M9 5a3 3 0 006 0M9 5a3 3 0 016 0m-6 8l2 2 4-4" />
-            </svg>
-          </div>
-        </div>
-        <div class="mt-2 text-5xl font-extrabold leading-none">{{ $stats['total_assignments'] }}</div>
       </div>
     </div>
 

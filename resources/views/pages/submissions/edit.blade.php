@@ -153,7 +153,6 @@
             </svg>
             Simpan Perubahan
           </button>
-          {{-- <a href="{{ route('submissions.index') }}" class="inline-flex items-center h-10 px-4 rounded-md bg-slate-100 text-slate-700 text-sm font-semibold hover:bg-slate-200">Batal</a> --}}
         </div>
       </form>
     </div>

@@ -5,8 +5,9 @@
   $items = [];
   $defaultIcons = [
     'dashboard' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-8 9 8M5 10v10h14V10" />',
-    'accounts' => '<path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2M9 7a4 4 0 100-8 4 4 0 000 8zm11 14v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />',
+    'accounts' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 7.5a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632z" />',
     'instansi' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M12 9h.01M15 9h.01M9 13h.01M12 13h.01M15 13h.01M9 17h.01M12 17h.01M15 17h.01" />',
+    'guide' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.25v13m0-13c-1.12-1.33-3.05-2-5.75-2A3.25 3.25 0 003 7.5v9.25A3.25 3.25 0 006.25 20c2.7 0 4.63.67 5.75 2m0-15.75c1.12-1.33 3.05-2 5.75-2A3.25 3.25 0 0121 7.5v9.25A3.25 3.25 0 0117.75 20c-2.7 0-4.63.67-5.75 2" />',
     'permohonan' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8 4h8l4 4v12a2 2 0 01-2 2H8a2 2 0 01-2-2V6a2 2 0 012-2zm8 0v4h4M9 13h6M9 17h6M9 9h3" />',
     'penugasan' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12h14V7a2 2 0 00-2-2h-2M9 5a3 3 0 006 0M9 5a3 3 0 016 0m-6 8l2 2 4-4" />',
     'hasil_analisis' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 15l3-3 3 2 4-5" />',
@@ -17,6 +18,7 @@
         ['label' => 'Dashboard', 'href' => route('dashboard'), 'active' => ['dashboard'], 'icon_key' => 'dashboard'],
         ['label' => 'Manajemen Akun', 'href' => route('admin.accounts.index'), 'active' => ['admin.accounts.*'], 'icon_key' => 'accounts'],
         ['label' => 'Manajemen Instansi', 'href' => route('admin.instansi.index'), 'active' => ['admin.instansi.*'], 'icon_key' => 'instansi'],
+        ['label' => 'Manajemen Buku Panduan', 'href' => route('admin.guides.index'), 'active' => ['admin.guides.*'], 'icon_key' => 'guide'],
       ];
   } else {
       $items[] = ['label' => 'Dashboard', 'href' => route('dashboard'), 'active' => ['dashboard'], 'icon_key' => 'dashboard'];
@@ -32,6 +34,8 @@
       if (in_array($role, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true)) {
           $items[] = ['label' => 'Hasil Analisis', 'href' => route('assignments.analysis-results'), 'active' => ['assignments.analysis-results*'], 'icon_key' => 'hasil_analisis'];
       }
+
+      $items[] = ['label' => 'Buku Panduan', 'href' => route('guides.index'), 'active' => ['guides.*'], 'icon_key' => 'guide'];
   }
 @endphp
 
