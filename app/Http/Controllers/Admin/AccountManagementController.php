@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Enums\UserRole;
 use App\Models\Instansi;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class AccountManagementController extends Controller
@@ -23,7 +25,8 @@ class AccountManagementController extends Controller
             ->latest();
 
         if ($search !== '') {
-            $query->where(function ($builder) use ($search): void {
+            $matchedRoles = $this->matchRolesFromKeyword($search);
+            $query->where(function ($builder) use ($search, $matchedRoles): void {
                 $builder
                     ->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
@@ -31,6 +34,10 @@ class AccountManagementController extends Controller
                     ->orWhereHas('instansi', function ($instansiQuery) use ($search): void {
                         $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
                     });
+
+                if ($matchedRoles !== []) {
+                    $builder->orWhereIn('role', $matchedRoles);
+                }
             });
         }
 
@@ -139,5 +146,36 @@ class AccountManagementController extends Controller
         $user->delete();
 
         return redirect()->route('admin.accounts.index')->with('success', 'Data akun berhasil dihapus.');
+    }
+
+    private function normalizeSearchTerm(string $value): string
+    {
+        return trim(Str::of($value)->lower()->ascii()->squish()->value());
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function matchRolesFromKeyword(string $search): array
+    {
+        $normalized = $this->normalizeSearchTerm($search);
+        if ($normalized === '') {
+            return [];
+        }
+
+        $matched = [];
+        foreach (UserRole::cases() as $role) {
+            $raw = $this->normalizeSearchTerm($role->value);
+            $label = $this->normalizeSearchTerm($role->label());
+
+            if (
+                ($raw !== '' && (str_contains($normalized, $raw) || str_contains($raw, $normalized))) ||
+                ($label !== '' && (str_contains($normalized, $label) || str_contains($label, $normalized)))
+            ) {
+                $matched[] = $role->value;
+            }
+        }
+
+        return $matched;
     }
 }

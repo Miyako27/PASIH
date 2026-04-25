@@ -46,15 +46,50 @@ class SubmissionController extends Controller
         }
 
         if ($search !== '') {
-            $query->where(function ($builder) use ($search) {
+            $normalizedSearch = $this->normalizeSearchTerm($search);
+            $matchedSubmissionStatuses = $this->matchSubmissionStatusesFromKeyword($search);
+            $matchedAssignmentStatuses = $this->matchAssignmentStatusesFromKeyword($search);
+            $isNoAssignmentKeyword = str_contains($normalizedSearch, 'belum ditugaskan') || str_contains($normalizedSearch, 'belum ada penugasan');
+            $isKadivDispositionKeyword = str_contains($normalizedSearch, 'kepala divisi') || str_contains($normalizedSearch, 'kadiv');
+
+            $query->where(function ($builder) use (
+                $search,
+                $matchedSubmissionStatuses,
+                $matchedAssignmentStatuses,
+                $isNoAssignmentKeyword,
+                $isKadivDispositionKeyword
+            ): void {
                 $builder
                     ->where('nomor_surat', 'like', "%{$search}%")
                     ->orWhere('perihal', 'like', "%{$search}%")
                     ->orWhere('pemda_name', 'like', "%{$search}%")
                     ->orWhere('perda_title', 'like', "%{$search}%")
+                    ->orWhereRaw("DATE_FORMAT(created_at, '%d-%m-%Y') like ?", ["%{$search}%"])
                     ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
                         $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
                     });
+
+                if ($matchedSubmissionStatuses !== []) {
+                    $builder->orWhereHas('latestStatus', function ($statusQuery) use ($matchedSubmissionStatuses): void {
+                        $statusQuery->whereIn('status', $matchedSubmissionStatuses);
+                    });
+                }
+
+                if ($matchedAssignmentStatuses !== []) {
+                    $builder->orWhereHas('assignments', function ($assignmentQuery) use ($matchedAssignmentStatuses): void {
+                        $assignmentQuery->whereIn('status', $matchedAssignmentStatuses);
+                    });
+                }
+
+                if ($isNoAssignmentKeyword) {
+                    $builder->orWhereDoesntHave('assignments');
+                }
+
+                if ($isKadivDispositionKeyword) {
+                    $builder->orWhereHas('latestDisposition.toUser', function ($userQuery): void {
+                        $userQuery->where('role', 'kepala_divisi_p3h');
+                    });
+                }
             });
         }
 
@@ -487,6 +522,84 @@ class SubmissionController extends Controller
         };
 
         return $normalize($instansiName).'_'.$normalize($documentLabel).'_'.$timestamp->format('YmdHis');
+    }
+
+    private function normalizeSearchTerm(string $value): string
+    {
+        return trim(Str::of($value)->lower()->ascii()->squish()->value());
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function matchSubmissionStatusesFromKeyword(string $search): array
+    {
+        $normalized = $this->normalizeSearchTerm($search);
+        if ($normalized === '') {
+            return [];
+        }
+
+        $keywords = [
+            'submitted' => ['submitted', 'diajukan'],
+            'revised' => ['revised', 'revisi', 'perlu revisi'],
+            'rejected' => ['rejected', 'ditolak', 'tolak'],
+            'accepted' => ['accepted', 'diterima'],
+            'disposed' => ['disposed', 'didisposisikan', 'disposisi'],
+            'assigned' => ['assigned', 'dalam penugasan', 'penugasan'],
+            'completed' => ['completed', 'selesai'],
+        ];
+
+        $matched = [];
+        foreach ($keywords as $status => $aliases) {
+            foreach ($aliases as $alias) {
+                $normalizedAlias = $this->normalizeSearchTerm($alias);
+                if (
+                    $normalizedAlias !== '' &&
+                    (str_contains($normalized, $normalizedAlias) || str_contains($normalizedAlias, $normalized))
+                ) {
+                    $matched[] = $status;
+                    break;
+                }
+            }
+        }
+
+        return $matched;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function matchAssignmentStatusesFromKeyword(string $search): array
+    {
+        $normalized = $this->normalizeSearchTerm($search);
+        if ($normalized === '') {
+            return [];
+        }
+
+        $keywords = [
+            'assigned' => ['assigned', 'belum ada penanggung jawab', 'tanpa penanggung jawab'],
+            'in_progress' => ['in progress', 'in_progress', 'dalam analisis', 'sedang dianalisis'],
+            'pending_kadiv_approval' => ['pending kadiv', 'menunggu persetujuan kadiv', 'menunggu kadiv'],
+            'pending_kakanwil_approval' => ['pending kakanwil', 'menunggu persetujuan kakanwil', 'menunggu kakanwil'],
+            'revision_by_pic' => ['revision', 'revisi', 'revisi oleh penanggung jawab', 'revisi oleh pic'],
+            'completed' => ['completed', 'selesai', 'selesai analisis'],
+        ];
+
+        $matched = [];
+        foreach ($keywords as $status => $aliases) {
+            foreach ($aliases as $alias) {
+                $normalizedAlias = $this->normalizeSearchTerm($alias);
+                if (
+                    $normalizedAlias !== '' &&
+                    (str_contains($normalized, $normalizedAlias) || str_contains($normalizedAlias, $normalized))
+                ) {
+                    $matched[] = $status;
+                    break;
+                }
+            }
+        }
+
+        return $matched;
     }
 
     private function authorizeView(Request $request, Submission $submission): void

@@ -43,13 +43,15 @@ class AssignmentController extends Controller
         }
 
         if ($search !== '') {
-            $query->where(function ($builder) use ($search): void {
+            $matchedStatuses = $this->matchAssignmentStatusesFromKeyword($search);
+            $query->where(function ($builder) use ($search, $matchedStatuses): void {
                 $builder
                     ->whereHas('submission', function ($submissionQuery) use ($search): void {
                         $submissionQuery
                             ->where('nomor_surat', 'like', "%{$search}%")
                             ->orWhere('perihal', 'like', "%{$search}%")
                             ->orWhere('perda_title', 'like', "%{$search}%")
+                            ->orWhereRaw("DATE_FORMAT(created_at, '%d-%m-%Y') like ?", ["%{$search}%"])
                             ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
                                 $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
                             });
@@ -57,6 +59,10 @@ class AssignmentController extends Controller
                     ->orWhereHas('latestPicUpdate.analyst', function ($analystQuery) use ($search): void {
                         $analystQuery->where('name', 'like', "%{$search}%");
                     });
+
+                if ($matchedStatuses !== []) {
+                    $builder->orWhereIn('status', $matchedStatuses);
+                }
             });
         }
 
@@ -116,13 +122,17 @@ class AssignmentController extends Controller
         }
 
         if ($search !== '') {
-            $resultsQuery->where(function ($query) use ($search): void {
+            $matchedStatuses = $this->matchAssignmentStatusesFromKeyword($search);
+            $searchYear = preg_match('/^\d{4}$/', $search) === 1 ? (int) $search : null;
+
+            $resultsQuery->where(function ($query) use ($search, $matchedStatuses, $searchYear): void {
                 $query
                     ->whereHas('submission', function ($submissionQuery) use ($search): void {
                         $submissionQuery
                             ->where('nomor_surat', 'like', "%{$search}%")
                             ->orWhere('perihal', 'like', "%{$search}%")
                             ->orWhere('perda_title', 'like', "%{$search}%")
+                            ->orWhereRaw("DATE_FORMAT(created_at, '%d-%m-%Y') like ?", ["%{$search}%"])
                             ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
                                 $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
                             });
@@ -130,6 +140,14 @@ class AssignmentController extends Controller
                     ->orWhereHas('latestPicUpdate.analyst', function ($analystQuery) use ($search): void {
                         $analystQuery->where('name', 'like', "%{$search}%");
                     });
+
+                if ($searchYear !== null) {
+                    $query->orWhereYear('completed_at', $searchYear);
+                }
+
+                if ($matchedStatuses !== []) {
+                    $query->orWhereIn('status', $matchedStatuses);
+                }
             });
         }
 
@@ -589,5 +607,48 @@ class AssignmentController extends Controller
         $result['rekomendasi'] = trim((string) ($document->rekomendasi ?? ''));
 
         return $result;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function matchAssignmentStatusesFromKeyword(string $search): array
+    {
+        $normalized = $this->normalizeSearchTerm($search);
+        if ($normalized === '') {
+            return [];
+        }
+
+        $keywords = [
+            'assigned' => ['assigned', 'belum ada penanggung jawab', 'tanpa penanggung jawab'],
+            'in_progress' => ['in progress', 'in_progress', 'dalam analisis', 'sedang dianalisis'],
+            'pending_kadiv_approval' => ['pending kadiv', 'menunggu persetujuan kadiv', 'menunggu kadiv'],
+            'pending_kakanwil_approval' => ['pending kakanwil', 'menunggu persetujuan kakanwil', 'menunggu kakanwil'],
+            'revision_by_pic' => ['revision', 'revisi', 'revisi oleh penanggung jawab', 'revisi oleh pic'],
+            'completed' => ['completed', 'selesai', 'selesai analisis'],
+        ];
+
+        $matched = [];
+        foreach ($keywords as $status => $aliases) {
+            foreach ($aliases as $alias) {
+                $normalizedAlias = $this->normalizeSearchTerm($alias);
+                if (
+                    $normalizedAlias !== '' &&
+                    (str_contains($normalized, $normalizedAlias) || str_contains($normalizedAlias, $normalized))
+                ) {
+                    $matched[] = $status;
+                    break;
+                }
+            }
+        }
+
+        return $matched;
+    }
+
+    private function normalizeSearchTerm(string $value): string
+    {
+        $normalized = Str::of($value)->lower()->ascii()->squish()->value();
+
+        return trim($normalized);
     }
 }

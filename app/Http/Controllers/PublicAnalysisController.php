@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Assignment;
 use App\Models\Instansi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PublicAnalysisController extends Controller
 {
@@ -27,14 +28,29 @@ class PublicAnalysisController extends Controller
             ->latest('updated_at');
 
         if ($search !== '') {
-            $query->whereHas('submission', function ($builder) use ($search): void {
-                $builder
-                    ->where('perda_title', 'like', "%{$search}%")
-                    ->orWhere('nomor_surat', 'like', "%{$search}%")
-                    ->orWhere('perihal', 'like', "%{$search}%")
-                    ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
-                        $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
-                    });
+            $normalizedSearch = trim(Str::of($search)->lower()->ascii()->squish()->value());
+            $searchYear = preg_match('/^\d{4}$/', $search) === 1 ? (int) $search : null;
+            $isCompletedKeyword = str_contains($normalizedSearch, 'selesai analisis') || str_contains($normalizedSearch, 'completed') || str_contains($normalizedSearch, 'selesai');
+
+            $query->where(function ($builder) use ($search, $searchYear, $isCompletedKeyword): void {
+                $builder->whereHas('submission', function ($submissionQuery) use ($search): void {
+                    $submissionQuery
+                        ->where('perda_title', 'like', "%{$search}%")
+                        ->orWhere('nomor_surat', 'like', "%{$search}%")
+                        ->orWhere('perihal', 'like', "%{$search}%")
+                        ->orWhereRaw("DATE_FORMAT(created_at, '%d-%m-%Y') like ?", ["%{$search}%"])
+                        ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
+                            $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
+                        });
+                });
+
+                if ($searchYear !== null) {
+                    $builder->orWhereYear('completed_at', $searchYear);
+                }
+
+                if ($isCompletedKeyword) {
+                    $builder->orWhere('status', 'completed');
+                }
             });
         }
 
