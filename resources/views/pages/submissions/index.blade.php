@@ -20,7 +20,7 @@
       </div>
 
       @if($canCreate)
-        <a href="{{ route('submissions.create') }}" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
+        <a href="{{ route('submissions.create') }}" class="pasih-add-btn inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
           <span class="text-base">+</span> Tambah Data
         </a>
       @endif
