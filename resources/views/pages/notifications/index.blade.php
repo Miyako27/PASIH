@@ -13,12 +13,12 @@
     </div>
 
     <div class="overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200">
-      <div class="border-b border-slate-200 bg-slate-50/70 px-5 py-4 flex items-center justify-between">
+      <div class="border-b border-slate-200 bg-slate-50/70 px-5 py-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 class="text-lg font-bold text-slate-800">Notifikasi Terbaru PASIH</h2>
           <p class="text-xs text-slate-500">Penugasan baru, perubahan status permohonan, dan status analisis.</p>
         </div>
-        <span class="inline-flex h-7 items-center rounded-full bg-blue-50 px-3 text-xs font-semibold text-blue-700">
+        <span class="inline-flex h-6 sm:h-7 items-center rounded-full bg-blue-50 px-2.5 sm:px-3 text-[11px] sm:text-xs font-semibold text-blue-700 self-start sm:self-auto">
           {{ $notifications->count() }} Notifikasi
         </span>
       </div>
@@ -69,7 +69,7 @@
                 </div>
               </div>
               <div class="shrink-0 text-right">
-                <div class="text-xs font-semibold text-slate-600">{{ optional($notification['time'])->diffForHumans() }}</div>
+                <div class="text-xs font-semibold text-slate-600">{{ optional($notification['time'])->locale('id')->diffForHumans() }}</div>
                 <div class="mt-1 text-[11px] text-slate-500">{{ optional($notification['time'])->format('d M Y, H:i') }}</div>
               </div>
             </div>
