@@ -119,43 +119,43 @@
       <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Nomor Surat</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->nomor_surat }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $submission->nomor_surat }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Pengajuan</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Judul Perda</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->perda_title ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $submission->perda_title ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Pemberi Penugasan</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->assignedBy?->name ?? '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $assignment->assignedBy?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Penanggung Jawab Analisis</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->analyst?->name ?? 'Belum ada PIC' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $assignment->analyst?->name ?? 'Belum ada PIC' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Penanggung Jawab Ditentukan Oleh</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $assignment->picAssignedBy?->name ?? '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $assignment->picAssignedBy?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Ditugaskan</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->assigned_at)->format('d-m-Y H:i') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($assignment->assigned_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Deadline</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->deadline_at)->format('d-m-Y') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($assignment->deadline_at)->format('d-m-Y') ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Mulai Analisis</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->started_at)->format('d-m-Y H:i') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($assignment->started_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Selesai Analisis</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($assignment->completed_at)->format('d-m-Y H:i') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($assignment->completed_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Catatan Revisi Persetujuan Hasil Analisis</div>
@@ -180,11 +180,11 @@
       <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Status Pengajuan</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->status->label() }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $submission->status->label() }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Review Status</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($submission->reviewed_at)->format('d-m-Y H:i') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($submission->reviewed_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Catatan Status</div>
@@ -192,11 +192,11 @@
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Disposisi Terakhir</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $latestDisposition?->toUser?->name ?? $submission->divisionOperator?->name ?? '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $latestDisposition?->toUser?->name ?? $submission->divisionOperator?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Disposisi</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($latestDisposition?->disposed_at)->format('d-m-Y H:i') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($latestDisposition?->disposed_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Catatan Disposisi</div>
@@ -213,23 +213,23 @@
       <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Perihal</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->perihal }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $submission->perihal }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Instansi Pengaju</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Judul Perda</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->perda_title }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $submission->perda_title }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Akun Pengaju</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ $submission->submitter?->name ?? '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ $submission->submitter?->name ?? '-' }}</div>
         </div>
         <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Tanggal Pengajuan</div>
-          <div class="mt-1 text-sm font-semibold text-slate-800">{{ optional($submission->submitted_at)->format('d-m-Y H:i') ?: '-' }}</div>
+          <div class="mt-1 text-sm text-slate-800">{{ optional($submission->submitted_at)->format('d-m-Y H:i') ?: '-' }}</div>
         </div>
         <div class="md:col-span-2 rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
           <div class="text-xs uppercase tracking-wide text-slate-500">Deskripsi Pengajuan</div>
@@ -252,7 +252,7 @@
           @endphp
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
-              <div class="text-sm font-semibold text-slate-800">{{ $docCard['label'] }}</div>
+              <div class="text-sm text-slate-800">{{ $docCard['label'] }}</div>
             </div>
             @if($document)
               @php
@@ -266,7 +266,7 @@
               @endphp
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
+                  <div class="truncate text-sm text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                   <div class="text-xs text-slate-500">Diunggah : {{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
@@ -319,7 +319,7 @@
           @endphp
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="px-4 py-3 bg-slate-50 border-b border-slate-200">
-              <div class="text-sm font-semibold text-slate-800">{{ $docCard['label'] }}</div>
+              <div class="text-sm text-slate-800">{{ $docCard['label'] }}</div>
             </div>
             @if(! $document)
               <div class="px-4 py-3 text-sm text-slate-500 bg-white">-</div>
@@ -335,7 +335,7 @@
               @endphp
               <div class="flex items-center justify-between gap-3 px-4 py-3 bg-white">
                 <div class="min-w-0 flex-1">
-                  <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
+                  <div class="truncate text-sm text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                   <div class="text-xs text-slate-500">Diunggah : {{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
                 </div>
                 @if($fileUrl)
@@ -409,7 +409,7 @@
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
               <div class="min-w-0 flex-1">
-                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
+                <div class="truncate text-sm text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                 <div class="text-xs text-slate-500">Diunggah : {{ optional($primaryAnalysisDocument->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
               </div>
               @if($fileUrl)
@@ -463,7 +463,7 @@
           <div class="rounded-xl ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center justify-between gap-3 px-4 py-3 bg-slate-50">
               <div class="min-w-0 flex-1">
-                <div class="truncate text-sm font-semibold text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
+                <div class="truncate text-sm text-slate-800" title="{{ $displayFileName }}"><span>{{ $displayFileName }}</span><span class="text-slate-500" data-pdf-page-info></span></div>
                 <div class="text-xs text-slate-500">Diunggah : {{ optional($document->created_at)->format('d-m-Y H:i') ?: '-' }}</div>
               </div>
               @if($fileUrl)
@@ -499,3 +499,4 @@
     </div>
   </div>
 @endsection
+
