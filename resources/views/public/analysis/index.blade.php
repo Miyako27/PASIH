@@ -127,7 +127,7 @@
                     Menampilkan {{ $results->firstItem() ?? 0 }} - {{ $results->lastItem() ?? 0 }} dari {{ $results->total() }} data
                 </div>
                 <div>
-                    {{ $results->onEachSide(1)->links() }}
+                    {{ $results->onEachSide(1)->links('vendor.pagination.pasih') }}
                 </div>
             </div>
         </div>

@@ -153,7 +153,7 @@
           Menampilkan {{ $assignments->firstItem() ?? 0 }} - {{ $assignments->lastItem() ?? 0 }} dari {{ $assignments->total() }} data
         </div>
         <div>
-          {{ $assignments->onEachSide(1)->links() }}
+          {{ $assignments->onEachSide(1)->links('vendor.pagination.pasih') }}
         </div>
       </div>
     </div>

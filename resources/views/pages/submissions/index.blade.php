@@ -245,7 +245,7 @@
           Menampilkan {{ $submissions->firstItem() ?? 0 }} - {{ $submissions->lastItem() ?? 0 }} dari {{ $submissions->total() }} data
         </div>
         <div>
-          {{ $submissions->onEachSide(1)->links() }}
+          {{ $submissions->onEachSide(1)->links('vendor.pagination.pasih') }}
         </div>
       </div>
     </div>

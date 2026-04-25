@@ -97,7 +97,7 @@
           Menampilkan {{ $institutions->firstItem() ?? 0 }} - {{ $institutions->lastItem() ?? 0 }} dari {{ $institutions->total() }} data
         </div>
         <div>
-          {{ $institutions->onEachSide(1)->links() }}
+          {{ $institutions->onEachSide(1)->links('vendor.pagination.pasih') }}
         </div>
       </div>
     </div>
