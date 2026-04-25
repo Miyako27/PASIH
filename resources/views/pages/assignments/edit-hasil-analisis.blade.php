@@ -60,9 +60,13 @@
           <textarea name="rekomendasi" rows="4" placeholder="Masukkan Rekomendasi" class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]">{{ old('rekomendasi', $initialAnalysis['rekomendasi'] ?? '') }}</textarea>
         </label>
 
-        <label class="block text-sm font-medium text-slate-700">Upload Dokumen <span class="text-red-500">*</span>
+        <div>
+          <label class="block text-sm font-medium text-slate-700">Upload Dokumen <span class="text-red-500">*</span></label>
+          <p class="text-xs text-slate-500 mt-1">
+            Format: PDF/DOC/DOCX, maksimal ukuran tiap file 5 MB.
+          </p>
           <input type="file" name="file" required class="mt-2 block w-full rounded-xl border border-[#B9B9B9] bg-white text-sm text-slate-700 file:mr-3 file:rounded-l-xl file:border-0 file:bg-slate-100 file:px-4 file:py-3 file:text-base file:text-slate-700">
-        </label>
+        </div>
 
         <div class="pt-1">
           <button type="submit" class="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700">

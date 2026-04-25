@@ -4,13 +4,13 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Persetujuan Penugasan</h1>
+      <h1 class="pasih-page-title">Persetujuan Hasil Analisis</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('assignments.index') }}" class="hover:text-slate-700 hover:underline">Penugasan</a>
         <span class="mx-1">/</span>
-        <span>Persetujuan</span>
+        <span>Persetujuan Hasil Analisis</span>
       </p>
     </div>
 
@@ -25,8 +25,8 @@
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
           <label class="block text-sm font-medium text-slate-700">
-            Nomor Surat
-            <input type="text" disabled value="{{ $assignment->submission->nomor_surat }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
+            Judul Peraturan Daerah
+            <input type="text" disabled value="{{ $assignment->submission->perda_title ?: '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
           <label class="block text-sm font-medium text-slate-700">
             Penanggung Jawab

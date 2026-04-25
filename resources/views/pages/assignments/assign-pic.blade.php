@@ -4,13 +4,13 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Tentukan Penanggung Jawab</h1>
+      <h1 class="pasih-page-title">Penugasan Analis</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('assignments.index') }}" class="hover:text-slate-700 hover:underline">Penugasan</a>
         <span class="mx-1">/</span>
-        <span>Tentukan Penanggung Jawab</span>
+        <span>Penugasan Analis</span>
       </p>
     </div>
 

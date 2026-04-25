@@ -44,7 +44,7 @@ class NotificationController extends Controller
 
         $assignmentQuery = Assignment::query()
             ->select(['id', 'submission_id', 'status', 'assigned_by_id', 'updated_at'])
-            ->with(['submission:id,nomor_surat', 'latestPicUpdate']);
+            ->with(['submission:id,nomor_surat', 'latestPicUpdate', 'latestApproval']);
 
         if ($user->role->value === 'operator_pemda') {
             $submissionQuery->where('submitter_id', $user->id);
@@ -72,7 +72,12 @@ class NotificationController extends Controller
 
         $userIds = $submissions
             ->flatMap(fn (Submission $item) => [$item->submitter_id, $item->kanwil_operator_id, $item->division_operator_id])
-            ->concat($assignments->flatMap(fn (Assignment $item) => [$item->assigned_by_id, $item->analyst_id]))
+            ->concat($assignments->flatMap(fn (Assignment $item) => [
+                $item->assigned_by_id,
+                $item->analyst_id,
+                $item->latestPicUpdate?->pic_assigned_by_id,
+                $item->latestApproval?->assigned_by_id,
+            ]))
             ->filter()
             ->unique()
             ->values();
@@ -83,10 +88,7 @@ class NotificationController extends Controller
 
         $submissionNotifications = $submissions->map(function (Submission $submission) use ($userNames, $user) {
             $status = $submission->status->value;
-            $actorId = $submission->latestStatus?->kanwil_operator_id
-                ?? $submission->latestDisposition?->kanwil_operator_id
-                ?? $submission->division_operator_id
-                ?? $submission->submitter_id;
+            $actorId = self::resolveSubmissionActorId($submission);
             $actorName = $userNames->get($actorId) ?? 'Sistem';
 
             if (in_array($status, ['accepted', 'revised', 'rejected'], true)) {
@@ -127,9 +129,7 @@ class NotificationController extends Controller
         $assignmentNotifications = $assignments->map(function (Assignment $assignment) use ($userNames, $user) {
             $nomorSurat = $assignment->submission?->nomor_surat ?? ('#'.$assignment->id);
             $status = $assignment->status->value;
-            $actorId = in_array($status, ['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'], true)
-                ? ($assignment->analyst_id ?? $assignment->assigned_by_id)
-                : ($assignment->assigned_by_id ?? $assignment->analyst_id);
+            $actorId = self::resolveAssignmentActorId($assignment);
             $actorName = $userNames->get($actorId) ?? 'Sistem';
 
             if ($status === 'assigned') {
@@ -177,6 +177,35 @@ class NotificationController extends Controller
     private static function resolveSubmissionUrl($user, Submission $submission): ?string
     {
         return route('submissions.show', $submission);
+    }
+
+    private static function resolveSubmissionActorId(Submission $submission): ?int
+    {
+        $status = $submission->status->value;
+
+        return match ($status) {
+            'submitted' => $submission->submitter_id,
+            'accepted', 'revised', 'rejected', 'disposed', 'assigned', 'completed' => $submission->latestStatus?->kanwil_operator_id
+                ?? $submission->latestDisposition?->kanwil_operator_id
+                ?? $submission->division_operator_id
+                ?? $submission->submitter_id,
+            default => $submission->latestStatus?->kanwil_operator_id
+                ?? $submission->latestDisposition?->kanwil_operator_id
+                ?? $submission->submitter_id,
+        };
+    }
+
+    private static function resolveAssignmentActorId(Assignment $assignment): ?int
+    {
+        return match ($assignment->status->value) {
+            'assigned' => $assignment->assigned_by_id,
+            'in_progress' => $assignment->latestPicUpdate?->pic_assigned_by_id ?? $assignment->assigned_by_id,
+            'pending_kadiv_approval' => $assignment->analyst_id ?? $assignment->assigned_by_id,
+            'pending_kakanwil_approval', 'revision_by_pic', 'completed' => $assignment->latestApproval?->assigned_by_id
+                ?? $assignment->analyst_id
+                ?? $assignment->assigned_by_id,
+            default => $assignment->assigned_by_id ?? $assignment->analyst_id,
+        };
     }
 
     private static function resolveAssignmentUrl($user, Assignment $assignment): ?string
