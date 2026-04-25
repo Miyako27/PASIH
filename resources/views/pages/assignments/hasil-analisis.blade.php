@@ -29,12 +29,12 @@
         <table class="w-full text-sm">
           <thead class="bg-slate-50 text-slate-600">
             <tr>
-              <th class="px-4 py-3 text-left">No</th>
+              <th class="px-4 py-3 text-center">No</th>
               <th class="px-4 py-3 text-left">Nomor Surat</th>
               <th class="px-4 py-3 text-left">Perihal</th>
               <th class="px-4 py-3 text-left">Analis</th>
               <th class="px-4 py-3 text-left">Status Analisis</th>
-              <th class="px-4 py-3 text-left">Dokumen Hasil Analisis</th>
+              <th class="px-4 py-3 text-center">Dokumen Hasil Analisis</th>
               <th class="px-4 py-3 text-left">Aksi</th>
             </tr>
           </thead>
@@ -45,7 +45,7 @@
                 $doc = $item->latestAnalysisDocument;
               @endphp
               <tr class="border-t border-slate-100 text-slate-700">
-                <td class="px-4 py-3">{{ $rowNumber }}</td>
+                <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
                 <td class="px-4 py-3">{{ $item->submission->nomor_surat }}</td>
                 <td class="px-4 py-3">{{ $item->submission->perihal }}</td>
                 <td class="px-4 py-3">{{ $item->analyst?->name ?? '-' }}</td>

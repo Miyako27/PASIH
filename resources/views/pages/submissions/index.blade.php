@@ -52,7 +52,7 @@
         <table class="w-full text-sm">
           <thead class="bg-slate-50 text-slate-600">
             <tr>
-              <th class="px-4 py-3 text-left">No</th>
+              <th class="px-4 py-3 text-center">No</th>
               <th class="px-4 py-3 text-left">Nomor Surat</th>
               <th class="px-4 py-3 text-left">Tanggal Pengajuan</th>
               <th class="px-4 py-3 text-left">Perihal</th>
@@ -112,7 +112,7 @@
                 }
               @endphp
               <tr class="border-t border-slate-100 text-slate-700">
-                <td class="px-4 py-3">{{ $rowNumber }}</td>
+                <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
                 <td class="px-4 py-3">{{ $submission->nomor_surat }}</td>
                 <td class="px-4 py-3">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</td>
                 <td class="px-4 py-3">{{ $submission->perihal }}</td>
