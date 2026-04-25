@@ -30,6 +30,8 @@ class AssignmentController extends Controller
             ->latest();
         $status = trim((string) $request->string('status'));
         $search = trim((string) $request->string('q'));
+        $perPage = (int) $request->integer('per_page', 10);
+        $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 10;
         $allowedStatuses = ['assigned', 'in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'];
 
         if ($role === 'analis_hukum') {
@@ -58,10 +60,11 @@ class AssignmentController extends Controller
         }
 
         return view('pages.assignments.index', [
-            'assignments' => $query->paginate(10)->withQueryString(),
+            'assignments' => $query->paginate($perPage)->withQueryString(),
             'analysts' => User::query()->where('role', 'analis_hukum')->orderBy('name')->get(),
             'status' => $status,
             'search' => $search,
+            'perPage' => $perPage,
         ]);
     }
 
@@ -95,6 +98,8 @@ class AssignmentController extends Controller
     {
         abort_unless(in_array($request->user()->role->value, ['analis_hukum', 'ketua_tim_analisis', 'kakanwil', 'kepala_divisi_p3h', 'operator_pemda'], true), 403);
         $search = trim((string) $request->string('q'));
+        $perPage = (int) $request->integer('per_page', 5);
+        $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 5;
 
         $resultsQuery = Assignment::query()
             ->with(['submission', 'latestPicUpdate.analyst', 'latestAnalysisDocument'])
@@ -124,8 +129,9 @@ class AssignmentController extends Controller
         }
 
         return view('pages.assignments.hasil-analisis', [
-            'results' => $resultsQuery->paginate(5)->withQueryString(),
+            'results' => $resultsQuery->paginate($perPage)->withQueryString(),
             'search' => $search,
+            'perPage' => $perPage,
         ]);
     }
 

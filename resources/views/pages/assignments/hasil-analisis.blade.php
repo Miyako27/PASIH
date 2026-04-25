@@ -14,14 +14,20 @@
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div class="flex items-center gap-2 text-sm text-slate-700">
+        <form method="GET" action="{{ route('assignments.analysis-results') }}" class="flex items-center gap-2 text-sm text-slate-700">
           <span>Tampil</span>
-          <span class="h-8 px-2 inline-flex items-center rounded-md border border-slate-300">{{ $results->perPage() }}</span>
+          <select name="per_page" class="h-8 rounded-md border-slate-300 text-sm focus:outline-none focus:ring-0 focus:border-slate-300" onchange="this.form.submit()">
+            <option value="5" @selected($perPage === 5)>5</option>
+            <option value="10" @selected($perPage === 10)>10</option>
+            <option value="25" @selected($perPage === 25)>25</option>
+          </select>
           <span>Data</span>
-        </div>
+          <input type="hidden" name="q" value="{{ $search }}">
+        </form>
         <form method="GET" action="{{ route('assignments.analysis-results') }}" class="flex items-center gap-2 text-sm text-slate-700">
           <label for="q">Cari:</label>
           <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
+          <input type="hidden" name="per_page" value="{{ $perPage }}">
         </form>
       </div>
 
