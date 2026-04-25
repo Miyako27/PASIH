@@ -29,9 +29,12 @@ class PublicAnalysisController extends Controller
         if ($search !== '') {
             $query->whereHas('submission', function ($builder) use ($search): void {
                 $builder
-                    ->where('pemda_title', 'like', "%{$search}%")
+                    ->where('perda_title', 'like', "%{$search}%")
                     ->orWhere('nomor_surat', 'like', "%{$search}%")
-                    ->orWhere('perihal', 'like', "%{$search}%");
+                    ->orWhere('perihal', 'like', "%{$search}%")
+                    ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
+                        $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
+                    });
             });
         }
 

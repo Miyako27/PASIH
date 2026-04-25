@@ -55,7 +55,7 @@
 
                 <form method="GET" action="{{ route('public.analysis.index') }}" class="flex items-center gap-2 text-sm text-slate-700">
                     <label for="q">Cari:</label>
-                    <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
+                    <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 px-3 rounded-md border border-[#B9B9B9] text-sm">
                     <input type="hidden" name="per_page" value="{{ $perPage }}">
                     <input type="hidden" name="instansi_id" value="{{ $instansiId }}">
                     <input type="hidden" name="year" value="{{ $year }}">

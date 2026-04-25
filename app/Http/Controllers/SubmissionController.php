@@ -51,7 +51,10 @@ class SubmissionController extends Controller
                     ->where('nomor_surat', 'like', "%{$search}%")
                     ->orWhere('perihal', 'like', "%{$search}%")
                     ->orWhere('pemda_name', 'like', "%{$search}%")
-                    ->orWhere('pemda_title', 'like', "%{$search}%");
+                    ->orWhere('perda_title', 'like', "%{$search}%")
+                    ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
+                        $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
+                    });
             });
         }
 
@@ -96,7 +99,7 @@ class SubmissionController extends Controller
                 'nomor_surat' => $validated['nomor_surat'],
                 'perihal' => $validated['perihal'],
                 'pemda_name' => trim((string) ($request->user()->instansi?->nama_instansi ?? $request->user()->name)),
-                'pemda_title' => trim((string) $validated['perda_title']),
+                'perda_title' => trim((string) $validated['perda_title']),
                 'description' => $validated['description'] ?? null,
             ]);
             $submission->recordStatus('submitted');
@@ -208,7 +211,7 @@ class SubmissionController extends Controller
             'nomor_surat' => $validated['nomor_surat'],
             'perihal' => $validated['perihal'],
             'pemda_name' => trim((string) ($request->user()->instansi?->nama_instansi ?? $request->user()->name)),
-            'pemda_title' => trim((string) $validated['perda_title']),
+            'perda_title' => trim((string) $validated['perda_title']),
             'description' => $validated['description'] ?? null,
         ]);
         $submission->recordStatus('submitted');

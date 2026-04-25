@@ -49,6 +49,7 @@ class AssignmentController extends Controller
                         $submissionQuery
                             ->where('nomor_surat', 'like', "%{$search}%")
                             ->orWhere('perihal', 'like', "%{$search}%")
+                            ->orWhere('perda_title', 'like', "%{$search}%")
                             ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
                                 $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
                             });
@@ -120,7 +121,11 @@ class AssignmentController extends Controller
                     ->whereHas('submission', function ($submissionQuery) use ($search): void {
                         $submissionQuery
                             ->where('nomor_surat', 'like', "%{$search}%")
-                            ->orWhere('perihal', 'like', "%{$search}%");
+                            ->orWhere('perihal', 'like', "%{$search}%")
+                            ->orWhere('perda_title', 'like', "%{$search}%")
+                            ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
+                                $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
+                            });
                     })
                     ->orWhereHas('latestPicUpdate.analyst', function ($analystQuery) use ($search): void {
                         $analystQuery->where('name', 'like', "%{$search}%");

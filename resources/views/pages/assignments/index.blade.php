@@ -27,7 +27,7 @@
         </form>
         <form method="GET" action="{{ route('assignments.index') }}" class="flex items-center gap-2 text-sm text-slate-700">
           <label for="q">Cari:</label>
-          <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 rounded-md border border-[#B9B9B9] text-sm">
+          <input id="q" type="text" name="q" value="{{ $search }}" class="h-8 w-40 px-3 rounded-md border border-[#B9B9B9] text-sm">
           <input type="hidden" name="per_page" value="{{ $perPage }}">
           <input type="hidden" name="status" value="{{ $status }}">
         </form>
@@ -89,7 +89,7 @@
               @endphp
               <tr class="text-slate-700" @if($rowBgColor !== null) style="background-color: {{ $rowBgColor }};" @endif>
                 <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
-                <td class="px-4 py-3">{{ $submission->pemda_title ?: $submission->perda_title ?: '-' }}</td>
+                <td class="px-4 py-3">{{ $submission->perda_title ?: '-' }}</td>
                 <td class="px-4 py-3">{{ $submission->nomor_surat }}</td>
                 <td class="px-4 py-3">{{ optional($submission->submitted_at)->format('d-m-Y') ?: '-' }}</td>
                 <td class="px-4 py-3">{{ $submission->submitter?->instansi?->nama_instansi ?? '-' }}</td>

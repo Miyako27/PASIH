@@ -21,7 +21,7 @@ class Submission extends Model
         'nomor_surat',
         'perihal',
         'pemda_name',
-        'pemda_title',
+        'perda_title',
         'description',
     ];
 
@@ -142,14 +142,9 @@ class Submission extends Model
         return trim((string) ($this->attributes['pemda_name'] ?? ''));
     }
 
-    public function getPemdaTitleAttribute(): string
-    {
-        return trim((string) ($this->attributes['pemda_title'] ?? ''));
-    }
-
     public function getPerdaTitleAttribute(): string
     {
-        return $this->pemda_title;
+        return trim((string) ($this->attributes['perda_title'] ?? ''));
     }
 
     public function setPemdaNameAttribute(string $value): void
@@ -157,14 +152,9 @@ class Submission extends Model
         $this->attributes['pemda_name'] = trim($value);
     }
 
-    public function setPemdaTitleAttribute(string $value): void
-    {
-        $this->attributes['pemda_title'] = trim($value);
-    }
-
     public function setPerdaTitleAttribute(string $value): void
     {
-        $this->attributes['pemda_title'] = trim($value);
+        $this->attributes['perda_title'] = trim($value);
     }
 
     public function recordStatus(string $status, ?int $kanwilOperatorId = null, ?string $note = null): void
