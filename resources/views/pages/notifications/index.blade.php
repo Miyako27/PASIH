@@ -15,8 +15,8 @@
     <div class="overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200">
       <div class="border-b border-slate-200 bg-slate-50/70 px-5 py-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 class="text-lg font-bold text-slate-800">Notifikasi Terbaru PASIH</h2>
-          <p class="text-xs text-slate-500">Penugasan baru, perubahan status permohonan, dan status analisis.</p>
+          <h2 class="text-lg font-bold text-slate-800">Notifikasi Terbaru</h2>
+          <p class="text-xs text-slate-500">Informasi terbaru terkait aktivitas dan proses dalam PASIH</p>
         </div>
         <span class="inline-flex h-6 sm:h-7 items-center rounded-full bg-blue-50 px-2.5 sm:px-3 text-[11px] sm:text-xs font-semibold text-blue-700 self-start sm:self-auto">
           {{ $notifications->count() }} Notifikasi

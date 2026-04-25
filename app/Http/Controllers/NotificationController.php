@@ -33,6 +33,20 @@ class NotificationController extends Controller
      */
     public static function buildNotifications($user, int $limit = 10): Collection
     {
+        if ($user->role->value === 'admin') {
+            return collect();
+        }
+
+        $role = $user->role->value;
+        $includeSubmissionNotifications = $role !== 'ketua_tim_analisis';
+        $includeAssignmentNotifications = true;
+        $assignmentStatuses = null;
+
+        if ($role === 'operator_kanwil') {
+            // Operator Kanwil: notifikasi permohonan + status analisis selesai saja.
+            $assignmentStatuses = ['completed'];
+        }
+
         $submissionQuery = Submission::query()
             ->select([
                 'id',
@@ -46,29 +60,37 @@ class NotificationController extends Controller
             ->select(['id', 'submission_id', 'status', 'assigned_by_id', 'updated_at'])
             ->with(['submission:id,nomor_surat', 'latestPicUpdate', 'latestApproval']);
 
-        if ($user->role->value === 'operator_pemda') {
+        if ($role === 'operator_pemda') {
             $submissionQuery->where('submitter_id', $user->id);
             $assignmentQuery->whereHas('submission', function ($query) use ($user) {
                 $query->where('submitter_id', $user->id);
             });
         }
 
-        if ($user->role->value === 'analis_hukum') {
+        if ($role === 'analis_hukum') {
             $assignmentQuery->whereAnalyst($user->id);
             $submissionQuery->whereHas('assignments', function ($query) use ($user) {
                 $query->whereAnalyst($user->id);
             });
         }
 
-        $submissions = $submissionQuery
-            ->latest('updated_at')
-            ->limit($limit)
-            ->get();
+        if (is_array($assignmentStatuses) && $assignmentStatuses !== []) {
+            $assignmentQuery->whereIn('status', $assignmentStatuses);
+        }
 
-        $assignments = $assignmentQuery
-            ->latest('updated_at')
-            ->limit($limit)
-            ->get();
+        $submissions = $includeSubmissionNotifications
+            ? $submissionQuery
+                ->latest('updated_at')
+                ->limit($limit)
+                ->get()
+            : collect();
+
+        $assignments = $includeAssignmentNotifications
+            ? $assignmentQuery
+                ->latest('updated_at')
+                ->limit($limit)
+                ->get()
+            : collect();
 
         $userIds = $submissions
             ->flatMap(fn (Submission $item) => [$item->submitter_id, $item->kanwil_operator_id, $item->division_operator_id])
