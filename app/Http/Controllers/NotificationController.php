@@ -38,13 +38,25 @@ class NotificationController extends Controller
         }
 
         $role = $user->role->value;
-        $includeSubmissionNotifications = $role !== 'ketua_tim_analisis';
+        $includeSubmissionNotifications = ! in_array($role, ['ketua_tim_analisis', 'analis_hukum'], true);
         $includeAssignmentNotifications = true;
         $assignmentStatuses = null;
 
         if ($role === 'operator_kanwil') {
             // Operator Kanwil: notifikasi permohonan + status analisis selesai saja.
             $assignmentStatuses = ['completed'];
+        }
+
+        if ($role === 'operator_pemda' || $role === 'analis_hukum') {
+            // Operator Pemda dan Analis Hukum: tetap terima info penugasan + seluruh progres hasil analisis.
+            $assignmentStatuses = [
+                'assigned',
+                'in_progress',
+                'pending_kadiv_approval',
+                'pending_kakanwil_approval',
+                'revision_by_pic',
+                'completed',
+            ];
         }
 
         $submissionQuery = Submission::query()
