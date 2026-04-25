@@ -307,6 +307,17 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
         width: 9.5rem;
     }
 
+    /* Keep public analysis table toolbar controls compact on mobile too. */
+    .public-page main :is(input, select).h-8 {
+        min-height: 2rem !important;
+        height: 2rem !important;
+        font-size: 0.875rem !important;
+    }
+
+    .public-page main input.h-8.w-40 {
+        width: 9.5rem;
+    }
+
     /* Mobile style for "Tambah Data" buttons on non-public pages. */
     body:not(.public-page) .pasih-add-btn {
         min-height: 2.75rem;
