@@ -30,8 +30,8 @@ class AssignmentController extends Controller
             ->latest();
         $status = trim((string) $request->string('status'));
         $search = trim((string) $request->string('q'));
-        $perPage = (int) $request->integer('per_page', 10);
-        $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 10;
+        $perPage = (int) $request->integer('per_page', 5);
+        $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 5;
         $allowedStatuses = ['assigned', 'in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic', 'completed'];
 
         if ($role === 'analis_hukum') {

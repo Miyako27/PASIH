@@ -69,17 +69,21 @@
                 $isAnalystOwner = $userRole === 'analis_hukum' && $assignment->analyst_id === auth()->id();
 
                 $rowBgColor = null;
-                if ($assignment->pic_assigned_at !== null) {
-                    $now = now();
-                    $twoMonthsAfterPicAssigned = $assignment->pic_assigned_at->copy()->addMonthsNoOverflow(2);
-                    $threeMonthsAfterPicAssigned = $assignment->pic_assigned_at->copy()->addMonthsNoOverflow(3);
+                if ($assignment->status->value !== 'completed') {
+                    if ($assignment->pic_assigned_at !== null) {
+                        $now = now();
+                        $twoMonthsAfterPicAssigned = $assignment->pic_assigned_at->copy()->addMonthsNoOverflow(2);
+                        $threeMonthsAfterPicAssigned = $assignment->pic_assigned_at->copy()->addMonthsNoOverflow(3);
 
-                    if ($now->lt($twoMonthsAfterPicAssigned)) {
-                        $rowBgColor = '#D1FAE5';
-                    } elseif ($now->lte($threeMonthsAfterPicAssigned)) {
-                        $rowBgColor = '#FEF08A';
+                        if ($now->lt($twoMonthsAfterPicAssigned)) {
+                            $rowBgColor = '#D1FAE5';
+                        } elseif ($now->lte($threeMonthsAfterPicAssigned)) {
+                            $rowBgColor = '#FEF08A';
+                        } else {
+                            $rowBgColor = '#FECACA';
+                        }
                     } else {
-                        $rowBgColor = '#FECACA';
+                        $rowBgColor = '#E5E7EB';
                     }
                 }
               @endphp
