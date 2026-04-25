@@ -275,20 +275,24 @@ async function initInlinePdfViewer(root) {
 
         const token = ++renderToken;
         const scale = fitScale * zoom;
+        const outputScale = Math.min(window.devicePixelRatio || 1, 2.5);
         pagesContainer.innerHTML = '';
 
         for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
             const page = await pdf.getPage(pageNumber);
             const viewport = page.getViewport({ scale });
+            const hiResViewport = page.getViewport({ scale: scale * outputScale });
             const canvas = document.createElement('canvas');
             canvas.className = 'block rounded bg-white shadow-sm ring-1 ring-slate-200';
-            canvas.width = Math.floor(viewport.width);
-            canvas.height = Math.floor(viewport.height);
+            canvas.width = Math.floor(hiResViewport.width);
+            canvas.height = Math.floor(hiResViewport.height);
+            canvas.style.width = `${Math.floor(viewport.width)}px`;
+            canvas.style.height = `${Math.floor(viewport.height)}px`;
             pagesContainer.appendChild(canvas);
 
             await page.render({
                 canvasContext: canvas.getContext('2d'),
-                viewport,
+                viewport: hiResViewport,
             }).promise;
 
             if (token !== renderToken) {
