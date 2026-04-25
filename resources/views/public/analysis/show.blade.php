@@ -21,8 +21,8 @@
         @endphp
 
         <div class="rounded-xl bg-white ring-1 ring-slate-200 p-5 md:p-6">
-            <h2 class="text-xl font-bold text-slate-800">Informasi Perda</h2>
-            <p class="text-sm text-slate-500 mt-1">Ringkasan informasi perda hasil analisis</p>
+            <h2 class="text-xl font-bold text-slate-800">Informasi Peraturan Daerah</h2>
+            <p class="text-sm text-slate-500 mt-1">Ringkasan informasi peraturan daerah</p>
 
             <div class="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="rounded-lg bg-slate-50 ring-1 ring-slate-200 p-4">
