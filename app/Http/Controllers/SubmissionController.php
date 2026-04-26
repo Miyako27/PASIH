@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SubmissionStatus;
 use App\Models\Submission;
 use App\Models\SubmissionDisposition;
 use App\Models\SubmissionDocument;
 use App\Models\User;
+use App\Services\WorkflowNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,11 @@ use Illuminate\Validation\Rule;
 
 class SubmissionController extends Controller
 {
+    public function __construct(
+        private readonly WorkflowNotificationService $workflowNotificationService
+    ) {
+    }
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -127,7 +134,9 @@ class SubmissionController extends Controller
             'peraturan_pelaksana_perda' => ['nullable', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
         ]);
 
-        DB::transaction(function () use ($request, $validated): void {
+        $submission = null;
+
+        DB::transaction(function () use ($request, $validated, &$submission): void {
 
             $submission = Submission::query()->create([
                 'submitter_id' => $request->user()->id,
@@ -186,6 +195,10 @@ class SubmissionController extends Controller
                 );
             }
         });
+
+        if ($submission instanceof Submission) {
+            $this->workflowNotificationService->notifyNewSubmission($submission, $request->user());
+        }
 
         return redirect()->route('submissions.index')->with('success', 'Pengajuan berhasil dibuat.');
     }
@@ -250,6 +263,8 @@ class SubmissionController extends Controller
             'description' => $validated['description'] ?? null,
         ]);
         $submission->recordStatus('submitted');
+
+        $this->workflowNotificationService->notifyNewSubmission($submission, $request->user());
 
         $suratPermohonanFile = $this->validateUploadedFile(
             $request->file('surat_permohonan'),
@@ -325,6 +340,13 @@ class SubmissionController extends Controller
 
         $submission->recordStatus($validated['status'], $request->user()->id, $statusNote);
 
+        $this->workflowNotificationService->notifySubmissionStatusUpdated(
+            $submission,
+            $request->user(),
+            $validated['status'],
+            $statusNote
+        );
+
         return back()->with('success', 'Status pengajuan diperbarui.');
     }
 
@@ -334,10 +356,10 @@ class SubmissionController extends Controller
 
         return view('pages.submissions.status-disposisi', [
             'submission' => $submission,
-            'kadivUser' => User::query()
+            'kadivUsers' => User::query()
                 ->where('role', 'kepala_divisi_p3h')
                 ->orderBy('name')
-                ->first(),
+                ->get(),
         ]);
     }
 
@@ -367,7 +389,9 @@ class SubmissionController extends Controller
 
         $statusNote = blank($validated['status_note'] ?? null) ? null : $validated['status_note'];
 
-        DB::transaction(function () use ($request, $submission, $validated, $statusNote): void {
+        $toUser = null;
+
+        DB::transaction(function () use ($request, $submission, $validated, $statusNote, &$toUser): void {
             $submission->recordStatus($validated['status'], $request->user()->id, $statusNote);
 
             if (! empty($validated['to_user_id'])) {
@@ -382,6 +406,22 @@ class SubmissionController extends Controller
                 ]);
             }
         });
+
+        $this->workflowNotificationService->notifySubmissionStatusUpdated(
+            $submission,
+            $request->user(),
+            $validated['status'],
+            $statusNote
+        );
+
+        if ($toUser instanceof User) {
+            $this->workflowNotificationService->notifySubmissionDispositioned(
+                $submission,
+                $request->user(),
+                $toUser,
+                $validated['disposition_note'] ?? null
+            );
+        }
 
         return redirect()
             ->route('submissions.index')
@@ -408,6 +448,20 @@ class SubmissionController extends Controller
         ]);
 
         $submission->recordStatus('disposed', $request->user()->id, $validated['note'] ?? null);
+
+        $this->workflowNotificationService->notifySubmissionDispositioned(
+            $submission,
+            $request->user(),
+            $toUser,
+            $validated['note'] ?? null
+        );
+
+        $this->workflowNotificationService->notifySubmissionStatusUpdated(
+            $submission,
+            $request->user(),
+            SubmissionStatus::Disposed->value,
+            $validated['note'] ?? null
+        );
 
         return back()->with('success', 'Permohonan berhasil didisposisikan.');
     }
@@ -439,6 +493,12 @@ class SubmissionController extends Controller
 
         if ((bool) ($validated['mark_completed'] ?? false)) {
             $submission->recordStatus('completed');
+
+            $this->workflowNotificationService->notifySubmissionStatusUpdated(
+                $submission,
+                $request->user(),
+                SubmissionStatus::Completed->value
+            );
         }
 
         return back()->with('success', 'Dokumen hasil berhasil diunggah.');

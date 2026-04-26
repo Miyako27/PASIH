@@ -1,0 +1,290 @@
+<?php $__env->startSection('title', 'Permohonan'); ?>
+
+<?php $__env->startSection('content'); ?>
+  <div class="space-y-5">
+    <?php if($errors->any()): ?>
+      <div class="rounded-xl bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-4 py-3 text-sm">
+        <?php echo e($errors->first()); ?>
+
+      </div>
+    <?php endif; ?>
+
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <h1 class="pasih-page-title">Permohonan</h1>
+        <p class="mt-1 pasih-page-breadcrumb">
+          <a href="<?php echo e(route('dashboard')); ?>" class="hover:text-slate-700 hover:underline">Dashboard</a>
+          <span class="mx-1">/</span>
+          <span>Permohonan</span>
+        </p>
+      </div>
+
+      <?php if($canCreate): ?>
+        <a href="<?php echo e(route('submissions.create')); ?>" class="pasih-add-btn inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
+          <span class="text-base">+</span> Tambah Data
+        </a>
+      <?php endif; ?>
+    </div>
+
+    <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <form method="GET" action="<?php echo e(route('submissions.index')); ?>" class="flex items-center gap-2 text-sm text-slate-700">
+          <span>Tampil</span>
+          <select name="per_page" class="h-8 rounded-md border-slate-300 text-sm focus:outline-none focus:ring-0 focus:border-slate-300" onchange="this.form.submit()">
+            <option value="5" <?php if($perPage === 5): echo 'selected'; endif; ?>>5</option>
+            <option value="10" <?php if($perPage === 10): echo 'selected'; endif; ?>>10</option>
+            <option value="25" <?php if($perPage === 25): echo 'selected'; endif; ?>>25</option>
+          </select>
+          <span>Data</span>
+          <input type="hidden" name="q" value="<?php echo e($search); ?>">
+          <input type="hidden" name="status" value="<?php echo e($status); ?>">
+        </form>
+
+        <form method="GET" action="<?php echo e(route('submissions.index')); ?>" class="flex items-center gap-2 text-sm text-slate-700">
+          <label for="q">Cari:</label>
+          <input id="q" type="text" name="q" value="<?php echo e($search); ?>" class="h-8 w-40 px-3 rounded-md border border-[#B9B9B9] text-sm">
+          <input type="hidden" name="per_page" value="<?php echo e($perPage); ?>">
+          <input type="hidden" name="status" value="<?php echo e($status); ?>">
+        </form>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-slate-600">
+            <tr>
+              <th class="px-4 py-3 text-center">No</th>
+              <th class="px-4 py-3 text-left">Judul Perda</th>
+              <th class="px-4 py-3 text-left">Tanggal Pengajuan</th>
+              <th class="px-4 py-3 text-left">Instansi Pengaju</th>
+              <th class="px-4 py-3 text-left">Disposisi</th>
+              <th class="px-4 py-3 text-left">Status Permohonan</th>
+              <th class="px-4 py-3 text-left w-52 min-w-[13rem]">Status Analisis</th>
+              <th class="px-4 py-3 text-left">Surat Balasan</th>
+              <th class="px-4 py-3 text-left">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php $__empty_1 = true; $__currentLoopData = $submissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $submission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+              <?php
+                $rowNumber = ($submissions->firstItem() ?? 1) + $loop->index;
+                $assignment = $submission->assignments->sortByDesc('id')->first();
+                $assignmentWithSuratBalasan = $submission->assignments
+                    ->sortByDesc('id')
+                    ->first(fn ($item) => $item->kemenkumReplyDocument);
+                $suratBalasanDocument = $assignmentWithSuratBalasan?->kemenkumReplyDocument;
+                $dispositionUser = $submission->divisionOperator ?? $submission->latestDisposition?->toUser;
+                $dispositionRoleLabel = $dispositionUser ? 'Kepala Divisi P3H' : '-';
+
+                $statusTone = match($submission->status->value) {
+                  'accepted' => 'analisis-accepted',
+                  'rejected' => 'analisis-rejected',
+                  'revised' => 'analisis-revised',
+                  default => 'analisis-submitted',
+                };
+
+                $analysisText = 'Belum Ditugaskan';
+                $analysisTone = 'permohonan-unassigned';
+
+                if ($assignment) {
+                    if ($assignment->status->value === 'completed') {
+                        $analysisText = 'Selesai Analisis';
+                        $analysisTone = 'permohonan-done';
+                    } elseif ($assignment->status->value === 'in_progress') {
+                        $analysisText = 'Dalam Analisis';
+                        $analysisTone = 'permohonan-in-analysis';
+                    } elseif ($assignment->status->value === 'pending_kadiv_approval') {
+                        $analysisText = 'Menunggu Persetujuan Kadiv';
+                        $analysisTone = 'permohonan-awaiting-kadiv';
+                    } elseif ($assignment->status->value === 'pending_kakanwil_approval') {
+                        $analysisText = 'Menunggu Persetujuan Kakanwil';
+                        $analysisTone = 'permohonan-awaiting-kakanwil';
+                    } elseif ($assignment->status->value === 'revision_by_pic') {
+                        $analysisText = 'Revisi oleh Penanggung Jawab';
+                        $analysisTone = 'permohonan-revision';
+                    } elseif ($assignment->status->value === 'assigned') {
+                        $analysisText = 'Belum ada Penanggung Jawab';
+                        $analysisTone = 'permohonan-available';
+                    } else {
+                        $analysisText = $assignment->status->label();
+                        $analysisTone = 'permohonan-unassigned';
+                    }
+                }
+              ?>
+              <tr class="border-t border-slate-100 text-slate-700">
+                <td class="px-4 py-3 text-center"><?php echo e($rowNumber); ?></td>
+                <td class="px-4 py-3"><?php echo e($submission->perda_title ?: '-'); ?></td>
+                <td class="px-4 py-3"><?php echo e(optional($submission->submitted_at)->format('d-m-Y') ?: '-'); ?></td>
+                <td class="px-4 py-3"><?php echo e($submission->submitter?->instansi?->nama_instansi ?? '-'); ?></td>
+                <td class="px-4 py-3"><?php echo e($dispositionRoleLabel); ?></td>
+                <td class="px-4 py-3"><?php if (isset($component)) { $__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ui.badge','data' => ['tone' => $statusTone]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('ui.badge'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['tone' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($statusTone)]); ?><?php echo e($submission->status->label()); ?> <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4)): ?>
+<?php $attributes = $__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4; ?>
+<?php unset($__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4)): ?>
+<?php $component = $__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4; ?>
+<?php unset($__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4); ?>
+<?php endif; ?></td>
+                <td class="px-4 py-3 w-52 min-w-[13rem]"><?php if (isset($component)) { $__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.ui.badge','data' => ['tone' => $analysisTone]] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('ui.badge'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes(['tone' => \Illuminate\View\Compilers\BladeCompiler::sanitizeComponentAttribute($analysisTone)]); ?><?php echo e($analysisText); ?> <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4)): ?>
+<?php $attributes = $__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4; ?>
+<?php unset($__attributesOriginalab7baa01105b3dfe1e0cf1dfc58879b4); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4)): ?>
+<?php $component = $__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4; ?>
+<?php unset($__componentOriginalab7baa01105b3dfe1e0cf1dfc58879b4); ?>
+<?php endif; ?></td>
+                <td class="px-4 py-3 text-center">
+                  <?php if($suratBalasanDocument && !empty($suratBalasanDocument->file_path)): ?>
+                    <a href="<?php echo e(asset('storage/'.$suratBalasanDocument->file_path)); ?>" target="_blank" class="inline-flex w-full items-center justify-center text-rose-600 hover:underline" title="Lihat Surat Balasan" aria-label="Lihat Surat Balasan">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6H6zm7 1.5L18.5 9H14a1 1 0 01-1-1V3.5zM8 13h8v1.5H8V13zm0 3h8v1.5H8V16z"/></svg>
+                    </a>
+                  <?php else: ?>
+                    <span class="text-slate-500">Belum ada surat balasan</span>
+                  <?php endif; ?>
+                </td>
+                <td class="px-4 py-3">
+                  <div class="flex items-center gap-1.5">
+                    <a href="<?php echo e(route('submissions.show', $submission)); ?>" class="h-8 w-8 rounded-md bg-blue-600 text-white inline-flex items-center justify-center" title="Detail">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /><circle cx="12" cy="12" r="3" /></svg>
+                    </a>
+
+                    <?php if($canReview): ?>
+                      <?php
+                        $isReviewerRole = auth()->user()->role->value === 'operator_kanwil';
+                        $isStatusDispositionDone = !is_null($submission->reviewed_at);
+                        $allowStatusDispositionForResubmission = in_array($submission->status->value, ['submitted', 'revised'], true);
+                      ?>
+
+                      <?php if($isReviewerRole && $isStatusDispositionDone && !$allowStatusDispositionForResubmission): ?>
+                        <button
+                          type="button"
+                          class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center cursor-not-allowed"
+                          style="background-color:#B9B9B9"
+                          title="Status-Disposisi sudah disimpan"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </button>
+                      <?php else: ?>
+                        <a
+                          href="<?php echo e(route('submissions.status-disposisi.form', $submission)); ?>"
+                          class="h-8 w-8 rounded-md bg-emerald-600 text-white inline-flex items-center justify-center"
+                          title="Aksi Status & Disposisi"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        </a>
+                      <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php if(in_array(auth()->user()->role->value, ['kakanwil', 'kepala_divisi_p3h'], true)): ?>
+                      <?php if($assignment): ?>
+                        <button
+                          type="button"
+                          class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center cursor-not-allowed"
+                          style="background-color:#B9B9B9"
+                          title="Permohonan sudah ditugaskan"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                        </button>
+                      <?php elseif(in_array($submission->status->value, ['accepted', 'disposed', 'assigned'], true)): ?>
+                        <a
+                          href="<?php echo e(route('submissions.penugasan.form', $submission)); ?>"
+                          class="h-8 w-8 rounded-md bg-violet-600 text-white inline-flex items-center justify-center"
+                          title="Penugasan"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                        </a>
+                      <?php else: ?>
+                        <button
+                          type="button"
+                          class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center cursor-not-allowed"
+                          style="background-color:#B9B9B9"
+                          title="Penugasan belum tersedia untuk status ini"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          </svg>
+                        </button>
+                      <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php if($canCreate && $submission->submitter_id === auth()->id()): ?>
+                      <?php
+                        $canModifyPemda = in_array($submission->status->value, ['submitted', 'revised'], true);
+                      ?>
+
+                      <?php if($canModifyPemda): ?>
+                        <a href="<?php echo e(route('submissions.edit', $submission)); ?>" class="h-8 w-8 rounded-md bg-amber-400 text-white inline-flex items-center justify-center" title="Edit">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 113 3L12 14l-4 1 1-4 7.5-7.5z" /></svg>
+                        </a>
+
+                        <form method="POST" action="<?php echo e(route('submissions.destroy', $submission)); ?>" data-confirm-type="delete" data-confirm-message="Apakah Anda yakin ingin menghapus data ini?">
+                          <?php echo csrf_field(); ?>
+                          <?php echo method_field('DELETE'); ?>
+                          <button type="submit" class="h-8 w-8 rounded-md bg-rose-600 text-white inline-flex items-center justify-center" title="Hapus">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16" /></svg>
+                          </button>
+                        </form>
+                      <?php else: ?>
+                        <button type="button" class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center cursor-not-allowed" style="background-color:#B9B9B9" title="Edit dinonaktifkan">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 113 3L12 14l-4 1 1-4 7.5-7.5z" /></svg>
+                        </button>
+                        <button type="button" class="h-8 w-8 rounded-md text-white inline-flex items-center justify-center cursor-not-allowed" style="background-color:#B9B9B9" title="Hapus dinonaktifkan">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-1 12a2 2 0 01-2 2H8a2 2 0 01-2-2L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3M4 7h16" /></svg>
+                        </button>
+                      <?php endif; ?>
+                    <?php endif; ?>
+                  </div>
+                </td>
+              </tr>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+              <tr>
+                <td colspan="9" class="px-4 py-6 text-center text-slate-500">Belum ada data permohonan.</td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="px-4 py-3 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-slate-600">
+        <div>
+          Menampilkan <?php echo e($submissions->firstItem() ?? 0); ?> - <?php echo e($submissions->lastItem() ?? 0); ?> dari <?php echo e($submissions->total()); ?> data
+        </div>
+        <div>
+          <?php echo e($submissions->onEachSide(1)->links('vendor.pagination.pasih')); ?>
+
+        </div>
+      </div>
+    </div>
+  </div>
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\PASIH\resources\views/pages/submissions/index.blade.php ENDPATH**/ ?>

@@ -43,11 +43,11 @@
             Disposisi <span class="text-red-500">*</span> <span class="text-xs font-normal text-slate-500">(wajib untuk status Diterima)</span>
             <select id="to_user_id" name="to_user_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px] focus:outline-none focus:ring-0 focus:border-[#B9B9B9]">
               <option value="">Pilih Disposisi</option>
-              @if($kadivUser)
+              @foreach($kadivUsers as $kadivUser)
                 <option value="{{ $kadivUser->id }}" @selected((int) old('to_user_id') === $kadivUser->id)>
-                  Kepala Divisi P3H
+                  {{ $kadivUser->name }}
                 </option>
-              @endif
+              @endforeach
             </select>
           </label>
         </div>

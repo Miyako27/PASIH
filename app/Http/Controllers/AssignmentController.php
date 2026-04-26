@@ -9,6 +9,7 @@ use App\Models\AssignmentKemenkumReplyDocument;
 use App\Models\AssignmentPicUpdate;
 use App\Models\Submission;
 use App\Models\User;
+use App\Services\WorkflowNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,11 @@ use Illuminate\Validation\ValidationException;
 
 class AssignmentController extends Controller
 {
+    public function __construct(
+        private readonly WorkflowNotificationService $workflowNotificationService
+    ) {
+    }
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -197,7 +203,7 @@ class AssignmentController extends Controller
             'instruction' => ['nullable', 'string'],
         ]);
 
-        Assignment::query()->create([
+        $assignment = Assignment::query()->create([
             'submission_id' => $validated['submission_id'],
             'assigned_by_id' => $request->user()->id,
             'instruction' => $validated['instruction'] ?? null,
@@ -207,6 +213,8 @@ class AssignmentController extends Controller
         Submission::query()->whereKey($validated['submission_id'])->each(function (Submission $submission) use ($request): void {
             $submission->recordStatus('assigned', $request->user()->id);
         });
+
+        $this->workflowNotificationService->notifyAssignmentCreated($assignment, $request->user());
 
         return back()->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
     }
@@ -228,7 +236,7 @@ class AssignmentController extends Controller
             'instruction' => ['nullable', 'string'],
         ]);
 
-        Assignment::query()->create([
+        $assignment = Assignment::query()->create([
             'submission_id' => $submission->id,
             'assigned_by_id' => $request->user()->id,
             'instruction' => $validated['instruction'] ?? null,
@@ -236,6 +244,8 @@ class AssignmentController extends Controller
         ]);
 
         $submission->recordStatus('assigned', $request->user()->id);
+
+        $this->workflowNotificationService->notifyAssignmentCreated($assignment, $request->user());
 
         return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
     }
@@ -301,6 +311,18 @@ class AssignmentController extends Controller
                 ]
             );
         });
+
+        $this->workflowNotificationService->notifyAssignmentPicAssigned(
+            $assignment,
+            $request->user(),
+            $analyst,
+            $validated['deadline_at'] ?? null
+        );
+
+        $this->workflowNotificationService->notifySubmitterReplyLetterAvailable(
+            $assignment,
+            $request->user()
+        );
 
         return redirect()->route('assignments.index')->with('success', 'Penanggung Jawab berhasil ditentukan. Status menjadi Dalam Analisis.');
     }
@@ -387,6 +409,8 @@ class AssignmentController extends Controller
             ]);
         });
 
+        $this->workflowNotificationService->notifyAssignmentSubmittedForKadivReview($assignment, $request->user());
+
         return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil diunggah. Status: Menunggu Persetujuan Kadiv.');
     }
 
@@ -429,6 +453,8 @@ class AssignmentController extends Controller
                     'approved_by_kakanwil_at' => null,
                 ]);
 
+                $this->workflowNotificationService->notifyAssignmentForwardedToKakanwil($assignment, $request->user());
+
                 return redirect()->route('assignments.index')->with('success', 'Persetujuan Kadiv berhasil. Status: Menunggu Persetujuan Kakanwil.');
             }
 
@@ -443,6 +469,12 @@ class AssignmentController extends Controller
                 'approved_by_kadiv_at' => null,
                 'approved_by_kakanwil_at' => null,
             ]);
+
+            $this->workflowNotificationService->notifyAssignmentReturnedForRevision(
+                $assignment,
+                $request->user(),
+                $validated['revision_note'] ?? null
+            );
 
             return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');
         }
@@ -468,6 +500,8 @@ class AssignmentController extends Controller
                 $assignment->submission?->recordStatus('completed', $approverId);
             });
 
+            $this->workflowNotificationService->notifyAssignmentCompleted($assignment, $request->user());
+
             return redirect()->route('assignments.index')->with('success', 'Persetujuan Kakanwil berhasil. Status: Selesai Analisis.');
         }
 
@@ -482,6 +516,12 @@ class AssignmentController extends Controller
             'approved_by_kadiv_at' => $assignment->approved_by_kadiv_at,
             'approved_by_kakanwil_at' => null,
         ]);
+
+        $this->workflowNotificationService->notifyAssignmentReturnedForRevision(
+            $assignment,
+            $request->user(),
+            $validated['revision_note'] ?? null
+        );
 
         return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');
     }
