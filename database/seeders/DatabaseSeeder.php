@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
         $now = now();
 
         $instansiKanwil = Instansi::query()->firstOrCreate(
-            ['nama_instansi' => 'Kanwil Kemenkum'],
-            ['jenis_instansi' => 'Kemenkum', 'alamat' => 'Alamat Kanwil', 'created_at' => $now, 'updated_at' => $now]
+            ['nama_instansi' => 'Pemerintah Provinsi Riau'],
+            ['jenis_instansi' => 'Pemerintah Provinsi Riau', 'alamat' => 'Alamat Kanwil', 'created_at' => $now, 'updated_at' => $now]
         );
 
         $adminRole = Role::query()->firstOrCreate(['nama_role' => 'admin']);
