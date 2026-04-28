@@ -4,7 +4,7 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Penugasan Analis</h1>
+      <h1 class="pasih-page-title">Penugasan</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
@@ -15,6 +15,9 @@
     </div>
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
+      <div class="px-4 py-3 border-b border-slate-200">
+        <h2 class="text-[18px] font-bold text-slate-800">Penugasan Analis</h2>
+      </div>
       <form method="POST" action="{{ route('assignments.assign-pic.store', $assignment) }}" enctype="multipart/form-data" class="p-5 space-y-5">
         @csrf
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
