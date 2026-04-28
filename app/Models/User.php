@@ -29,7 +29,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'notifications_seen_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
