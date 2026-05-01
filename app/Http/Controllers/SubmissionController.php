@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\SubmissionStatus;
 use App\Models\Submission;
 use App\Models\SubmissionDisposition;
 use App\Models\SubmissionDocument;
@@ -200,7 +199,7 @@ class SubmissionController extends Controller
             $this->workflowNotificationService->notifyNewSubmission($submission, $request->user());
         }
 
-        return redirect()->route('submissions.index')->with('success', 'Pengajuan berhasil dibuat.');
+        return redirect()->route('submissions.index')->with('success', 'Permohonan berhasil dibuat');
     }
 
     public function show(Request $request, Submission $submission)
@@ -310,7 +309,7 @@ class SubmissionController extends Controller
             );
         }
 
-        return redirect()->route('submissions.index')->with('success', 'Pengajuan berhasil diperbarui.');
+        return redirect()->route('submissions.index')->with('success', 'Permohonan berhasil diperbarui');
     }
 
     public function destroy(Request $request, Submission $submission)
@@ -324,30 +323,7 @@ class SubmissionController extends Controller
 
         $submission->delete();
 
-        return redirect()->route('submissions.index')->with('success', 'Data permohonan berhasil dihapus.');
-    }
-
-    public function updateStatus(Request $request, Submission $submission)
-    {
-        abort_unless($request->user()->role->value === 'operator_kanwil', 403);
-
-        $validated = $request->validate([
-            'status' => ['required', Rule::in(['accepted', 'revised', 'rejected'])],
-            'note' => ['nullable', 'string'],
-        ]);
-
-        $statusNote = blank($validated['note'] ?? null) ? null : $validated['note'];
-
-        $submission->recordStatus($validated['status'], $request->user()->id, $statusNote);
-
-        $this->workflowNotificationService->notifySubmissionStatusUpdated(
-            $submission,
-            $request->user(),
-            $validated['status'],
-            $statusNote
-        );
-
-        return back()->with('success', 'Status pengajuan diperbarui.');
+        return redirect()->route('submissions.index')->with('success', 'Permohonan berhasil dihapus');
     }
 
     public function statusDispositionForm(Request $request, Submission $submission)
@@ -425,83 +401,7 @@ class SubmissionController extends Controller
 
         return redirect()
             ->route('submissions.index')
-            ->with('success', 'Status dan disposisi permohonan berhasil disimpan.');
-    }
-
-    public function dispose(Request $request, Submission $submission)
-    {
-        abort_unless($request->user()->role->value === 'operator_kanwil', 403);
-
-        $validated = $request->validate([
-            'to_user_id' => ['required', 'exists:users,id'],
-            'note' => ['nullable', 'string'],
-        ]);
-
-        $toUser = User::query()->findOrFail($validated['to_user_id']);
-        abort_unless($toUser->role->value === 'kepala_divisi_p3h', 422);
-
-        SubmissionDisposition::query()->create([
-            'submission_id' => $submission->id,
-            'kanwil_operator_id' => $request->user()->id,
-            'to_user_id' => $toUser->id,
-            'disposition_note' => $validated['note'] ?? null,
-        ]);
-
-        $submission->recordStatus('disposed', $request->user()->id, $validated['note'] ?? null);
-
-        $this->workflowNotificationService->notifySubmissionDispositioned(
-            $submission,
-            $request->user(),
-            $toUser,
-            $validated['note'] ?? null
-        );
-
-        $this->workflowNotificationService->notifySubmissionStatusUpdated(
-            $submission,
-            $request->user(),
-            SubmissionStatus::Disposed->value,
-            $validated['note'] ?? null
-        );
-
-        return back()->with('success', 'Permohonan berhasil didisposisikan.');
-    }
-
-    public function uploadResult(Request $request, Submission $submission)
-    {
-        abort_unless($request->user()->role->value === 'analis_hukum', 403);
-
-        $validated = $request->validate([
-            'document_type' => ['required', Rule::in(['hasil_analisis', 'rekomendasi'])],
-            'file' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
-            'mark_completed' => ['nullable', 'boolean'],
-        ]);
-
-        $resultFile = $this->validateUploadedFile(
-            $request->file('file'),
-            'file',
-            'Upload dokumen gagal. Periksa ukuran file dan coba lagi.'
-        );
-
-        $this->storeDocument(
-            $submission->id,
-            $request->user()->id,
-            $resultFile,
-            $validated['document_type'],
-            $submission->submitter?->instansi?->nama_instansi ?? $submission->pemda_name,
-            $validated['document_type'] === 'hasil_analisis' ? 'Hasil Analisis' : 'Rekomendasi'
-        );
-
-        if ((bool) ($validated['mark_completed'] ?? false)) {
-            $submission->recordStatus('completed');
-
-            $this->workflowNotificationService->notifySubmissionStatusUpdated(
-                $submission,
-                $request->user(),
-                SubmissionStatus::Completed->value
-            );
-        }
-
-        return back()->with('success', 'Dokumen hasil berhasil diunggah.');
+            ->with('success', 'Status dan disposisi permohonan berhasil disimpan');
     }
 
     private function storeDocument(

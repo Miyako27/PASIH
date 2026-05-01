@@ -23,26 +23,7 @@ const iconMarkup = {
 };
 
 function getSuccessTitle(message) {
-    const text = (message || '').toLowerCase();
-
-    if (text.includes('hapus')) {
-        return 'Data Berhasil Dihapus !';
-    }
-
-    if (text.includes('diambil')) {
-        return 'Penugasan Berhasil Diambil !';
-    }
-
-    if (
-        text.includes('ditambah') ||
-        text.includes('diperbarui') ||
-        text.includes('dibuat') ||
-        text.includes('disimpan')
-    ) {
-        return 'Data Berhasil Disimpan !';
-    }
-
-    return message || 'Data Berhasil Disimpan !';
+    return message || 'Berhasil';
 }
 
 function createAlertModal({

@@ -46,7 +46,7 @@ class AuthController extends Controller
                     'method' => 'POST',
                 ]);
             } catch (\Throwable) {
-                // Logging aktivitas tidak boleh mengganggu proses login.
+                
             }
         }
 
@@ -66,7 +66,7 @@ class AuthController extends Controller
                     'method' => 'POST',
                 ]);
             } catch (\Throwable) {
-                // Logging aktivitas tidak boleh mengganggu proses logout.
+                
             }
         }
 

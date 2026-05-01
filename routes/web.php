@@ -110,15 +110,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:operator_kanwil')->group(function () {
-        Route::patch('/submissions/{submission}/status', [SubmissionController::class, 'updateStatus'])
-            ->whereNumber('submission')
-            ->name('submissions.update-status');
-        Route::post('/submissions/{submission}/dispose', [SubmissionController::class, 'dispose'])
-            ->whereNumber('submission')
-            ->name('submissions.dispose');
-    });
-
-    Route::middleware('role:operator_kanwil')->group(function () {
         Route::get('/submissions/{submission}/status-disposisi', [SubmissionController::class, 'statusDispositionForm'])
             ->whereNumber('submission')
             ->name('submissions.status-disposisi.form');
@@ -128,9 +119,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:ketua_tim_analisis,kakanwil,kepala_divisi_p3h,analis_hukum')->group(function () {
-        Route::post('/submissions/{submission}/result', [SubmissionController::class, 'uploadResult'])
-            ->whereNumber('submission')
-            ->name('submissions.upload-result');
         Route::get('/assignments', [AssignmentController::class, 'index'])->name('assignments.index');
         Route::get('/assignments/{assignment}', [AssignmentController::class, 'show'])
             ->whereNumber('assignment')
@@ -138,7 +126,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:kakanwil,kepala_divisi_p3h')->group(function () {
-        Route::post('/assignments', [AssignmentController::class, 'store'])->name('assignments.store');
         Route::get('/submissions/{submission}/penugasan', [AssignmentController::class, 'createFromSubmission'])
             ->whereNumber('submission')
             ->name('submissions.penugasan.form');
@@ -181,12 +168,4 @@ Route::middleware('auth')->group(function () {
             ->whereNumber('assignment')
             ->name('assignments.approval.store');
     });
-
-    Route::middleware('role:ketua_tim_analisis,analis_hukum')->group(function () {
-        Route::post('/assignments/{assignment}/document', [AssignmentController::class, 'uploadDocument'])
-            ->whereNumber('assignment')
-            ->name('assignments.upload-document');
-    });
-
-    Route::get('send-mail', [MailController::class, 'index']);
 });

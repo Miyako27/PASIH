@@ -194,31 +194,6 @@ class AssignmentController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        abort_unless(in_array($request->user()->role->value, ['kakanwil', 'kepala_divisi_p3h'], true), 403);
-
-        $validated = $request->validate([
-            'submission_id' => ['required', 'exists:submissions,id'],
-            'instruction' => ['nullable', 'string'],
-        ]);
-
-        $assignment = Assignment::query()->create([
-            'submission_id' => $validated['submission_id'],
-            'assigned_by_id' => $request->user()->id,
-            'instruction' => $validated['instruction'] ?? null,
-            'status' => 'assigned',
-        ]);
-
-        Submission::query()->whereKey($validated['submission_id'])->each(function (Submission $submission) use ($request): void {
-            $submission->recordStatus('assigned', $request->user()->id);
-        });
-
-        $this->workflowNotificationService->notifyAssignmentCreated($assignment, $request->user());
-
-        return back()->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
-    }
-
     public function createFromSubmission(Request $request, Submission $submission)
     {
         abort_unless(in_array($request->user()->role->value, ['kakanwil', 'kepala_divisi_p3h'], true), 403);
@@ -247,7 +222,7 @@ class AssignmentController extends Controller
 
         $this->workflowNotificationService->notifyAssignmentCreated($assignment, $request->user());
 
-        return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat. Status: Belum ada Penanggung Jawab.');
+        return redirect()->route('submissions.index')->with('success', 'Penugasan berhasil dibuat');
     }
 
     public function assignPicForm(Request $request, Assignment $assignment)
@@ -324,7 +299,7 @@ class AssignmentController extends Controller
             $request->user()
         );
 
-        return redirect()->route('assignments.index')->with('success', 'Penanggung Jawab berhasil ditentukan. Status menjadi Dalam Analisis.');
+        return redirect()->route('assignments.index')->with('success', 'Penanggung jawab analisis berhasil ditetapkan');
     }
 
     public function uploadAnalysisForm(Request $request, Assignment $assignment)
@@ -393,7 +368,7 @@ class AssignmentController extends Controller
 
         $this->workflowNotificationService->notifyAssignmentSubmittedForKadivReview($assignment, $request->user());
 
-        return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil diunggah. Status: Menunggu Persetujuan Kadiv.');
+        return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil diunggah');
     }
 
     public function approvalForm(Request $request, Assignment $assignment)
@@ -437,7 +412,7 @@ class AssignmentController extends Controller
 
                 $this->workflowNotificationService->notifyAssignmentForwardedToKakanwil($assignment, $request->user());
 
-                return redirect()->route('assignments.index')->with('success', 'Persetujuan Kadiv berhasil. Status: Menunggu Persetujuan Kakanwil.');
+                return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil disetujui oleh Kepala Divisi P3H');
             }
 
             $assignment->update([
@@ -458,7 +433,7 @@ class AssignmentController extends Controller
                 $validated['revision_note'] ?? null
             );
 
-            return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');
+            return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil dikembalikan untuk revisi');
         }
 
         if ($validated['decision'] === 'approve') {
@@ -484,7 +459,7 @@ class AssignmentController extends Controller
 
             $this->workflowNotificationService->notifyAssignmentCompleted($assignment, $request->user());
 
-            return redirect()->route('assignments.index')->with('success', 'Persetujuan Kakanwil berhasil. Status: Selesai Analisis.');
+            return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil disetujui oleh Kepala Kantor Wilayah');
         }
 
         $assignment->update([
@@ -505,44 +480,7 @@ class AssignmentController extends Controller
             $validated['revision_note'] ?? null
         );
 
-        return redirect()->route('assignments.index')->with('success', 'Penugasan dikembalikan untuk revisi Penanggung Jawab.');
-    }
-
-    public function uploadDocument(Request $request, Assignment $assignment)
-    {
-        abort_unless(
-            ($request->user()->role->value === 'analis_hukum' && $assignment->analyst_id === $request->user()->id) ||
-            $request->user()->role->value === 'ketua_tim_analisis',
-            403
-        );
-
-        $validated = $request->validate([
-            'document_type' => ['required', Rule::in(['hasil_analisis', 'rekomendasi', 'lampiran'])],
-            'file' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
-        ]);
-
-        $file = $this->validateUploadedFile(
-            $request->file('file'),
-            'file',
-            'Upload dokumen penugasan gagal. Pastikan ukuran file tidak melebihi batas server.'
-        );
-        $stored = $this->storeAssignmentFile(
-            $file,
-            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->pemda_name ?? 'Instansi',
-            $validated['document_type'] === 'hasil_analisis' ? 'Hasil Analisis' : 'Dokumen'
-        );
-
-        AssignmentDocument::query()->create([
-            'assignment_id' => $assignment->id,
-            'uploaded_by' => $request->user()->id,
-            'document_type' => $validated['document_type'],
-            'file_name' => $stored['file_name'],
-            'file_path' => $stored['file_path'],
-            'mime_type' => $stored['mime_type'],
-            'file_size' => $stored['file_size'],
-        ]);
-
-        return back()->with('success', 'Dokumen penugasan berhasil diunggah.');
+        return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil dikembalikan untuk revisi');
     }
 
     private function canReviewAssignmentByRole(string $role, Assignment $assignment): bool
