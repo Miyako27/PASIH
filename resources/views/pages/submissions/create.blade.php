@@ -5,13 +5,13 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Permohonan</h1>
+      <h1 class="pasih-page-title">Ajukan Permohonan Peraturan Daerah</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('submissions.index') }}" class="hover:text-slate-700 hover:underline">Permohonan</a>
         <span class="mx-1">/</span>
-        <span>Tambah Permohonan</span>
+        <span>Ajukan Permohonan Peraturan Daerah</span>
       </p>
     </div>
 
@@ -25,7 +25,7 @@
 
     <div class="rounded-md bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200">
-        <h2 class="text-[18px] font-bold text-slate-800">Ajukan Surat Permohonan</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Data Permohonan</h2>
       </div>
 
 

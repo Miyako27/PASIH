@@ -11,7 +11,7 @@
 
     <div class="flex items-start justify-between gap-4">
       <div>
-        <h1 class="pasih-page-title">Manajemen Instansi</h1>
+        <h1 class="pasih-page-title">Tambah Instansi</h1>
         <p class="mt-2 pasih-page-breadcrumb">
           <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
           <span class="mx-1">/</span>
@@ -20,15 +20,11 @@
           <span>Tambah Instansi</span>
         </p>
       </div>
-
-      {{-- <a href="{{ route('admin.instansi.index') }}" class="inline-flex items-center gap-2 h-11 px-4 rounded-xl bg-blue-950 text-white text-sm font-semibold hover:bg-blue-900">
-        Kembali
-      </a> --}}
     </div>
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200">
-        <h2 class="text-[18px] font-bold text-slate-800">Tambah Instansi</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Data Instansi</h2>
       </div>
 
       <form method="POST" action="{{ route('admin.instansi.store') }}" class="p-4 space-y-4">

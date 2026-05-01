@@ -345,24 +345,6 @@ class AssignmentController extends Controller
         ]);
     }
 
-    public function editAnalysisResultForm(Request $request, Assignment $assignment)
-    {
-        abort_unless(
-            $request->user()->role->value === 'analis_hukum' &&
-            $assignment->analyst_id === $request->user()->id &&
-            in_array($assignment->status->value, ['in_progress', 'revision_by_pic'], true),
-            403
-        );
-
-        $assignment->load(['submission', 'latestAnalysisDocument']);
-        $initialAnalysis = $this->extractAnalysisFieldsFromDocument($assignment->latestAnalysisDocument);
-
-        return view('pages.assignments.edit-hasil-analisis', [
-            'assignment' => $assignment,
-            'initialAnalysis' => $initialAnalysis,
-        ]);
-    }
-
     public function uploadAnalysisStore(Request $request, Assignment $assignment)
     {
         abort_unless(

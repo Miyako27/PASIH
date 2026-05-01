@@ -4,13 +4,13 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Penugasan</h1>
+      <h1 class="pasih-page-title">Hasil Analisis Peraturan Daerah</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('assignments.index') }}" class="hover:text-slate-700 hover:underline">Penugasan</a>
         <span class="mx-1">/</span>
-        <span>Upload Hasil Analisis</span>
+        <span>Hasil Analisis Peraturan Daerah</span>
       </p>
     </div>
 
@@ -22,22 +22,22 @@
 
     <div class="rounded-md bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200">
-        <h2 class="text-[18px] font-bold text-slate-800">Upload Hasil Analisis</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Input Hasil Analisis</h2>
       </div>
 
       <form method="POST" action="{{ route('assignments.upload-hasil.store', $assignment) }}" enctype="multipart/form-data" class="p-4 space-y-4">
         @csrf
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label class="block text-sm font-medium text-slate-700">Nomor Surat
+          <label class="block text-sm font-medium text-slate-700">Judul Peraturan daerah
+            <input type="text" disabled value="{{ $assignment->submission->perda_title }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
+          </label>
+
+            <label class="block text-sm font-medium text-slate-700">Nomor Surat
             <input type="text" disabled value="{{ $assignment->submission->nomor_surat }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
 
-          <label class="block text-sm font-medium text-slate-700">Perihal
-            <input type="text" disabled value="{{ $assignment->submission->perihal }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
-          </label>
-
-          <label class="block text-sm font-medium text-slate-700">Ditugaskan Oleh
+          <label class="block text-sm font-medium text-slate-700">Penugasan Oleh
             <input type="text" disabled value="{{ $assignment->submission->divisionOperator?->name ?? 'P3H' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
 
@@ -61,7 +61,7 @@
         </label>
 
         <div>
-          <label class="block text-sm font-medium text-slate-700">Upload Dokumen Hasil Analisis<span class="text-red-500">*</span></label>
+          <label class="block text-sm font-medium text-slate-700">Upload Dokumen Hasil Analisis Perda <span class="text-red-500">*</span></label>
           <p class="text-xs text-slate-500 mt-1">
             Format: PDF/DOC/DOCX, maksimal ukuran tiap file 5 MB.
           </p>

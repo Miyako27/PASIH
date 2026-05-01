@@ -4,13 +4,13 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Permohonan</h1>
+      <h1 class="pasih-page-title">Verifikasi Permohonan</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('submissions.index') }}" class="hover:text-slate-700 hover:underline">Permohonan</a>
         <span class="mx-1">/</span>
-        <span>Ubah Status & Disposisi</span>
+        <span>Verifikasi Permohonan</span>
       </p>
     </div>
 
@@ -22,7 +22,7 @@
 
     <div class="rounded-lg bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-5 py-4 border-b border-slate-200">
-        <h2 class="text-[18px] font-bold text-slate-800">Ubah Status & Tetapkan Disposisi</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Penetapan Status & Disposisi</h2>
       </div>
 
       <form id="status-disposition-form" method="POST" action="{{ route('submissions.status-disposisi.save', $submission) }}" class="p-5 space-y-5" novalidate>
@@ -54,13 +54,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <label class="block text-sm font-medium text-slate-700">
-            Catatan Status <span class="text-red-500">*</span>
+            Catatan Status Permohonan <span class="text-red-500">*</span>
             <textarea
               id="status_note"
               required
               name="status_note"
               rows="4"
-              placeholder="Masukkan Catatan Untuk Status"
+              placeholder="Masukkan Catatan Untuk Status Permohonan"
               class="mt-2 w-full px-4 py-2 rounded-md border border-[#B9B9B9] text-sm placeholder:text-[14px]"
             >{{ old('status_note') }}</textarea>
           </label>

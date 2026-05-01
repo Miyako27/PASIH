@@ -4,7 +4,7 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Penugasan</h1>
+      <h1 class="pasih-page-title">Persetujuan Hasil Analisis</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
@@ -22,7 +22,7 @@
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200">
-        <h2 class="text-[18px] font-bold text-slate-800">Persetujuan Hasil Analisis</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Keputusan Hasil Analisis</h2>
       </div>
 
       <form method="POST" action="{{ route('assignments.approval.store', $assignment) }}" class="p-5 space-y-5">
@@ -33,7 +33,7 @@
             <input type="text" disabled value="{{ $assignment->submission->perda_title ?: '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
           <label class="block text-sm font-medium text-slate-700">
-            Penanggung Jawab
+            Penanggung Jawab Analisis
             <input type="text" disabled value="{{ $assignment->analyst?->name ?? '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
         </div>

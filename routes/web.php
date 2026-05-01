@@ -165,9 +165,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:analis_hukum')->group(function () {
-        Route::get('/hasil-analisis/{assignment}/edit', [AssignmentController::class, 'editAnalysisResultForm'])
-            ->whereNumber('assignment')
-            ->name('assignments.analysis-results.edit');
         Route::get('/assignments/{assignment}/upload-hasil', [AssignmentController::class, 'uploadAnalysisForm'])
             ->whereNumber('assignment')
             ->name('assignments.upload-hasil.form');

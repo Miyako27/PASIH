@@ -4,19 +4,19 @@
 @section('content')
   <div class="space-y-5">
     <div>
-      <h1 class="pasih-page-title">Penugasan</h1>
+      <h1 class="pasih-page-title">Penugasan Analisis</h1>
       <p class="mt-1 pasih-page-breadcrumb">
         <a href="{{ route('dashboard') }}" class="hover:text-slate-700 hover:underline">Dashboard</a>
         <span class="mx-1">/</span>
         <a href="{{ route('assignments.index') }}" class="hover:text-slate-700 hover:underline">Penugasan</a>
         <span class="mx-1">/</span>
-        <span>Penugasan Analis</span>
+        <span>Penugasan Analisis</span>
       </p>
     </div>
 
     <div class="rounded-xl bg-white ring-1 ring-slate-200 overflow-hidden">
       <div class="px-4 py-3 border-b border-slate-200">
-        <h2 class="text-[18px] font-bold text-slate-800">Penugasan Analis</h2>
+        <h2 class="text-[18px] font-bold text-slate-800">Penetapan Penanggung Jawab Analisis Peraturan Daerah</h2>
       </div>
       <form method="POST" action="{{ route('assignments.assign-pic.store', $assignment) }}" enctype="multipart/form-data" class="p-5 space-y-5">
         @csrf
@@ -32,7 +32,7 @@
         </div>
 
         <label class="block text-sm font-medium text-slate-700">
-          Penanggung Jawab (Analis) <span class="text-red-500">*</span>
+          Penanggung Jawab Analisis <span class="text-red-500">*</span>
           <select name="analyst_id" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm focus:outline-none focus:ring-0 focus:border-[#B9B9B9]" required>
             <option value="">Pilih Analis</option>
             @foreach($analysts as $analyst)
@@ -47,7 +47,7 @@
         </label>
 
         <label class="block text-sm font-medium text-slate-700">
-          Upload Surat Balasan Kemenkum <span class="text-red-500">*</span>
+          Upload Surat Balasan ke Pemda <span class="text-red-500">*</span>
           <p class="mt-1 text-xs text-slate-500">Format: PDF/DOC/DOCX, maksimal 5 MB.</p>
           <input
             type="file"

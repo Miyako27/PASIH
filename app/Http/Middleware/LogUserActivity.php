@@ -88,7 +88,6 @@ class LogUserActivity
 
             'assignments.analysis-results' => ['type' => 'Hasil Analisis', 'title' => 'Membuka daftar hasil analisis', 'detail' => 'Melihat daftar hasil analisis'],
             'assignments.analysis-results.show' => ['type' => 'Hasil Analisis', 'title' => 'Membuka detail hasil analisis', 'detail' => 'Melihat detail hasil analisis'],
-            'assignments.analysis-results.edit' => ['type' => 'Hasil Analisis', 'title' => 'Membuka form edit hasil analisis', 'detail' => 'Mengakses form edit hasil analisis'],
 
             default => [
                 'type' => 'Aktivitas Sistem',
