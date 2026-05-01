@@ -68,7 +68,7 @@ class GuideManagementController extends Controller
             'file_size' => $stored['file_size'],
         ]);
 
-        return redirect()->route('admin.guides.index')->with('success', 'Buku panduan berhasil ditambahkan.');
+        return redirect()->route('admin.guides.index')->with('success', 'Buku panduan berhasil ditambahkan');
     }
 
     public function show(GuideDocument $guide)
@@ -103,7 +103,7 @@ class GuideManagementController extends Controller
                 'document_title' => $documentTitle,
             ]);
 
-            return redirect()->route('admin.guides.show', $guide)->with('success', 'Tidak ada perubahan dokumen.');
+            return redirect()->route('admin.guides.show', $guide)->with('success', 'Tidak ada perubahan dokumen');
         }
 
         $file = $this->validateUploadedFile(
@@ -125,7 +125,7 @@ class GuideManagementController extends Controller
 
         $this->deletePhysicalFile($oldPath);
 
-        return redirect()->route('admin.guides.show', $guide)->with('success', 'Buku panduan berhasil diperbarui.');
+        return redirect()->route('admin.guides.show', $guide)->with('success', 'Buku panduan berhasil diperbarui');
     }
 
     public function destroy(GuideDocument $guide)
@@ -134,7 +134,7 @@ class GuideManagementController extends Controller
         $guide->delete();
         $this->deletePhysicalFile($oldPath);
 
-        return redirect()->route('admin.guides.index')->with('success', 'Buku panduan berhasil dihapus.');
+        return redirect()->route('admin.guides.index')->with('success', 'Buku panduan berhasil dihapus');
     }
 
     private function validateUploadedFile(

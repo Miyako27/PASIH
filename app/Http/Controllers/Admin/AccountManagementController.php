@@ -82,7 +82,7 @@ class AccountManagementController extends Controller
             'id_instansi' => (int) $validated['id_instansi'],
         ]);
 
-        return redirect()->route('admin.accounts.index')->with('success', 'Data akun berhasil ditambahkan.');
+        return redirect()->route('admin.accounts.index')->with('success', 'Data akun berhasil ditambahkan');
     }
 
     public function show(User $user)
@@ -134,7 +134,7 @@ class AccountManagementController extends Controller
 
         $user->update($payload);
 
-        return redirect()->route('admin.accounts.index')->with('success', 'Data akun berhasil diperbarui.');
+        return redirect()->route('admin.accounts.index')->with('success', 'Data akun berhasil diperbarui');
     }
 
     public function destroy(Request $request, User $user)
@@ -145,7 +145,7 @@ class AccountManagementController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.accounts.index')->with('success', 'Data akun berhasil dihapus.');
+        return redirect()->route('admin.accounts.index')->with('success', 'Data akun berhasil dihapus');
     }
 
     private function normalizeSearchTerm(string $value): string

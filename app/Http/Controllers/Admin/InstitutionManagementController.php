@@ -47,7 +47,7 @@ class InstitutionManagementController extends Controller
 
         Instansi::query()->create($validated);
 
-        return redirect()->route('admin.instansi.index')->with('success', 'Data instansi berhasil ditambahkan.');
+        return redirect()->route('admin.instansi.index')->with('success', 'Data instansi berhasil ditambahkan');
     }
 
     public function show(Instansi $instansi)
@@ -74,13 +74,13 @@ class InstitutionManagementController extends Controller
 
         $instansi->update($validated);
 
-        return redirect()->route('admin.instansi.index')->with('success', 'Data instansi berhasil diperbarui.');
+        return redirect()->route('admin.instansi.index')->with('success', 'Data instansi berhasil diperbarui');
     }
 
     public function destroy(Instansi $instansi)
     {
         $instansi->delete();
 
-        return redirect()->route('admin.instansi.index')->with('success', 'Data instansi berhasil dihapus.');
+        return redirect()->route('admin.instansi.index')->with('success', 'Data instansi berhasil dihapus');
     }
 }
