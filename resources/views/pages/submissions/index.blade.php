@@ -141,7 +141,7 @@
                       @php
                         $isReviewerRole = auth()->user()->role->value === 'operator_kanwil';
                         $isStatusDispositionDone = !is_null($submission->reviewed_at);
-                        $allowStatusDispositionForResubmission = in_array($submission->status->value, ['submitted', 'revised'], true);
+                        $allowStatusDispositionForResubmission = $submission->status->value === 'submitted';
                       @endphp
 
                       @if($isReviewerRole && $isStatusDispositionDone && !$allowStatusDispositionForResubmission)
