@@ -41,28 +41,23 @@ class AppServiceProvider extends ServiceProvider
             ['created_at' => $now, 'updated_at' => $now]
         );
 
-        DB::table('users')
-            ->where('role', 'pimpinan_p3h')
-            ->update(['role' => 'kakanwil']);
-
+        $legacyPimpinanRoleId = DB::table('roles')->where('nama_role', 'pimpinan_p3h')->value('id_role');
+        $legacyOperatorDivisiRoleId = DB::table('roles')->where('nama_role', 'operator_divisi_p3h')->value('id_role');
         $ketuaTimRoleId = DB::table('roles')->where('nama_role', 'ketua_tim_analisis')->value('id_role');
-        if ($ketuaTimRoleId && Schema::hasTable('users')) {
-            DB::table('users')
-                ->where('role', 'operator_divisi_p3h')
-                ->update([
-                    'role' => 'ketua_tim_analisis',
-                    'id_role' => $ketuaTimRoleId,
-                ]);
-        }
-
         $kakanwilRoleId = DB::table('roles')->where('nama_role', 'kakanwil')->value('id_role');
-        if ($kakanwilRoleId && Schema::hasTable('users')) {
-            DB::table('users')
-                ->where('role', 'kakanwil')
-                ->where(function ($query) use ($kakanwilRoleId) {
-                    $query->whereNull('id_role')->orWhere('id_role', '!=', $kakanwilRoleId);
-                })
-                ->update(['id_role' => $kakanwilRoleId]);
+
+        if (Schema::hasTable('users')) {
+            if ($legacyPimpinanRoleId && $kakanwilRoleId) {
+                DB::table('users')
+                    ->where('id_role', $legacyPimpinanRoleId)
+                    ->update(['id_role' => $kakanwilRoleId]);
+            }
+
+            if ($legacyOperatorDivisiRoleId && $ketuaTimRoleId) {
+                DB::table('users')
+                    ->where('id_role', $legacyOperatorDivisiRoleId)
+                    ->update(['id_role' => $ketuaTimRoleId]);
+            }
         }
 
         DB::table('roles')->whereIn('nama_role', ['pimpinan_p3h', 'operator_divisi_p3h'])->delete();

@@ -93,7 +93,9 @@ class SubmissionController extends Controller
 
                 if ($isKadivDispositionKeyword) {
                     $builder->orWhereHas('latestDisposition.toUser', function ($userQuery): void {
-                        $userQuery->where('role', 'kepala_divisi_p3h');
+                        $userQuery->whereHas('roleRef', function ($roleQuery): void {
+                            $roleQuery->where('nama_role', 'kepala_divisi_p3h');
+                        });
                     });
                 }
             });
@@ -104,7 +106,11 @@ class SubmissionController extends Controller
             'canCreate' => $user->role->value === 'operator_pemda',
             'canReview' => $user->role->value === 'operator_kanwil',
             'canUploadResult' => $user->role->value === 'analis_hukum',
-            'divisionUsers' => User::query()->where('role', 'kepala_divisi_p3h')->get(),
+            'divisionUsers' => User::query()
+                ->whereHas('roleRef', function ($roleQuery): void {
+                    $roleQuery->where('nama_role', 'kepala_divisi_p3h');
+                })
+                ->get(),
             'canAssignFromSubmission' => in_array($user->role->value, ['kakanwil', 'kepala_divisi_p3h'], true),
             'perPage' => $perPage,
             'search' => $search,
@@ -333,7 +339,9 @@ class SubmissionController extends Controller
         return view('pages.submissions.status-disposisi', [
             'submission' => $submission,
             'kadivUsers' => User::query()
-                ->where('role', 'kepala_divisi_p3h')
+                ->whereHas('roleRef', function ($roleQuery): void {
+                    $roleQuery->where('nama_role', 'kepala_divisi_p3h');
+                })
                 ->orderBy('name')
                 ->get(),
         ]);

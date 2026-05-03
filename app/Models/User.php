@@ -15,7 +15,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
         'id_role',
         'id_instansi',
         'notifications_seen_at',
@@ -31,7 +30,6 @@ class User extends Authenticatable
         return [
             'notifications_seen_at' => 'datetime',
             'password' => 'hashed',
-            'role' => UserRole::class,
         ];
     }
 
@@ -43,6 +41,13 @@ class User extends Authenticatable
     public function roleRef()
     {
         return $this->belongsTo(Role::class, 'id_role', 'id_role');
+    }
+
+    public function getRoleAttribute(): ?UserRole
+    {
+        $roleName = $this->roleRef?->nama_role;
+
+        return $roleName ? UserRole::tryFrom($roleName) : null;
     }
 
     public function instansi()

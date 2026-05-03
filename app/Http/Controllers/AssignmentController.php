@@ -74,7 +74,12 @@ class AssignmentController extends Controller
 
         return view('pages.assignments.index', [
             'assignments' => $query->paginate($perPage)->withQueryString(),
-            'analysts' => User::query()->where('role', 'analis_hukum')->orderBy('name')->get(),
+            'analysts' => User::query()
+                ->whereHas('roleRef', function ($roleQuery): void {
+                    $roleQuery->where('nama_role', 'analis_hukum');
+                })
+                ->orderBy('name')
+                ->get(),
             'status' => $status,
             'search' => $search,
             'perPage' => $perPage,
@@ -234,7 +239,12 @@ class AssignmentController extends Controller
 
         return view('pages.assignments.assign-pic', [
             'assignment' => $assignment,
-            'analysts' => User::query()->where('role', 'analis_hukum')->orderBy('name')->get(),
+            'analysts' => User::query()
+                ->whereHas('roleRef', function ($roleQuery): void {
+                    $roleQuery->where('nama_role', 'analis_hukum');
+                })
+                ->orderBy('name')
+                ->get(),
         ]);
     }
 

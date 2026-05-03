@@ -233,7 +233,9 @@ class WorkflowNotificationService
             ->all();
 
         $query = User::query()
-            ->whereIn('role', $roles)
+            ->whereHas('roleRef', function ($roleQuery) use ($roles): void {
+                $roleQuery->whereIn('nama_role', $roles);
+            })
             ->whereNotNull('email')
             ->where('email', '!=', '');
 

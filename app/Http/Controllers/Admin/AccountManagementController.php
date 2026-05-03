@@ -21,7 +21,7 @@ class AccountManagementController extends Controller
         $search = trim((string) $request->string('q'));
 
         $query = User::query()
-            ->with(['instansi'])
+            ->with(['instansi', 'roleRef'])
             ->latest();
 
         if ($search !== '') {
@@ -30,13 +30,17 @@ class AccountManagementController extends Controller
                 $builder
                     ->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('role', 'like', "%{$search}%")
+                    ->orWhereHas('roleRef', function ($roleQuery) use ($search): void {
+                        $roleQuery->where('nama_role', 'like', "%{$search}%");
+                    })
                     ->orWhereHas('instansi', function ($instansiQuery) use ($search): void {
                         $instansiQuery->where('nama_instansi', 'like', "%{$search}%");
                     });
 
                 if ($matchedRoles !== []) {
-                    $builder->orWhereIn('role', $matchedRoles);
+                    $builder->orWhereHas('roleRef', function ($roleQuery) use ($matchedRoles): void {
+                        $roleQuery->whereIn('nama_role', $matchedRoles);
+                    });
                 }
             });
         }
@@ -77,7 +81,6 @@ class AccountManagementController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
             'id_role' => $roleId,
             'id_instansi' => (int) $validated['id_instansi'],
         ]);
@@ -123,7 +126,6 @@ class AccountManagementController extends Controller
         $payload = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'role' => $validated['role'],
             'id_role' => $roleId,
             'id_instansi' => (int) $validated['id_instansi'],
         ];

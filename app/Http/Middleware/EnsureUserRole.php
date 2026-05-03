@@ -11,9 +11,8 @@ class EnsureUserRole
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
         $user = $request->user();
-        $userRole = is_object($user?->role) && isset($user->role->value)
-            ? $user->role->value
-            : $user?->role;
+        $user?->loadMissing('roleRef');
+        $userRole = $user?->role?->value;
 
         if (! $user || ! in_array($userRole, $roles, true)) {
             abort(403);
