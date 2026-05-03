@@ -14,17 +14,13 @@ class AssignmentAnalysisApproval extends Model
     protected $fillable = [
         'assignment_id',
         'assigned_by_id',
-        'revision_note',
-        'approved_by_kadiv_at',
-        'approved_by_kakanwil_at',
+        'assignment_statuses_id',
+        'note',
     ];
 
     protected function casts(): array
     {
-        return [
-            'approved_by_kadiv_at' => 'datetime',
-            'approved_by_kakanwil_at' => 'datetime',
-        ];
+        return [];
     }
 
     public function assignment()
@@ -35,5 +31,10 @@ class AssignmentAnalysisApproval extends Model
     public function assignedBy()
     {
         return $this->belongsTo(User::class, 'assigned_by_id');
+    }
+
+    public function assignmentStatus()
+    {
+        return $this->belongsTo(AssignmentStatusLog::class, 'assignment_statuses_id');
     }
 }

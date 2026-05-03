@@ -14,7 +14,7 @@ class Assignment extends Model
     protected $with = [
         'latestPicUpdate.analyst',
         'latestPicUpdate.picAssignedBy',
-        'latestApproval',
+        'latestApproval.assignmentStatus',
         'latestStatusLog',
     ];
 
@@ -188,28 +188,42 @@ class Assignment extends Model
     public function getRevisionNoteAttribute(): ?string
     {
         return $this->status->value === 'revision_by_pic'
-            ? $this->latestApproval?->revision_note
+            ? $this->latestApproval?->note
             : null;
     }
 
     public function getApprovedByKadivAtAttribute()
     {
-        return in_array($this->status->value, ['pending_kakanwil_approval', 'completed'], true)
-            ? $this->latestApproval?->approved_by_kadiv_at
-            : null;
+        if (! in_array($this->status->value, ['pending_kakanwil_approval', 'completed'], true)) {
+            return null;
+        }
+
+        return $this->analysisApprovals()
+            ->whereHas('assignmentStatus', function ($query): void {
+                $query->where('status', 'pending_kakanwil_approval');
+            })
+            ->latest('id')
+            ->value('created_at');
     }
 
     public function getApprovedByKakanwilAtAttribute()
     {
-        return $this->status->value === 'completed'
-            ? $this->latestApproval?->approved_by_kakanwil_at
-            : null;
+        if ($this->status->value !== 'completed') {
+            return null;
+        }
+
+        return $this->analysisApprovals()
+            ->whereHas('assignmentStatus', function ($query): void {
+                $query->where('status', 'completed');
+            })
+            ->latest('id')
+            ->value('created_at');
     }
 
     public function getCompletedAtAttribute()
     {
         return $this->status->value === 'completed'
-            ? $this->latestApproval?->approved_by_kakanwil_at
+            ? $this->approved_by_kakanwil_at
             : null;
     }
 }

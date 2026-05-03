@@ -156,7 +156,11 @@ class AssignmentController extends Controller
 
                 if ($searchYear !== null) {
                     $query->orWhereHas('latestApproval', function ($approvalQuery) use ($searchYear): void {
-                        $approvalQuery->whereYear('approved_by_kakanwil_at', $searchYear);
+                        $approvalQuery
+                            ->whereYear('created_at', $searchYear)
+                            ->whereHas('assignmentStatus', function ($statusQuery): void {
+                                $statusQuery->where('status', 'completed');
+                            });
                     });
                 }
 
@@ -412,9 +416,8 @@ class AssignmentController extends Controller
                 AssignmentAnalysisApproval::query()->create([
                     'assignment_id' => $assignment->id,
                     'assigned_by_id' => $request->user()->id,
-                    'revision_note' => null,
-                    'approved_by_kadiv_at' => now(),
-                    'approved_by_kakanwil_at' => null,
+                    'assignment_statuses_id' => $assignment->latestStatusLog?->id,
+                    'note' => null,
                 ]);
 
                 $this->workflowNotificationService->notifyAssignmentForwardedToKakanwil($assignment, $request->user());
@@ -427,9 +430,8 @@ class AssignmentController extends Controller
             AssignmentAnalysisApproval::query()->create([
                 'assignment_id' => $assignment->id,
                 'assigned_by_id' => $request->user()->id,
-                'revision_note' => $validated['revision_note'],
-                'approved_by_kadiv_at' => null,
-                'approved_by_kakanwil_at' => null,
+                'assignment_statuses_id' => $assignment->latestStatusLog?->id,
+                'note' => $validated['revision_note'],
             ]);
 
             $this->workflowNotificationService->notifyAssignmentReturnedForRevision(
@@ -445,16 +447,13 @@ class AssignmentController extends Controller
             $approverId = $request->user()->id;
 
             DB::transaction(function () use ($assignment, $approverId): void {
-                $lastKadivApprovalAt = $assignment->approved_by_kadiv_at;
-
                 $assignment->transitionStatus('completed', $approverId);
 
                 AssignmentAnalysisApproval::query()->create([
                     'assignment_id' => $assignment->id,
                     'assigned_by_id' => $approverId,
-                    'revision_note' => null,
-                    'approved_by_kadiv_at' => $lastKadivApprovalAt,
-                    'approved_by_kakanwil_at' => now(),
+                    'assignment_statuses_id' => $assignment->latestStatusLog?->id,
+                    'note' => null,
                 ]);
 
                 $assignment->submission?->recordStatus('completed', $approverId);
@@ -470,9 +469,8 @@ class AssignmentController extends Controller
         AssignmentAnalysisApproval::query()->create([
             'assignment_id' => $assignment->id,
             'assigned_by_id' => $request->user()->id,
-            'revision_note' => $validated['revision_note'],
-            'approved_by_kadiv_at' => $assignment->approved_by_kadiv_at,
-            'approved_by_kakanwil_at' => null,
+            'assignment_statuses_id' => $assignment->latestStatusLog?->id,
+            'note' => $validated['revision_note'],
         ]);
 
         $this->workflowNotificationService->notifyAssignmentReturnedForRevision(

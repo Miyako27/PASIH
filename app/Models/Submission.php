@@ -153,8 +153,14 @@ class Submission extends Model
 
     public function recordStatus(string $status, ?int $userId = null, ?string $note = null): void
     {
+        $resolvedUserId = $userId;
+
+        if ($resolvedUserId === null && $status === SubmissionStatus::Submitted->value) {
+            $resolvedUserId = $this->submitter_id;
+        }
+
         $this->statuses()->create([
-            'user_id' => $userId,
+            'user_id' => $resolvedUserId,
             'status' => $status,
             'note' => $note,
         ]);

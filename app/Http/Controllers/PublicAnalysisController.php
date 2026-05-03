@@ -46,7 +46,11 @@ class PublicAnalysisController extends Controller
 
                 if ($searchYear !== null) {
                     $builder->orWhereHas('latestApproval', function ($approvalQuery) use ($searchYear): void {
-                        $approvalQuery->whereYear('approved_by_kakanwil_at', $searchYear);
+                        $approvalQuery
+                            ->whereYear('created_at', $searchYear)
+                            ->whereHas('assignmentStatus', function ($statusQuery): void {
+                                $statusQuery->where('status', 'completed');
+                            });
                     });
                 }
 
@@ -66,7 +70,11 @@ class PublicAnalysisController extends Controller
 
         if ($year !== '' && preg_match('/^\\d{4}$/', $year) === 1) {
             $query->whereHas('analysisApprovals', function ($builder) use ($year): void {
-                $builder->whereYear('approved_by_kakanwil_at', (int) $year);
+                $builder
+                    ->whereYear('created_at', (int) $year)
+                    ->whereHas('assignmentStatus', function ($statusQuery): void {
+                        $statusQuery->where('status', 'completed');
+                    });
             });
         }
 
@@ -75,7 +83,9 @@ class PublicAnalysisController extends Controller
         $years = Assignment::query()
             ->whereStatus('completed')
             ->whereHas('analysisApprovals', function ($builder): void {
-                $builder->whereNotNull('approved_by_kakanwil_at');
+                $builder->whereHas('assignmentStatus', function ($statusQuery): void {
+                    $statusQuery->where('status', 'completed');
+                });
             })
             ->with('latestApproval')
             ->get()

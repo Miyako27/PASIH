@@ -207,33 +207,25 @@ class NotificationController extends Controller
                     ->select([
                         'assignment_id',
                         'assigned_by_id',
-                        'revision_note',
-                        'approved_by_kadiv_at',
-                        'approved_by_kakanwil_at',
+                        'assignment_statuses_id',
+                        'note',
                         'created_at',
                     ])
                     ->whereIn('assignment_id', $assignmentIds)
+                    ->with(['assignmentStatus:id,status'])
                     ->get()
                     ->map(function (AssignmentAnalysisApproval $approval) {
-                        if ($approval->approved_by_kakanwil_at !== null) {
+                        $status = (string) ($approval->assignmentStatus?->status ?? '');
+                        if (in_array($status, ['completed', 'pending_kakanwil_approval'], true)) {
                             return [
                                 'assignment_id' => $approval->assignment_id,
-                                'status' => 'completed',
+                                'status' => $status,
                                 'actor_id' => $approval->assigned_by_id,
-                                'time' => $approval->approved_by_kakanwil_at,
+                                'time' => $approval->created_at,
                             ];
                         }
 
-                        if ($approval->approved_by_kadiv_at !== null) {
-                            return [
-                                'assignment_id' => $approval->assignment_id,
-                                'status' => 'pending_kakanwil_approval',
-                                'actor_id' => $approval->assigned_by_id,
-                                'time' => $approval->approved_by_kadiv_at,
-                            ];
-                        }
-
-                        if (filled($approval->revision_note)) {
+                        if ($status === 'revision_by_pic' || filled($approval->note)) {
                             return [
                                 'assignment_id' => $approval->assignment_id,
                                 'status' => 'revision_by_pic',
