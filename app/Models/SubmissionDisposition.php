@@ -13,7 +13,7 @@ class SubmissionDisposition extends Model
 
     protected $fillable = [
         'submission_id',
-        'kanwil_operator_id',
+        'user_id',
         'to_user_id',
         'disposition_note',
     ];
@@ -28,9 +28,14 @@ class SubmissionDisposition extends Model
         return $this->belongsTo(User::class, 'to_user_id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function kanwilOperator()
     {
-        return $this->belongsTo(User::class, 'kanwil_operator_id');
+        return $this->user();
     }
 
     public function getNoteAttribute(): ?string

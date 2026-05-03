@@ -68,7 +68,6 @@ class SubmissionController extends Controller
                 $builder
                     ->where('nomor_surat', 'like', "%{$search}%")
                     ->orWhere('perihal', 'like', "%{$search}%")
-                    ->orWhere('pemda_name', 'like', "%{$search}%")
                     ->orWhere('perda_title', 'like', "%{$search}%")
                     ->orWhereRaw("DATE_FORMAT(created_at, '%d-%m-%Y') like ?", ["%{$search}%"])
                     ->orWhereHas('submitter.instansi', function ($instansiQuery) use ($search): void {
@@ -83,7 +82,7 @@ class SubmissionController extends Controller
 
                 if ($matchedAssignmentStatuses !== []) {
                     $builder->orWhereHas('assignments', function ($assignmentQuery) use ($matchedAssignmentStatuses): void {
-                        $assignmentQuery->whereIn('status', $matchedAssignmentStatuses);
+                        $assignmentQuery->whereStatusIn($matchedAssignmentStatuses);
                     });
                 }
 
@@ -147,7 +146,6 @@ class SubmissionController extends Controller
                 'submitter_id' => $request->user()->id,
                 'nomor_surat' => $validated['nomor_surat'],
                 'perihal' => $validated['perihal'],
-                'pemda_name' => trim((string) ($request->user()->instansi?->nama_instansi ?? $request->user()->name)),
                 'perda_title' => trim((string) $validated['perda_title']),
                 'description' => $validated['description'] ?? null,
             ]);
@@ -263,7 +261,6 @@ class SubmissionController extends Controller
         $submission->update([
             'nomor_surat' => $validated['nomor_surat'],
             'perihal' => $validated['perihal'],
-            'pemda_name' => trim((string) ($request->user()->instansi?->nama_instansi ?? $request->user()->name)),
             'perda_title' => trim((string) $validated['perda_title']),
             'description' => $validated['description'] ?? null,
         ]);
@@ -384,7 +381,7 @@ class SubmissionController extends Controller
 
                 SubmissionDisposition::query()->create([
                     'submission_id' => $submission->id,
-                    'kanwil_operator_id' => $request->user()->id,
+                    'user_id' => $request->user()->id,
                     'to_user_id' => $toUser->id,
                     'disposition_note' => $validated['disposition_note'] ?? null,
                 ]);

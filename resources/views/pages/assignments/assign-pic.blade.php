@@ -27,7 +27,7 @@
           </label>
           <label class="block text-sm font-medium text-slate-700">
             Instansi Pengaju
-            <input type="text" disabled value="{{ $assignment->submission->submitter?->instansi?->nama_instansi ?? $assignment->submission->pemda_name ?? '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
+            <input type="text" disabled value="{{ $assignment->submission->submitter?->instansi?->nama_instansi ?? $assignment->submission->submitter?->name ?? '-' }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] bg-slate-100 text-sm text-slate-500">
           </label>
         </div>
 

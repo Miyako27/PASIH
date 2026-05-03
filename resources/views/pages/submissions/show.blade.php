@@ -72,7 +72,7 @@
           return $fromDb;
         }
 
-        $instansiName = (string) ($submission->submitter?->instansi?->nama_instansi ?? $submission->pemda_name ?? 'Instansi');
+        $instansiName = (string) ($submission->submitter?->instansi?->nama_instansi ?? $submission->submitter?->name ?? 'Instansi');
         $normalize = function (string $value): string {
           $parts = preg_split('/[^A-Za-z0-9]+/', trim($value)) ?: [];
           $parts = array_filter($parts, static fn ($part) => $part !== '');

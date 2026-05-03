@@ -24,7 +24,7 @@ class PublicAnalysisController extends Controller
                 'documents',
                 'latestApproval',
             ])
-            ->where('status', 'completed')
+            ->whereStatus('completed')
             ->latest('updated_at');
 
         if ($search !== '') {
@@ -51,7 +51,9 @@ class PublicAnalysisController extends Controller
                 }
 
                 if ($isCompletedKeyword) {
-                    $builder->orWhere('status', 'completed');
+                    $builder->orWhereHas('latestStatusLog', function ($statusQuery): void {
+                        $statusQuery->where('status', 'completed');
+                    });
                 }
             });
         }
@@ -71,7 +73,7 @@ class PublicAnalysisController extends Controller
         $results = $query->paginate($perPage)->withQueryString();
 
         $years = Assignment::query()
-            ->where('status', 'completed')
+            ->whereStatus('completed')
             ->whereHas('analysisApprovals', function ($builder): void {
                 $builder->whereNotNull('approved_by_kakanwil_at');
             })

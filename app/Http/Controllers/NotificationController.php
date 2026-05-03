@@ -76,7 +76,7 @@ class NotificationController extends Controller
             ]);
 
         $assignmentQuery = Assignment::query()
-            ->select(['id', 'submission_id', 'status', 'assigned_by_id', 'created_at', 'updated_at'])
+            ->select(['id', 'submission_id', 'assigned_by_id', 'created_at', 'updated_at'])
             ->with(['submission:id,nomor_surat,submitter_id']);
 
         if ($role === 'operator_pemda') {
@@ -118,12 +118,12 @@ class NotificationController extends Controller
                 });
 
                 $submissionEventRows = SubmissionStatusLog::query()
-                    ->select(['submission_id', 'kanwil_operator_id', 'status', 'created_at'])
+                    ->select(['submission_id', 'user_id', 'status', 'created_at'])
                     ->whereIn('submission_id', $submissionIds)
                     ->get()
                     ->map(function (SubmissionStatusLog $statusLog) use ($submissionMeta) {
                         $meta = $submissionMeta->get($statusLog->submission_id);
-                        $actorId = $statusLog->kanwil_operator_id;
+                        $actorId = $statusLog->user_id;
 
                         if (! $actorId && is_array($meta)) {
                             $actorId = $meta['submitter_id'] ?? null;

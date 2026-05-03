@@ -5,31 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubmissionStatusLog extends Model
+class AssignmentStatusLog extends Model
 {
     use HasFactory;
 
-    protected $table = 'submission_statuses';
+    protected $table = 'assignment_statuses';
 
     protected $fillable = [
-        'submission_id',
+        'assignment_id',
         'user_id',
         'status',
-        'note',
     ];
 
-    public function submission()
+    public function assignment()
     {
-        return $this->belongsTo(Submission::class);
+        return $this->belongsTo(Assignment::class);
     }
 
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
-    public function kanwilOperator()
-    {
-        return $this->user();
-    }
 }
+

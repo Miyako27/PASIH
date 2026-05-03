@@ -20,7 +20,6 @@ class Submission extends Model
         'submitter_id',
         'nomor_surat',
         'perihal',
-        'pemda_name',
         'perda_title',
         'description',
     ];
@@ -124,7 +123,7 @@ class Submission extends Model
 
     public function getKanwilOperatorIdAttribute()
     {
-        return $this->latestStatus?->kanwil_operator_id;
+        return $this->latestStatus?->user_id;
     }
 
     public function getDivisionOperatorIdAttribute()
@@ -139,7 +138,7 @@ class Submission extends Model
 
     public function getPemdaNameAttribute(): string
     {
-        return trim((string) ($this->attributes['pemda_name'] ?? ''));
+        return trim((string) ($this->submitter?->instansi?->nama_instansi ?? $this->submitter?->name ?? ''));
     }
 
     public function getPerdaTitleAttribute(): string
@@ -147,20 +146,15 @@ class Submission extends Model
         return trim((string) ($this->attributes['perda_title'] ?? ''));
     }
 
-    public function setPemdaNameAttribute(string $value): void
-    {
-        $this->attributes['pemda_name'] = trim($value);
-    }
-
     public function setPerdaTitleAttribute(string $value): void
     {
         $this->attributes['perda_title'] = trim($value);
     }
 
-    public function recordStatus(string $status, ?int $kanwilOperatorId = null, ?string $note = null): void
+    public function recordStatus(string $status, ?int $userId = null, ?string $note = null): void
     {
         $this->statuses()->create([
-            'kanwil_operator_id' => $kanwilOperatorId,
+            'user_id' => $userId,
             'status' => $status,
             'note' => $note,
         ]);

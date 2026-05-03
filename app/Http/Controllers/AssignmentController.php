@@ -45,7 +45,7 @@ class AssignmentController extends Controller
         }
 
         if (in_array($status, $allowedStatuses, true)) {
-            $query->where('status', $status);
+            $query->whereStatus($status);
         }
 
         if ($search !== '') {
@@ -67,7 +67,9 @@ class AssignmentController extends Controller
                     });
 
                 if ($matchedStatuses !== []) {
-                    $builder->orWhereIn('status', $matchedStatuses);
+                    $builder->orWhereHas('latestStatusLog', function ($statusQuery) use ($matchedStatuses): void {
+                        $statusQuery->whereIn('status', $matchedStatuses);
+                    });
                 }
             });
         }
@@ -121,7 +123,7 @@ class AssignmentController extends Controller
 
         $resultsQuery = Assignment::query()
             ->with(['submission.submitter.instansi', 'submission.documents', 'latestPicUpdate.analyst', 'latestAnalysisDocument'])
-            ->where('status', 'completed')
+            ->whereStatus('completed')
             ->latest('updated_at');
 
         if ($request->user()->role->value === 'analis_hukum') {
@@ -159,7 +161,9 @@ class AssignmentController extends Controller
                 }
 
                 if ($matchedStatuses !== []) {
-                    $query->orWhereIn('status', $matchedStatuses);
+                    $query->orWhereHas('latestStatusLog', function ($statusQuery) use ($matchedStatuses): void {
+                        $statusQuery->whereIn('status', $matchedStatuses);
+                    });
                 }
             });
         }
@@ -220,7 +224,6 @@ class AssignmentController extends Controller
             'submission_id' => $submission->id,
             'assigned_by_id' => $request->user()->id,
             'instruction' => $validated['instruction'] ?? null,
-            'status' => 'assigned',
         ]);
 
         $submission->recordStatus('assigned', $request->user()->id);
@@ -269,14 +272,12 @@ class AssignmentController extends Controller
         );
         $stored = $this->storeAssignmentFile(
             $file,
-            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->pemda_name ?? 'Instansi',
+            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->submitter?->name ?? 'Instansi',
             'Surat Balasan Kemenkum'
         );
 
         DB::transaction(function () use ($request, $assignment, $analyst, $validated, $stored): void {
-            $assignment->update([
-                'status' => 'in_progress',
-            ]);
+            $assignment->transitionStatus('in_progress', $request->user()->id);
 
             AssignmentPicUpdate::query()->create([
                 'assignment_id' => $assignment->id,
@@ -353,7 +354,7 @@ class AssignmentController extends Controller
         );
         $stored = $this->storeAssignmentFile(
             $file,
-            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->pemda_name ?? 'Instansi',
+            $assignment->submission?->submitter?->instansi?->nama_instansi ?? $assignment->submission?->submitter?->name ?? 'Instansi',
             'Hasil Analisis'
         );
 
@@ -371,9 +372,7 @@ class AssignmentController extends Controller
                 'rekomendasi' => $validated['rekomendasi'],
             ]);
 
-            $assignment->update([
-                'status' => 'pending_kadiv_approval',
-            ]);
+            $assignment->transitionStatus('pending_kadiv_approval', $request->user()->id);
         });
 
         $this->workflowNotificationService->notifyAssignmentSubmittedForKadivReview($assignment, $request->user());
@@ -408,9 +407,7 @@ class AssignmentController extends Controller
 
         if ($role === 'kepala_divisi_p3h') {
             if ($validated['decision'] === 'approve') {
-                $assignment->update([
-                    'status' => 'pending_kakanwil_approval',
-                ]);
+                $assignment->transitionStatus('pending_kakanwil_approval', $request->user()->id);
 
                 AssignmentAnalysisApproval::query()->create([
                     'assignment_id' => $assignment->id,
@@ -425,9 +422,7 @@ class AssignmentController extends Controller
                 return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil disetujui oleh Kepala Divisi P3H');
             }
 
-            $assignment->update([
-                'status' => 'revision_by_pic',
-            ]);
+            $assignment->transitionStatus('revision_by_pic', $request->user()->id);
 
             AssignmentAnalysisApproval::query()->create([
                 'assignment_id' => $assignment->id,
@@ -452,9 +447,7 @@ class AssignmentController extends Controller
             DB::transaction(function () use ($assignment, $approverId): void {
                 $lastKadivApprovalAt = $assignment->approved_by_kadiv_at;
 
-                $assignment->update([
-                    'status' => 'completed',
-                ]);
+                $assignment->transitionStatus('completed', $approverId);
 
                 AssignmentAnalysisApproval::query()->create([
                     'assignment_id' => $assignment->id,
@@ -472,9 +465,7 @@ class AssignmentController extends Controller
             return redirect()->route('assignments.index')->with('success', 'Hasil analisis berhasil disetujui oleh Kepala Kantor Wilayah');
         }
 
-        $assignment->update([
-            'status' => 'revision_by_pic',
-        ]);
+        $assignment->transitionStatus('revision_by_pic', $request->user()->id);
 
         AssignmentAnalysisApproval::query()->create([
             'assignment_id' => $assignment->id,

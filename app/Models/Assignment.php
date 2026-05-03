@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\AssignmentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Assignment extends Model
 {
@@ -14,20 +15,23 @@ class Assignment extends Model
         'latestPicUpdate.analyst',
         'latestPicUpdate.picAssignedBy',
         'latestApproval',
+        'latestStatusLog',
     ];
 
     protected $fillable = [
         'submission_id',
         'assigned_by_id',
         'instruction',
-        'status',
     ];
 
-    protected function casts(): array
+    protected static function booted(): void
     {
-        return [
-            'status' => AssignmentStatus::class,
-        ];
+        static::created(function (Assignment $assignment): void {
+            $assignment->statusLogs()->create([
+                'user_id' => Auth::id() ?? $assignment->assigned_by_id,
+                'status' => AssignmentStatus::Assigned->value,
+            ]);
+        });
     }
 
     public function submission()
@@ -70,6 +74,16 @@ class Assignment extends Model
         return $this->hasMany(AssignmentDocument::class);
     }
 
+    public function statusLogs()
+    {
+        return $this->hasMany(AssignmentStatusLog::class, 'assignment_id');
+    }
+
+    public function latestStatusLog()
+    {
+        return $this->hasOne(AssignmentStatusLog::class, 'assignment_id')->latestOfMany('id');
+    }
+
     public function kemenkumReplyDocument()
     {
         return $this->hasOne(AssignmentKemenkumReplyDocument::class)->latestOfMany('id');
@@ -87,6 +101,39 @@ class Assignment extends Model
         return $query->whereHas('latestPicUpdate', function ($builder) use ($analystId): void {
             $builder->where('analyst_id', $analystId);
         });
+    }
+
+    public function scopeWhereStatus($query, string $status)
+    {
+        return $query->whereHas('latestStatusLog', function ($statusQuery) use ($status): void {
+            $statusQuery->where('status', $status);
+        });
+    }
+
+    public function scopeWhereStatusIn($query, array $statuses)
+    {
+        return $query->whereHas('latestStatusLog', function ($statusQuery) use ($statuses): void {
+            $statusQuery->whereIn('status', $statuses);
+        });
+    }
+
+    public function getStatusAttribute(): AssignmentStatus
+    {
+        $statusValue = (string) ($this->latestStatusLog?->status ?? AssignmentStatus::Assigned->value);
+
+        return AssignmentStatus::tryFrom($statusValue) ?? AssignmentStatus::Assigned;
+    }
+
+    public function transitionStatus(string $status, ?int $userId = null): void
+    {
+        $this->statusLogs()->create([
+            'user_id' => $userId ?? Auth::id() ?? $this->assigned_by_id,
+            'status' => $status,
+        ]);
+
+        $this->touch();
+        $this->unsetRelation('latestStatusLog');
+        $this->load('latestStatusLog');
     }
 
     public function getAnalystIdAttribute(): ?int

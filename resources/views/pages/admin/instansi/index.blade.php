@@ -48,7 +48,7 @@
         <table class="w-full text-sm">
           <thead class="bg-slate-50 text-slate-600">
             <tr>
-              <th class="px-4 py-3 text-left">No</th>
+              <th class="px-4 py-3 text-center">No</th>
               <th class="px-4 py-3 text-left">Nama Instansi</th>
               <th class="px-4 py-3 text-left">Jenis</th>
               <th class="px-4 py-3 text-left">Alamat</th>
@@ -61,7 +61,7 @@
                 $rowNumber = ($institutions->firstItem() ?? 1) + $loop->index;
               @endphp
               <tr class="border-t border-slate-100 text-slate-700">
-                <td class="px-4 py-3">{{ $rowNumber }}</td>
+                <td class="px-4 py-3 text-center">{{ $rowNumber }}</td>
                 <td class="px-4 py-3">{{ $institution->nama_instansi }}</td>
                 <td class="px-4 py-3">{{ $institution->jenis_instansi }}</td>
                 <td class="px-4 py-3">{{ $institution->alamat }}</td>

@@ -60,9 +60,9 @@ class DashboardController extends Controller
         $acceptedSubmissions = (clone $periodSubmissionQuery)->whereStatus('accepted')->count();
         $completedSubmissionsCount = (clone $periodSubmissionQuery)->whereStatus('completed')->count();
         $inAnalysisAssignments = (clone $periodAssignmentQuery)
-            ->whereIn('status', ['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic'])
+            ->whereStatusIn(['in_progress', 'pending_kadiv_approval', 'pending_kakanwil_approval', 'revision_by_pic'])
             ->count();
-        $completedAssignmentsCount = (clone $periodAssignmentQuery)->where('status', 'completed')->count();
+        $completedAssignmentsCount = (clone $periodAssignmentQuery)->whereStatus('completed')->count();
         $validatedSubmissions = (clone $periodSubmissionQuery)
             ->whereStatusIn(['accepted', 'Revised', 'Rejected', 'Assigned', 'Completed'])
             ->count();
@@ -92,10 +92,10 @@ class DashboardController extends Controller
             'Permohonan Masuk' => (clone $periodSubmissionQuery)->count(),
             'Sudah Divalidasi' => $validatedSubmissions,
             'Sudah Disposisi' => $disposedSubmissions,
-            'Belum Ada Penanggung Jawab' => (clone $periodAssignmentQuery)->where('status', 'assigned')->count(),
-            'Sedang Dianalisis' => (clone $periodAssignmentQuery)->whereIn('status', ['in_progress', 'revision_by_pic'])->count(),
-            'Menunggu Persetujuan Kepala Divisi P3H' => (clone $periodAssignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
-            'Menunggu Persetujuan Kepala Kantor Wilayah' => (clone $periodAssignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
+            'Belum Ada Penanggung Jawab' => (clone $periodAssignmentQuery)->whereStatus('assigned')->count(),
+            'Sedang Dianalisis' => (clone $periodAssignmentQuery)->whereStatusIn(['in_progress', 'revision_by_pic'])->count(),
+            'Menunggu Persetujuan Kepala Divisi P3H' => (clone $periodAssignmentQuery)->whereStatus('pending_kadiv_approval')->count(),
+            'Menunggu Persetujuan Kepala Kantor Wilayah' => (clone $periodAssignmentQuery)->whereStatus('pending_kakanwil_approval')->count(),
             'Selesai Analisis' => $completedAssignmentsCount,
         ];
 
@@ -175,13 +175,13 @@ class DashboardController extends Controller
                 [
                     'title' => 'Tentukan Penanggung Jawab analisis',
                     'description' => 'Penugasan sudah dibuat tetapi Penanggung Jawab belum ditentukan',
-                    'count' => (clone $assignmentQuery)->where('status', 'assigned')->count(),
+                    'count' => (clone $assignmentQuery)->whereStatus('assigned')->count(),
                     'url' => route('assignments.index', ['status' => 'assigned']),
                 ],
                 [
                     'title' => 'Pantau revisi dari Penanggung Jawab',
                     'description' => 'Penugasan direvisi dan perlu dipantau progres pembaruannya',
-                    'count' => (clone $assignmentQuery)->where('status', 'revision_by_pic')->count(),
+                    'count' => (clone $assignmentQuery)->whereStatus('revision_by_pic')->count(),
                     'url' => route('assignments.index', ['status' => 'revision_by_pic']),
                 ],
             ],
@@ -189,13 +189,13 @@ class DashboardController extends Controller
                 [
                     'title' => 'Kerjakan analisis aktif',
                     'description' => 'Penugasan dalam proses analisis dan menunggu unggahan hasil',
-                    'count' => (clone $assignmentQuery)->where('status', 'in_progress')->count(),
+                    'count' => (clone $assignmentQuery)->whereStatus('in_progress')->count(),
                     'url' => route('assignments.index', ['status' => 'in_progress']),
                 ],
                 [
                     'title' => 'Tindak lanjuti revisi',
                     'description' => 'Hasil analisis dikembalikan dan perlu diperbarui',
-                    'count' => (clone $assignmentQuery)->where('status', 'revision_by_pic')->count(),
+                    'count' => (clone $assignmentQuery)->whereStatus('revision_by_pic')->count(),
                     'url' => route('assignments.index', ['status' => 'revision_by_pic']),
                 ],
             ],
@@ -203,7 +203,7 @@ class DashboardController extends Controller
                 [
                     'title' => 'Setujui hasil analisis',
                     'description' => 'Penugasan menunggu persetujuan Kadiv',
-                    'count' => (clone $assignmentQuery)->where('status', 'pending_kadiv_approval')->count(),
+                    'count' => (clone $assignmentQuery)->whereStatus('pending_kadiv_approval')->count(),
                     'url' => route('assignments.index', ['status' => 'pending_kadiv_approval']),
                 ],
                 [
@@ -220,7 +220,7 @@ class DashboardController extends Controller
                 [
                     'title' => 'Setujui final hasil analisis',
                     'description' => 'Penugasan menunggu persetujuan final Kakanwil',
-                    'count' => (clone $assignmentQuery)->where('status', 'pending_kakanwil_approval')->count(),
+                    'count' => (clone $assignmentQuery)->whereStatus('pending_kakanwil_approval')->count(),
                     'url' => route('assignments.index', ['status' => 'pending_kakanwil_approval']),
                 ],
                 [
@@ -237,7 +237,7 @@ class DashboardController extends Controller
         };
 
         $completedAssignments = (clone $periodAssignmentQuery)
-            ->where('status', 'completed')
+            ->whereStatus('completed')
             ->get();
 
         $onTime = $completedAssignments->filter(function (Assignment $assignment): bool {
