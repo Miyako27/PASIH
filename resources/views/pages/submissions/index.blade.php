@@ -79,6 +79,8 @@
                   'accepted' => 'analisis-accepted',
                   'rejected' => 'analisis-rejected',
                   'revised' => 'analisis-revised',
+                  'assigned' => 'permohonan-available',
+                  'completed' => 'permohonan-done',
                   default => 'analisis-submitted',
                 };
 
