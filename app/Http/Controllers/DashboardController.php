@@ -159,7 +159,7 @@ class DashboardController extends Controller
                     'title' => 'Validasi permohonan masuk',
                     'description' => 'Permohonan berstatus diajukan/revisi menunggu validasi dan disposisi',
                     'count' => Submission::query()->whereStatusIn(['submitted', 'revised'])->count(),
-                    'url' => route('submissions.index'),
+                    'url' => route('submissions.index', ['task' => 'kanwil_validation']),
                 ],
                 [
                     'title' => 'Lanjutkan disposisi permohonan diterima',
@@ -168,7 +168,7 @@ class DashboardController extends Controller
                         ->whereStatus('accepted')
                         ->whereDoesntHave('dispositions')
                         ->count(),
-                    'url' => route('submissions.index', ['status' => 'accepted']),
+                    'url' => route('submissions.index', ['task' => 'kanwil_disposition']),
                 ],
             ],
             'ketua_tim_analisis' => [
@@ -213,7 +213,7 @@ class DashboardController extends Controller
                         ->whereStatusIn(['accepted', 'disposed', 'assigned'])
                         ->whereDoesntHave('assignments')
                         ->count(),
-                    'url' => route('submissions.index'),
+                    'url' => route('submissions.index', ['task' => 'ready_for_assignment']),
                 ],
             ],
             'kakanwil' => [
@@ -230,7 +230,7 @@ class DashboardController extends Controller
                         ->whereStatusIn(['accepted', 'disposed', 'assigned'])
                         ->whereDoesntHave('assignments')
                         ->count(),
-                    'url' => route('submissions.index'),
+                    'url' => route('submissions.index', ['task' => 'ready_for_assignment']),
                 ],
             ],
             default => [],

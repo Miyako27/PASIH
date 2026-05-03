@@ -29,7 +29,9 @@ class SubmissionController extends Controller
         $perPage = in_array($perPage, [5, 10, 25], true) ? $perPage : 5;
         $search = trim((string) $request->string('q'));
         $status = trim((string) $request->string('status'));
+        $task = trim((string) $request->string('task'));
         $allowedStatuses = ['submitted', 'revised', 'rejected', 'accepted', 'disposed', 'assigned', 'completed'];
+        $allowedTasks = ['kanwil_validation', 'kanwil_disposition', 'ready_for_assignment'];
 
         $query = Submission::query()->with([
             'submitter.instansi',
@@ -49,6 +51,20 @@ class SubmissionController extends Controller
 
         if (in_array($status, $allowedStatuses, true)) {
             $query->whereStatus($status);
+        }
+
+        if (in_array($task, $allowedTasks, true)) {
+            if ($task === 'kanwil_validation' && $user->role->value === 'operator_kanwil') {
+                $query->whereStatusIn(['submitted', 'revised']);
+            }
+
+            if ($task === 'kanwil_disposition' && $user->role->value === 'operator_kanwil') {
+                $query->whereStatus('accepted')->whereDoesntHave('dispositions');
+            }
+
+            if ($task === 'ready_for_assignment' && in_array($user->role->value, ['kakanwil', 'kepala_divisi_p3h'], true)) {
+                $query->whereStatusIn(['accepted', 'disposed', 'assigned'])->whereDoesntHave('assignments');
+            }
         }
 
         if ($search !== '') {
@@ -114,6 +130,7 @@ class SubmissionController extends Controller
             'perPage' => $perPage,
             'search' => $search,
             'status' => $status,
+            'task' => $task,
         ]);
     }
 
