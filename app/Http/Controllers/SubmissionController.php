@@ -527,7 +527,7 @@ class SubmissionController extends Controller
             'rejected' => ['rejected', 'ditolak', 'tolak'],
             'accepted' => ['accepted', 'diterima'],
             'disposed' => ['disposed', 'didisposisikan', 'disposisi'],
-            'assigned' => ['assigned', 'dalam penugasan', 'penugasan'],
+            'assigned' => ['assigned', 'dalam proses analisis', 'proses analisis'],
             'completed' => ['completed', 'selesai'],
         ];
 

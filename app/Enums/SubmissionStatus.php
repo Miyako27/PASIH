@@ -20,7 +20,7 @@ enum SubmissionStatus: string
             self::Rejected => 'Ditolak',
             self::Accepted => 'Diterima',
             self::Disposed => 'Didisposisikan',
-            self::Assigned => 'Dalam Penugasan',
+            self::Assigned => 'Dalam Proses Analisis',
             self::Completed => 'Selesai',
         };
     }
