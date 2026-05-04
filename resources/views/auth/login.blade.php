@@ -24,7 +24,7 @@
       <div class="mt-4 rounded-lg bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-3 py-2 text-sm">{{ $errors->first() }}</div>
     @endif
     <div id="recaptcha-inline-error" class="mt-4 rounded-lg bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-3 py-2 text-sm hidden">
-      Silakan centang reCAPTCHA terlebih dahulu
+      Silakan centang reCAPTCHA terlebih dahulu.
     </div>
 
     <form id="login-form" method="POST" action="{{ route('login.attempt') }}" class="mt-5 space-y-3">
