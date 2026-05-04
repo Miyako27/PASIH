@@ -7,6 +7,7 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -24,10 +25,31 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
+        $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
+            'g-recaptcha-response' => ['required', 'string'],
+        ], [
+            'g-recaptcha-response.required' => 'Silakan centang reCAPTCHA terlebih dahulu',
         ]);
+
+        $recaptchaResponse = Http::asForm()->post(
+            config('services.recaptcha.verify_url'),
+            [
+                'secret' => config('services.recaptcha.secret_key'),
+                'response' => $request->input('g-recaptcha-response'),
+                'remoteip' => $request->ip(),
+            ]
+        );
+
+        if (! $recaptchaResponse->successful() || ! data_get($recaptchaResponse->json(), 'success', false)) {
+            return back()->withErrors(['email' => 'Verifikasi reCAPTCHA gagal. Silakan coba lagi.'])->onlyInput('email');
+        }
+
+        $credentials = [
+            'email' => $validated['email'],
+            'password' => $validated['password'],
+        ];
 
         if (! Auth::attempt($credentials, $request->boolean('remember'))) {
             return back()->withErrors(['email' => 'Email atau password tidak valid.'])->onlyInput('email');

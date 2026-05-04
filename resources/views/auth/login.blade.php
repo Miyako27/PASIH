@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Login PASIH</title>
   @vite(['resources/css/app.css','resources/js/app.js'])
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4" style="background-color:#B9B9B9;">
   <div class="w-full max-w-md rounded-2xl bg-[#F7F7F7] ring-1 ring-slate-300 shadow-md px-6 py-7">
@@ -22,8 +23,11 @@
     @if($errors->any())
       <div class="mt-4 rounded-lg bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-3 py-2 text-sm">{{ $errors->first() }}</div>
     @endif
+    <div id="recaptcha-inline-error" class="mt-4 rounded-lg bg-rose-50 text-rose-700 ring-1 ring-rose-200 px-3 py-2 text-sm hidden">
+      Silakan centang reCAPTCHA terlebih dahulu
+    </div>
 
-    <form method="POST" action="{{ route('login.attempt') }}" class="mt-5 space-y-3">
+    <form id="login-form" method="POST" action="{{ route('login.attempt') }}" class="mt-5 space-y-3">
       @csrf
 
       <label class="block text-sm font-medium text-slate-700">
@@ -76,6 +80,10 @@
         <a href="{{ route('password.request') }}" class="text-slate-500 hover:underline">Lupa Password?</a>
       </div>
 
+      <div class="pt-2 flex justify-center">
+        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}" data-callback="onRecaptchaSuccess" data-expired-callback="onRecaptchaExpired"></div>
+      </div>
+
       <button type="submit" class="mt-2 w-full h-11 rounded-lg text-white text-sm font-semibold" style="background-color:#19305D;">
         Login
       </button>
@@ -86,6 +94,24 @@
     const togglePasswordButton = document.getElementById('toggle-password');
     const eyeOpenIcon = document.getElementById('eye-open');
     const eyeClosedIcon = document.getElementById('eye-closed');
+    const loginForm = document.getElementById('login-form');
+    const recaptchaInlineError = document.getElementById('recaptcha-inline-error');
+    const emailInput = loginForm.querySelector('input[name="email"]');
+    const passwordField = loginForm.querySelector('input[name="password"]');
+
+    const setLoginFieldValidityMessage = function (field) {
+      field.setCustomValidity('');
+
+      const label = (field.getAttribute('data-label') || field.getAttribute('name') || 'kolom ini').toLowerCase();
+      if (field.validity.valueMissing) {
+        field.setCustomValidity(`Silakan isi ${label} terlebih dahulu.`);
+        return;
+      }
+
+      if (field.validity.typeMismatch && field.type === 'email') {
+        field.setCustomValidity('Format email tidak valid. Contoh: nama@domain.com.');
+      }
+    };
 
     togglePasswordButton.addEventListener('click', function () {
       const isHidden = passwordInput.type === 'password';
@@ -96,6 +122,39 @@
       togglePasswordButton.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Tampilkan password');
       togglePasswordButton.setAttribute('aria-pressed', String(isHidden));
     });
+
+    loginForm.addEventListener('submit', function (event) {
+      const recaptchaValue = document.querySelector('[name="g-recaptcha-response"]')?.value;
+
+      if (!recaptchaValue) {
+        event.preventDefault();
+        recaptchaInlineError.classList.remove('hidden');
+      }
+    });
+
+    [emailInput, passwordField].forEach(function (field) {
+      if (!field) {
+        return;
+      }
+
+      field.setAttribute('data-label', field.getAttribute('name') === 'email' ? 'Email' : 'Password');
+
+      field.addEventListener('invalid', function () {
+        setLoginFieldValidityMessage(field);
+      });
+
+      field.addEventListener('input', function () {
+        field.setCustomValidity('');
+      });
+    });
+
+    window.onRecaptchaSuccess = function () {
+      recaptchaInlineError.classList.add('hidden');
+    };
+
+    window.onRecaptchaExpired = function () {
+      recaptchaInlineError.classList.remove('hidden');
+    };
   </script>
 </body>
 </html>
