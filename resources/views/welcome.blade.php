@@ -9,7 +9,7 @@
             <h1 class="headline">
                 Hasil Analisis
                 <br>
-                <span class="headline-accent">Peraturan Daerah</span> Kementerian Hukum Riau
+                <span class="headline-accent">Hukum Peraturan Daerah</span> Kementerian Hukum Riau
             </h1>
 
             <p class="subtitle">
