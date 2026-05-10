@@ -9,11 +9,11 @@
             <h1 class="headline">
                 Hasil Analisis &amp; Evaluasi
                 <br>
-                <span class="headline-accent">Hukum Peraturan Daerah</span> Kementerian Hukum Riau
+                <span class="headline-accent">Hukum Peraturan Daerah</span>
             </h1>
 
             <p class="subtitle">
-                Menyediakan hasil analisis dan evaluasi hukum peraturan daerah yang dapat diakses serta dimanfaatkan oleh masyarakat, termasuk untuk keperluan akademik dan penelitian
+                Menyediakan hasil analisis dan evaluasi hukum peraturan daerah oleh Kementerian Hukum Riau yang dapat diakses serta dimanfaatkan oleh masyarakat, termasuk untuk keperluan akademik dan penelitian
             </p>
 
             <a class="cta" href="{{ route('public.analysis.index') }}">Lihat Hasil Analisis</a>
