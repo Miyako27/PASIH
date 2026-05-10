@@ -20,26 +20,28 @@
     @endphp
 
     <header class="topbar">
-        <div class="brand">
-            <img class="brand-logo" src="{{ asset('images/loginlogo2.png') }}" alt="Logo Kementerian Hukum">
-            <div>
-                <div class="brand-title">PASIH</div>
-                <p class="brand-subtitle">Pendampingan Analisis &amp; Evaluasi Hukum Peraturan Daerah Kementerian Hukum Riau</p>
+        <div class="topbar-inner">
+            <div class="brand">
+                <img class="brand-logo" src="{{ asset('images/loginlogo2.png') }}" alt="Logo Kementerian Hukum">
+                <div>
+                    <div class="brand-title">PASIH</div>
+                    <p class="brand-subtitle">Pendampingan Analisis &amp; Evaluasi Hukum Peraturan Daerah Kementerian Hukum Riau</p>
+                </div>
             </div>
-        </div>
 
-        <div class="topbar-actions">
-            <a class="login-btn" href="{{ route('login') }}">Masuk</a>
-            <button
-                type="button"
-                data-sidebar-toggle
-                aria-label="Buka menu"
-                class="menu-btn"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
-                </svg>
-            </button>
+            <div class="topbar-actions">
+                <a class="login-btn" href="{{ route('login') }}">Masuk</a>
+                <button
+                    type="button"
+                    data-sidebar-toggle
+                    aria-label="Buka menu"
+                    class="menu-btn"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16" />
+                    </svg>
+                </button>
+            </div>
         </div>
     </header>
 

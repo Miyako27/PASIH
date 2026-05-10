@@ -373,16 +373,21 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
 }
 
 .welcome-page .topbar {
-    height: 68px;
     background: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 clamp(14px, 4vw, 84px);
     border-bottom: 1px solid #eef1fa;
     position: sticky;
     top: 0;
     z-index: 50;
+}
+
+.welcome-page .topbar-inner {
+    height: 68px;
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .welcome-page .brand {
@@ -665,12 +670,7 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
 }
 
 .public-page .topbar {
-    height: 68px;
     background: rgba(255, 255, 255, 0.95);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 clamp(14px, 4vw, 84px);
     border-bottom: 1px solid #e2e8f0;
     position: sticky;
     top: 0;
@@ -678,6 +678,16 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     transition: background-color 0.25s ease, box-shadow 0.25s ease, backdrop-filter 0.25s ease, border-color 0.25s ease;
+}
+
+.public-page .topbar-inner {
+    height: 68px;
+    width: min(100%, 1280px);
+    margin: 0 auto;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .public-page .topbar.is-scrolled {
@@ -776,7 +786,7 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
 }
 
 @media (max-width: 960px) {
-    .welcome-page .topbar {
+    .welcome-page .topbar-inner {
         height: auto;
         gap: 12px;
         align-items: flex-start;
@@ -789,12 +799,11 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
         height: 44px;
     }
 
-    .public-page .topbar {
+    .public-page .topbar-inner {
         height: 68px;
         gap: 10px;
         align-items: center;
         flex-direction: row;
-        padding: 0 16px;
     }
 
     .public-page .brand-logo {
@@ -905,6 +914,20 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
 
     .welcome-page .office-item .muted {
         font-size: 14px;
+    }
+}
+
+@media (min-width: 640px) {
+    .welcome-page .topbar-inner,
+    .public-page .topbar-inner {
+        padding: 0 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .welcome-page .topbar-inner,
+    .public-page .topbar-inner {
+        padding: 0 32px;
     }
 }
 
