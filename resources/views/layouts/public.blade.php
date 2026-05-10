@@ -86,14 +86,17 @@
             >
                 Hasil Analisis
             </a>
+        </nav>
+
+        <div class="public-sidebar-login-wrap mt-auto px-4 py-4">
             <a
                 href="{{ route('login') }}"
                 data-sidebar-link
-                class="mt-3 block w-full rounded-xl px-4 py-3 text-sm font-semibold bg-[#1f275e] text-white hover:bg-[#27316a] text-center"
+                class="block w-full rounded-xl px-4 py-3 text-sm font-semibold bg-[#1f275e] text-white hover:bg-[#27316a] text-center"
             >
                 Masuk
             </a>
-        </nav>
+        </div>
     </aside>
 
     @yield('content')

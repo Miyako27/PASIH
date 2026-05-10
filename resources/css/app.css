@@ -763,6 +763,11 @@ body:not(.public-page) main table td :is(a, button).h-8.w-8 :is(svg, img).h-4.w-
     justify-content: center;
 }
 
+.public-page .public-sidebar-login-wrap {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+}
+
 .public-page .login-btn:hover {
     transform: translateY(-1px);
 }
