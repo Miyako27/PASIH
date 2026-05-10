@@ -59,6 +59,13 @@ class LogUserActivity
         return match ($routeName) {
             'dashboard' => ['type' => 'Navigasi', 'title' => 'Membuka dashboard', 'detail' => 'Mengakses halaman dashboard'],
             'notifications.index' => ['type' => 'Notifikasi', 'title' => 'Membuka notifikasi', 'detail' => 'Melihat daftar notifikasi akun'],
+            'password.change' => ['type' => 'Akun', 'title' => 'Membuka ubah password', 'detail' => 'Mengakses halaman ubah password akun'],
+            'guides.index' => ['type' => 'Buku Panduan', 'title' => 'Membuka daftar buku panduan', 'detail' => 'Melihat daftar buku panduan sistem'],
+
+            'documents.preview.submission' => ['type' => 'Dokumen', 'title' => 'Membuka dokumen permohonan', 'detail' => 'Melihat pratinjau dokumen permohonan'],
+            'documents.preview.assignment' => ['type' => 'Dokumen', 'title' => 'Membuka dokumen penugasan', 'detail' => 'Melihat pratinjau dokumen penugasan'],
+            'documents.preview.suratbalasan' => ['type' => 'Dokumen', 'title' => 'Membuka dokumen surat balasan', 'detail' => 'Melihat pratinjau dokumen surat balasan'],
+            'documents.preview.guide' => ['type' => 'Dokumen', 'title' => 'Membuka dokumen buku panduan', 'detail' => 'Melihat pratinjau dokumen buku panduan'],
 
             'submissions.index' => ['type' => 'Permohonan', 'title' => 'Membuka daftar permohonan', 'detail' => 'Melihat data permohonan'],
             'submissions.show' => ['type' => 'Permohonan', 'title' => 'Membuka detail permohonan', 'detail' => 'Melihat detail permohonan'],
@@ -83,6 +90,30 @@ class LogUserActivity
 
             'assignments.analysis-results' => ['type' => 'Hasil Analisis', 'title' => 'Membuka daftar hasil analisis', 'detail' => 'Melihat daftar hasil analisis'],
             'assignments.analysis-results.show' => ['type' => 'Hasil Analisis', 'title' => 'Membuka detail hasil analisis', 'detail' => 'Melihat detail hasil analisis'],
+
+            'admin.accounts.index' => ['type' => 'Manajemen Akun', 'title' => 'Membuka daftar akun', 'detail' => 'Melihat daftar akun pengguna'],
+            'admin.accounts.show' => ['type' => 'Manajemen Akun', 'title' => 'Membuka detail akun', 'detail' => 'Melihat detail akun pengguna'],
+            'admin.accounts.create' => ['type' => 'Manajemen Akun', 'title' => 'Membuka form tambah akun', 'detail' => 'Mengakses form pembuatan akun pengguna'],
+            'admin.accounts.store' => ['type' => 'Manajemen Akun', 'title' => 'Menambahkan akun', 'detail' => 'Menyimpan data akun pengguna baru'],
+            'admin.accounts.edit' => ['type' => 'Manajemen Akun', 'title' => 'Membuka form edit akun', 'detail' => 'Mengakses form ubah data akun pengguna'],
+            'admin.accounts.update' => ['type' => 'Manajemen Akun', 'title' => 'Memperbarui akun', 'detail' => 'Menyimpan perubahan data akun pengguna'],
+            'admin.accounts.destroy' => ['type' => 'Manajemen Akun', 'title' => 'Menghapus akun', 'detail' => 'Menghapus data akun pengguna'],
+
+            'admin.instansi.index' => ['type' => 'Manajemen Instansi', 'title' => 'Membuka daftar instansi', 'detail' => 'Melihat daftar instansi'],
+            'admin.instansi.show' => ['type' => 'Manajemen Instansi', 'title' => 'Membuka detail instansi', 'detail' => 'Melihat detail data instansi'],
+            'admin.instansi.create' => ['type' => 'Manajemen Instansi', 'title' => 'Membuka form tambah instansi', 'detail' => 'Mengakses form pembuatan data instansi'],
+            'admin.instansi.store' => ['type' => 'Manajemen Instansi', 'title' => 'Menambahkan instansi', 'detail' => 'Menyimpan data instansi baru'],
+            'admin.instansi.edit' => ['type' => 'Manajemen Instansi', 'title' => 'Membuka form edit instansi', 'detail' => 'Mengakses form ubah data instansi'],
+            'admin.instansi.update' => ['type' => 'Manajemen Instansi', 'title' => 'Memperbarui instansi', 'detail' => 'Menyimpan perubahan data instansi'],
+            'admin.instansi.destroy' => ['type' => 'Manajemen Instansi', 'title' => 'Menghapus instansi', 'detail' => 'Menghapus data instansi'],
+
+            'admin.guides.index' => ['type' => 'Manajemen Buku Panduan', 'title' => 'Membuka daftar buku panduan', 'detail' => 'Melihat daftar buku panduan'],
+            'admin.guides.show' => ['type' => 'Manajemen Buku Panduan', 'title' => 'Membuka detail buku panduan', 'detail' => 'Melihat detail buku panduan'],
+            'admin.guides.create' => ['type' => 'Manajemen Buku Panduan', 'title' => 'Membuka form tambah buku panduan', 'detail' => 'Mengakses form pembuatan buku panduan'],
+            'admin.guides.store' => ['type' => 'Manajemen Buku Panduan', 'title' => 'Menambahkan buku panduan', 'detail' => 'Menyimpan data buku panduan baru'],
+            'admin.guides.edit' => ['type' => 'Manajemen Buku Panduan', 'title' => 'Membuka form edit buku panduan', 'detail' => 'Mengakses form ubah data buku panduan'],
+            'admin.guides.update' => ['type' => 'Manajemen Buku Panduan', 'title' => 'Memperbarui buku panduan', 'detail' => 'Menyimpan perubahan data buku panduan'],
+            'admin.guides.destroy' => ['type' => 'Manajemen Buku Panduan', 'title' => 'Menghapus buku panduan', 'detail' => 'Menghapus data buku panduan'],
 
             default => [
                 'type' => 'Aktivitas Sistem',
