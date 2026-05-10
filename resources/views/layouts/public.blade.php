@@ -94,7 +94,7 @@
                 data-sidebar-link
                 class="block w-full rounded-xl px-4 py-3 text-sm font-semibold bg-[#1f275e] text-white hover:bg-[#27316a] text-center"
             >
-                Masuk
+                Login
             </a>
         </div>
     </aside>

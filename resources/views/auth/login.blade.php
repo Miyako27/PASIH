@@ -80,8 +80,8 @@
         <a href="{{ route('password.request') }}" class="text-slate-500 hover:underline">Lupa Password?</a>
       </div>
 
-      <div class="pt-2 flex justify-center">
-        <div class="g-recaptcha" data-sitekey="{{ config('services.recaptcha.site_key') }}" data-callback="onRecaptchaSuccess" data-expired-callback="onRecaptchaExpired"></div>
+      <div class="pt-2 recaptcha-wrap flex justify-center">
+        <div class="g-recaptcha recaptcha-el" data-sitekey="{{ config('services.recaptcha.site_key') }}" data-callback="onRecaptchaSuccess" data-expired-callback="onRecaptchaExpired"></div>
       </div>
 
       <button type="submit" class="mt-2 w-full h-11 rounded-lg text-white text-sm font-semibold" style="background-color:#19305D;">
@@ -155,6 +155,28 @@
     window.onRecaptchaExpired = function () {
       recaptchaInlineError.classList.remove('hidden');
     };
+
+    const recaptchaBaseWidth = 304;
+    const recaptchaBaseHeight = 78;
+    const recaptchaWrap = document.querySelector('.recaptcha-wrap');
+    const recaptchaElement = document.querySelector('.recaptcha-el');
+
+    const fitRecaptchaToContainer = function () {
+      if (!recaptchaWrap || !recaptchaElement) {
+        return;
+      }
+
+      const availableWidth = recaptchaWrap.clientWidth;
+      const scale = Math.min(1, availableWidth / recaptchaBaseWidth);
+
+      recaptchaElement.style.transform = `scale(${scale})`;
+      recaptchaElement.style.transformOrigin = 'center top';
+      recaptchaWrap.style.height = `${recaptchaBaseHeight * scale}px`;
+    };
+
+    window.addEventListener('resize', fitRecaptchaToContainer);
+    window.addEventListener('load', fitRecaptchaToContainer);
+    fitRecaptchaToContainer();
   </script>
 </body>
 </html>
