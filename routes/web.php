@@ -18,7 +18,7 @@ Route::get('/', function () {
         return redirect()->route('dashboard');
     }
 
-    return view('welcome');
+    return view('pages.public.analysis.welcome');
 })->name('home');
 
 Route::get('/publik/hasil-analisis', [PublicAnalysisController::class, 'index'])

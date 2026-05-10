@@ -95,7 +95,7 @@ class PublicAnalysisController extends Controller
             ->sortDesc()
             ->values();
 
-        return view('public.analysis.index', [
+        return view('pages.public.analysis.index', [
             'results' => $results,
             'search' => $search,
             'instansiId' => $instansiId,
@@ -128,7 +128,7 @@ class PublicAnalysisController extends Controller
             ->sortByDesc('id')
             ->first();
 
-        return view('public.analysis.show', [
+        return view('pages.public.analysis.show', [
             'assignment' => $assignment,
             'latestAnalysisDocument' => $latestAnalysisDocument,
             'perdaDocument' => $perdaDocument,
