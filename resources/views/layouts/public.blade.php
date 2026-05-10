@@ -24,7 +24,7 @@
             <img class="brand-logo" src="{{ asset('images/loginlogo2.png') }}" alt="Logo Kementerian Hukum">
             <div>
                 <div class="brand-title">PASIH</div>
-                <p class="brand-subtitle">Pendampingan Analisis &amp; Evaluasi Peraturan Daerah Kementerian Hukum Provinsi Riau</p>
+                <p class="brand-subtitle">Pendampingan Analisis &amp; Evaluasi Hukum Peraturan Daerah Kementerian Hukum Riau</p>
             </div>
         </div>
 
@@ -101,7 +101,7 @@
     @else
         <footer class="public-footer">
             <div class="public-copyright">
-                &copy; 2026 PASIH - Kementerian Hukum Provinsi Riau. Dikembangkan bersama Politeknik Caltex Riau.
+                &copy; 2026 PASIH - Kementerian Hukum Riau. Dikembangkan bersama Politeknik Caltex Riau.
             </div>
         </footer>
     @endif

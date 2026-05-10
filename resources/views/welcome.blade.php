@@ -13,7 +13,7 @@
             </h1>
 
             <p class="subtitle">
-                Menyediakan hasil analisis dan evaluasi peraturan daerah yang dapat diakses serta dimanfaatkan oleh masyarakat, termasuk untuk keperluan akademik dan penelitian
+                Menyediakan hasil analisis dan evaluasi hukum peraturan daerah yang dapat diakses serta dimanfaatkan oleh masyarakat, termasuk untuk keperluan akademik dan penelitian
             </p>
 
             <a class="cta" href="{{ route('public.analysis.index') }}">Lihat Hasil Analisis</a>
@@ -84,7 +84,7 @@
         </div>
 
         <div class="copyright">
-            &copy; {{ date('Y') }} PASIH - Kementerian Hukum Provinsi Riau. Dikembangkan bersama Politeknik Caltex Riau.
+            &copy; {{ date('Y') }} PASIH - Kementerian Hukum Riau. Dikembangkan bersama Politeknik Caltex Riau.
         </div>
     </footer>
 @endsection

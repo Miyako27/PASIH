@@ -25,7 +25,7 @@
 
       <div class="min-w-0">
         <div class="truncate text-sm sm:text-base lg:text-lg font-bold tracking-tight">{{ $displayRole }}</div>
-        <div class="hidden sm:block text-xs text-slate-500 truncate">Kementerian Hukum Provinsi Riau</div>
+        <div class="hidden sm:block text-xs text-slate-500 truncate">Kementerian Hukum Riau</div>
       </div>
     </div>
 

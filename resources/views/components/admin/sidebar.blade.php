@@ -59,7 +59,7 @@
         PASIH
     </div>
     <div class="text-xs text-white/70 mt-1 leading-relaxed">
-        Pendampingan Analisis &amp; Evaluasi Peraturan Daerah Kementerian Hukum Provinsi Riau
+        Pendampingan Analisis &amp; Evaluasi Hukum Peraturan Daerah Kementerian Hukum Riau
     </div>
 
 </div>
