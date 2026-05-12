@@ -5,11 +5,11 @@
 @section('content')
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-5">
         <div>
-            <h1 class="text-4xl font-extrabold tracking-tight text-blue-950">Detail Hasil Analisis & Evaluasi Hukum</h1>
+            <h1 class="text-4xl font-extrabold tracking-tight text-blue-950">Detail Hasil Analisis &amp; Evaluasi Hukum</h1>
             <p class="mt-2 text-sm text-slate-600">
-                <a href="{{ route('public.analysis.index') }}" class="hover:underline">Hasil Analisis & Evaluasi Hukum</a>
+                <a href="{{ route('public.analysis.index') }}" class="hover:underline">Hasil Analisis &amp; Evaluasi Hukum</a>
                 <span class="mx-1">/</span>
-                <span>Detail Hasil Analisis & Evaluasi Hukum</span>
+                <span>Detail Hasil Analisis &amp; Evaluasi Hukum</span>
             </p>
         </div>
 

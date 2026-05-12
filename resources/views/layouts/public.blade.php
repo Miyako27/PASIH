@@ -25,7 +25,7 @@
                 <img class="brand-logo" src="{{ asset('images/loginlogo2.png') }}" alt="Logo Kementerian Hukum">
                 <div>
                     <div class="brand-title">PASIH</div>
-                    <p class="brand-subtitle">Pendampingan Analisis & Evaluasi Hukum Peraturan Daerah Kementerian Hukum Riau</p>
+                    <p class="brand-subtitle">Pendampingan Analisis &amp; Evaluasi Hukum Peraturan Daerah Kementerian Hukum Riau</p>
                 </div>
             </div>
 
@@ -56,7 +56,7 @@
                 <img src="{{ asset('images/loginlogo2.png') }}" alt="Logo Kementerian Hukum" class="w-10 h-10 rounded-md object-cover">
                 <div class="min-w-0">
                     <div class="font-extrabold tracking-tight text-lg text-[#29346b] truncate">PASIH</div>
-                    <div class="text-[11px] leading-snug text-slate-500">Pendampingan Analisis & Evaluasi Peraturan Daerah Kementerian Hukum Provinsi Riau</div>
+                    <div class="text-[11px] leading-snug text-slate-500">Pendampingan Analisis &amp; Evaluasi Peraturan Daerah Kementerian Hukum Provinsi Riau</div>
                 </div>
             </div>
             <button
