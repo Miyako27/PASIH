@@ -7,7 +7,7 @@
     <main class="hero">
         <div class="hero-inner">
             <h1 class="headline">
-                Hasil Analisis &amp; Evaluasi
+                Hasil Analisis & Evaluasi
                 <br>
                 <span class="headline-accent">Hukum Peraturan Daerah</span>
             </h1>

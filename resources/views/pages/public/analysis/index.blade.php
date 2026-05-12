@@ -5,11 +5,11 @@
 @section('content')
     <main class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 space-y-5">
         <div>
-            <h1 class="text-4xl font-extrabold tracking-tight text-blue-950">Hasil Analisis &amp; Evaluasi Hukum</h1>
+            <h1 class="text-4xl font-extrabold tracking-tight text-blue-950">Hasil Analisis & Evaluasi Hukum</h1>
             <p class="mt-1 pasih-page-breadcrumb">
                 <a href="{{ route('home') }}" class="hover:text-slate-700 hover:underline">Beranda</a>
                 <span class="mx-1">/</span>
-                <span>Hasil Analisis &amp; Evaluasi Hukum</span>
+                <span>Hasil Analisis & Evaluasi Hukum</span>
             </p>
         </div>
 
