@@ -43,7 +43,7 @@
 
         <label class="block text-sm font-medium text-slate-700">
           Deadline <span class="text-red-500">*</span>
-          <input type="date" name="deadline_at" required value="{{ old('deadline_at', optional($assignment->deadline_at)->format('Y-m-d')) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">
+          <input type="date" name="deadline_at" min="{{ now()->toDateString() }}" required value="{{ old('deadline_at', optional($assignment->deadline_at)->format('Y-m-d')) }}" class="mt-2 w-full h-10 px-4 py-2 rounded-md border border-[#B9B9B9] text-sm">
         </label>
 
         <label class="block text-sm font-medium text-slate-700">
